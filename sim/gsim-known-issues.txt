@@ -1,0 +1,23 @@
+GSIM revision 93b8cd23edd3228807c4f2a08c19c3936a463cb2
+
+Observed during EthernetHarness simulation: byte-vector concatenation of a
+constant source MAC (02:00:00:00:00:02) and EtherType 0800 above a dynamic
+destination MAC was emitted as a series of native 64-bit shifts. The generated
+SystemVerilog was correct:
+  {64'h8020000000002, destinationMac[7:0], ..., destinationMac[47:40]}
+The generated C++ expression started with native literal 0x802000000000200 and
+repeated << 8 and OR operations without widening to _BitInt(128) until assignment.
+This silently lost source-MAC byte 5 and both EtherType bytes. The independent
+wire oracle rejected the first frame (EtherType became 0000).
+
+EthernetIpv4Transmit now places the three fields using explicitly widened ORs.
+This is logically equivalent in RTL and prevents the erroneous model expression.
+The ethernet test checks every transmitted header byte against an independent
+software packet builder, including this constant-header configuration.
+No vendored GSIM source or generated model is patched.
+
+TcpTransmitHarness also exposed a top-level Vec input accessor limitation:
+Input(Vec(5, UInt(64.W))) produced a uint64_t array but a scalar setter using
+"io$$options != val" and "io$$options = val", which Clang rejected. The harness
+now uses five individually named 64-bit input ports, concatenated internally.
+This changes only host test accessors, not the production command bundle.
