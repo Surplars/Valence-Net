@@ -8,9 +8,11 @@ capacity and physical timing are recorded separately.
 
 The multi-connection/SACK revision passes **31 functional targets**, including
 complete-Ethernet single/four-context RX offered at 10G and sustained
-four-context TX. Physical verification of the new default four-context core
-is in progress; preceding single-context timing is historical evidence.
-See [development evidence](docs/DEVELOPMENT.md).
+four-context TX. The default four-context core passes routed OOC timing at
+**156.25 MHz on ZU15EG-2**, with **+0.004 ns setup / +0.006 ns hold**.
+See [development evidence](docs/DEVELOPMENT.md) and the
+[original timing report](docs/timing/2026-10-23-113414/post_route_timing.rpt).
+SoC integration and board throughput remain separate validation steps.
 
 Develop in WSL at **/home/openion/Valence-Net**. Source, Git, Mill/GSIM builds
 and caches stay on the Linux filesystem. Explicitly use WSL's `--cd` option
@@ -218,8 +220,16 @@ placement are documented in `sim/gsim-known-issues.txt`.
 ## Vivado timing
 
 Target part: **xczu15eg-ffvb1156-2-i**. Clock: **6.4 ns**. Setup/hold
-uncertainty: **0.1 / 0.05 ns**. No false-path or multicycle exceptions are
-used to manufacture a timing pass.
+uncertainty: **0.1 / 0.05 ns**. No false-path or multicycle exceptions are used.
+
+Snapshot **20261023T113414Z** completed route and physical refinement with
+zero failing setup/hold endpoints, clean timing coverage, zero routing errors
+and zero DRC errors. All **223,179 routable nets** are fully routed. The core
+uses **172,027 LUTs, 81,490 FFs, 132 RAMB36 and 18 RAMB18**, excluding the timing
+fixture. Published [summary](docs/timing/2026-10-23-113414/summary.json),
+[report hashes](docs/timing/2026-10-23-113414/evidence-hashes.json) and
+[warning review](docs/timing/2026-10-23-113414/tool-log-review.json) correspond
+to the same source as the 31-target functional regression.
 
 `fpga/prepare_ooc.py` freezes source verification, default RTL, hashes,
 constraints and script into a timestamped native-WSL snapshot.

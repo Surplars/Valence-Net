@@ -1,0 +1,26 @@
+{
+  "status": "reviewed",
+  "critical_tool_messages": "Vivado 12-4439 warns only about the large all-register report collections. All requested register reports and final checkpoint completed, their setup/hold match the global results, and no tool/native errors occurred.",
+  "drc": "RTSTAT-10 is the 64-bit signature output of the OOC fixture with no routable downstream loads; all 223179 routable nets are fully routed.",
+  "methodology": {
+    "SYNTH-6": "150 inferred BRAM primitives have no merged output register; retained protocol latency is unchanged and their routed paths meet timing.",
+    "SYNTH-16": "150 inferred dual-port BRAM collision advisories. Buffer/bank/ring ownership and admission guard simultaneous read/write use; no collision forwarding behavior is claimed. Existing concurrent/wrap/release regressions remain the functional evidence; this is not gate-level BRAM or board validation.",
+    "CLKC-3": "The fixture intentionally fixes its physical BUFG site for reproducibility."
+  },
+  "unconstrained_checks": {
+    "no_clock": 0,
+    "constant_clock": 0,
+    "pulse_width_clock": 0,
+    "unconstrained_internal_endpoints": 0,
+    "no_input_delay": 0,
+    "no_output_delay": 0,
+    "multiple_clock": 0,
+    "generated_clocks": 0,
+    "loops": 0,
+    "partial_input_delay": 0,
+    "partial_output_delay": 0,
+    "latch_loops": 0
+  },
+  "scope": "Full default four-context registered-boundary OOC; not board/MAC/SoC signoff",
+  "clock_source_warning": "Route 35-197 concerns HD.CLK_SRC metadata on the clock input port. The fixture instead contains a real BUFGCE physically located at BUFGCE_X0Y0; internal register clock paths and all coverage checks are concrete. No upstream board/partition clock signoff is claimed."
+}

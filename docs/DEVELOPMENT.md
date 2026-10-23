@@ -174,8 +174,20 @@ and verification-2026-10-22.json.
 ## Physical timing
 
 The current full-default four-context snapshot is
-build/vivado/20261023T113414Z. Main-checkout SACK/multi-context/full-Ethernet
-focused regressions pass, and configurations 1/3/8 elaborate without warnings.
+build/vivado/20261023T113414Z. It completed physical refinement and routing
+with setup +0.004 ns, hold +0.006 ns and pulse-width slack +2.658 ns. Setup and
+hold each cover 241,228 endpoints, with zero failing endpoints and zero TNS/THS.
+All twelve coverage checks are zero, including unconstrained endpoints, missing
+clocks/delays and combinational loops. All 223,179 routable nets are fully
+routed, with zero routing/DRC/methodology errors and zero blackboxes.
+
+The core uses 172,027 LUTs, 81,490 FFs, 132 RAMB36 and 18 RAMB18. Including the
+retained timing fixture gives 172,861 LUTs and 87,462 FFs. The setup margin is
+4 ps for this exact fixture/constraint set; integrated SoC and board timing
+need their own checks.
+
+Main-checkout SACK/multi-context/full-Ethernet focused regressions pass,
+and configurations 1/3/8 elaborate without warnings.
 A fresh source/RTL comparison passed before freezing. All 31 regression targets pass against this frozen source, preserved as
 subsequent-full-regression.json, with unchanged 9/100-clock Ethernet TX and
 strict 10G RX.
@@ -266,8 +278,22 @@ because they require its decision state. A separate writer/snapshot-state busy
 output is therefore exactly sufficient for the idle metadata guard. The full
 RBO busy output remains unchanged for low-level consumers. All seven focused
 test result strings, including cycle counts, match 103352 exactly. The new
-full31 regression passes with every result string unchanged. Physical routing
-is running; no timing pass is claimed.
+full31 regression passes with every result string unchanged. Placement and
+physical optimization both report +0.106 ns setup. The first complete route
+reports -0.260 ns setup / +0.006 ns hold. AggressiveExplore physical optimization
+and Explore rerouting complete at +0.004 ns setup / +0.006 ns hold. The source
+selected for main is byte-identical to the pushed a2733af code and this passing
+physical snapshot. A fresh restored-source emission reproduces all 77 core
+RTL files byte-for-byte. Further arithmetic candidates remain in an isolated
+local checkpoint and are not included in the timing claim.
+
+Published original summary/route/utilization/DRC/methodology reports and their
+hashes are under timing/2026-10-23-113414. The warning review records the four
+Vivado 12-4439 report-collection-size messages; every requested register report
+and final DCP completed successfully. DRC RTSTAT-10 concerns only the fixture
+signature output. Methodology records inferred-BRAM output-register/collision
+advisories and the intentionally fixed BUFG site; these are retained with the
+reports, not described as a warning-free run. No tool/native errors occurred.
 
 The timing flow preserves a failed first route as baseline_route.dcp/reports
 and attempts one AggressiveExplore physical optimization plus Explore route.
