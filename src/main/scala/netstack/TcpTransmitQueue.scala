@@ -44,6 +44,7 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
         val mss = Input(UInt(16.W))
         val reserve = Decoupled(UInt(16.W))
         val replay = Flipped(Decoupled(UInt(32.W)))
+        val replayLimit = Input(UInt(16.W))
         val replayMiss = Output(Bool())
         val segment = Decoupled(new TcpPayloadSegment)
         val out = Decoupled(new PacketBeat(16))
@@ -151,8 +152,9 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
     // at the request handshake, without feeding them back into bank selection.
     val wireFlight = io.sendActual - io.sendOldest
     val replayInFlight = (replaySequence - io.sendOldest) < wireFlight
-    val replayLength = min3(replayAvailable, io.mss, io.sendActual - replaySequence)(15, 0)
-    val replayGood = replayFound && replayInFlight && io.mss =/= 0.U
+    val effectiveMss = Mux(io.replayLimit < io.mss, io.replayLimit, io.mss)
+    val replayLength = min3(replayAvailable, effectiveMss, io.sendActual - replaySequence)(15, 0)
+    val replayGood = replayFound && replayInFlight && effectiveMss =/= 0.U
     val replayResolved = lookup === 2.U && sameRequest
     io.replay.ready := !pending && store.io.read.ready && replayResolved
     io.replayMiss := io.replay.fire && !replayGood
@@ -177,7 +179,13 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
         segment.length := length
         segment.context := Mux(retry, replayContext, contexts(head))
         segment.retransmission := retry
-        segment.push := (offset +& length) === Mux(retry, replayBlockLength, lengths(head))
+        // Compare against an independently computed tail rather than adding
+        // the late MSS/credit-selected length before testing the bank end.
+        // Seventeen bits preserve exact equality even for invalid offsets.
+        val newTail = lengths(head).pad(17) - scheduled(head).pad(17)
+        val replayTail = replayBlockLength.pad(17) - replayOffset.pad(17)
+        segment.push := Mux(retry, replayLength.pad(17) === replayTail,
+            newLength.pad(17) === newTail)
     }
     when(io.reserve.fire) {
         when(!assigned(head)) { bases(head) := io.sendSequence; assigned(head) := true.B }
@@ -203,7 +211,8 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
     store.io.release.valid := reclaim.asUInt.orR
     store.io.release.bits := tokens(retired)
     when(store.io.release.valid) { live(retired) := false.B }
-    io.fault := store.io.releaseMiss || (store.io.response.fire && store.io.response.bits.error)
+    // Diagnostic only: isolate reclamation/token checks from parent fault ORs.
+    io.fault := RegNext(store.io.releaseMiss || (store.io.response.fire && store.io.response.bits.error), false.B)
 }
 
 class TcpDataHeader extends Bundle {
@@ -211,6 +220,7 @@ class TcpDataHeader extends Bundle {
     val sourcePort = UInt(16.W); val destinationPort = UInt(16.W)
     val acknowledgement = UInt(32.W); val window = UInt(16.W)
     val ttl = UInt(8.W); val tos = UInt(8.W)
+    val optionLength = UInt(6.W); val options = UInt(320.W)
 }
 
 /** Retention -> segmentation/replay -> checksummed IPv4/TCP packets.
@@ -218,7 +228,7 @@ class TcpDataHeader extends Bundle {
   * at this IP boundary is not physical transmission: carry this descriptor
   * through routing/MAC, and report its end sequence to the TCB only on wire
   * completion. The next packet may be prepared while the previous is stalled.
-  * header.ttl must be nonzero; this path currently emits no TCP options.
+  * header.ttl must be nonzero; options are preencoded by the owning TCB.
   */
 class TcpDataTransmit(val banks: Int = 8, val beatsPerBank: Int = 128) extends Module {
     val io = IO(new Bundle {
@@ -230,6 +240,7 @@ class TcpDataTransmit(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
         val sendSequence = Input(UInt(32.W)); val credit = Input(UInt(32.W))
         val mss = Input(UInt(16.W)); val reserve = Decoupled(UInt(16.W))
         val replay = Flipped(Decoupled(UInt(32.W)))
+        val replayLimit = Input(UInt(16.W))
         val replayMiss = Output(Bool())
         val header = Input(new TcpDataHeader)
         val out = Decoupled(new PacketBeat(16))
@@ -249,17 +260,23 @@ class TcpDataTransmit(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
     data.io.sendOldest := io.sendOldest; data.io.sendActual := io.sendActual
     data.io.sendSequence := io.sendSequence; data.io.credit := io.credit; data.io.mss := io.mss
     io.reserve <> data.io.reserve; data.io.replay <> io.replay
+    data.io.replayLimit := io.replayLimit
     io.replayMiss := data.io.replayMiss; io.freeBanks := data.io.freeBanks
     data.io.segment.ready := serializer.io.command.ready && descriptors.io.enq.ready
     serializer.io.command.valid := data.io.segment.valid && descriptors.io.enq.ready
     descriptors.io.enq.valid := data.io.segment.valid && serializer.io.command.ready
     descriptors.io.enq.bits := data.io.segment.bits
+    // Match the exact header snapshot used to budget this segment's MSS.
+    // A new RX SACK/window update while RAM/serializer is stalled cannot grow it.
+    val header = Reg(new TcpDataHeader)
+    when(data.io.reserve.fire || (data.io.replay.fire && !data.io.replayMiss)) { header := io.header }
     val cmd = serializer.io.command.bits
     cmd := 0.U.asTypeOf(new TcpSendCommand)
-    cmd.sourceIp := io.header.sourceIp; cmd.destinationIp := io.header.destinationIp
-    cmd.sourcePort := io.header.sourcePort; cmd.destinationPort := io.header.destinationPort
-    cmd.acknowledgement := io.header.acknowledgement; cmd.window := io.header.window
-    cmd.ttl := io.header.ttl; cmd.tos := io.header.tos
+    cmd.sourceIp := header.sourceIp; cmd.destinationIp := header.destinationIp
+    cmd.sourcePort := header.sourcePort; cmd.destinationPort := header.destinationPort
+    cmd.acknowledgement := header.acknowledgement; cmd.window := header.window
+    cmd.ttl := header.ttl; cmd.tos := header.tos
+    cmd.optionLength := header.optionLength; cmd.options := header.options
     cmd.sequence := data.io.segment.bits.sequence
     cmd.flags := Mux(data.io.segment.bits.push, 24.U, 16.U)
     cmd.length := data.io.segment.bits.length

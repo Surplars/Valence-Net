@@ -9,7 +9,8 @@ import chisel3.util._
   * A bounded number of completed retransmissions is allowed before aborting.
   */
 class TcpManagedConnection(val ticksPerSecond: Int = 1000, val timeWaitTicks: Int = 120000,
-                           val challengeTicks: Int = 10, val maxRetries: Int = 8) extends Module {
+                           val challengeTicks: Int = 10, val maxRetries: Int = 8,
+                           val trustedReservations: Boolean = false, val receiveReorder: Boolean = false, val sackSupport: Boolean = false) extends Module {
     require(maxRetries >= 1 && maxRetries <= 255)
     val io = IO(new TcpConnectionIO {
         val timeout = Valid(UInt(32.W))
@@ -18,13 +19,14 @@ class TcpManagedConnection(val ticksPerSecond: Int = 1000, val timeWaitTicks: In
         val timerExpired = Output(Bool())
         val retries = Output(UInt(8.W))
     })
-    val control = Module(new TcpConnectionControl(timeWaitTicks, challengeTicks))
+    val control = Module(new TcpConnectionControl(timeWaitTicks, challengeTicks, trustedReservations, receiveReorder, sackSupport))
     val timer = Module(new TcpRetransmissionTimer(ticksPerSecond))
     control.io.open <> io.open
     control.io.passiveInitialSequence := io.passiveInitialSequence
     control.io.rx <> io.rx
     io.disposition <> control.io.disposition
     io.control <> control.io.control
+    io.controlPending := control.io.controlPending
     io.ack <> control.io.ack
     io.notice <> control.io.notice
     control.io.sendReserve <> io.sendReserve
@@ -33,14 +35,18 @@ class TcpManagedConnection(val ticksPerSecond: Int = 1000, val timeWaitTicks: In
     io.completionAccepted := control.io.completionAccepted
     io.invalidCompletion := control.io.invalidCompletion
     io.replay <> control.io.replay
+    control.io.probe <> io.probe
     control.io.receiveWindow := io.receiveWindow
+    control.io.receiveSack := io.receiveSack; io.sackEnabled := control.io.sackEnabled
     control.io.congestionWindow := io.congestionWindow
     control.io.tick := io.tick
+    control.io.updateWindow := io.updateWindow
     io.state := control.io.state
     io.generation := control.io.generation
     io.sendOldest := control.io.sendOldest
     io.sendNext := control.io.sendNext
     io.sendActual := control.io.sendActual
+    io.receiveCredit := control.io.receiveCredit
     io.receiveNext := control.io.receiveNext
     io.sendWindow := control.io.sendWindow
     io.sendCredit := control.io.sendCredit

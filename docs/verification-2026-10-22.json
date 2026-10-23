@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-22",
+  "base_commit": "54d589cb212dcdb812cfb5fb34e342314fbddb38",
+  "source_set_sha256": "fc4ed81cf0553e11aa720301abf483abe87cd060f6d596d99bbd9e2473f2bd6d",
+  "source_file_count": 69,
+  "functional_tests": [
+    "checksum",
+    "udp",
+    "buffer",
+    "receive",
+    "slice",
+    "ip_receive",
+    "transmit",
+    "arp",
+    "ethernet",
+    "tcp_receive",
+    "tcp_transmit",
+    "tcp_timer",
+    "tcp_timer_pipeline",
+    "tcp_store",
+    "tcp_control",
+    "tcp_managed",
+    "tcp_data",
+    "tcp_connection_tx",
+    "tcp_ring",
+    "tcp_endpoint",
+    "tcp_reassembly",
+    "ethernet_tcp",
+    "tcp_congestion",
+    "tcp_congested_endpoint",
+    "ethernet_mixed",
+    "ethernet_service"
+  ],
+  "functional_test_count": 26,
+  "functional_all_passed": true,
+  "gsim_revision": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+  "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)",
+  "fpga_snapshot": "20261022T150138Z",
+  "fpga_summary_sha256": "a3916f66541248db8f02e314cc816f9af3d53c3c029690c7351f86ab466c9953",
+  "fpga_part": "xczu15eg-ffvb1156-2-i",
+  "period_ns": 6.4,
+  "clock_target_mhz": 156.25,
+  "raw_internal_gbps": 20,
+  "setup_wns_ns": 0.001,
+  "hold_whs_ns": 0.003,
+  "pulse_width_slack_ns": 2.658,
+  "timing_coverage_checks": {
+    "no_clock": 0,
+    "constant_clock": 0,
+    "pulse_width_clock": 0,
+    "unconstrained_internal_endpoints": 0,
+    "no_input_delay": 0,
+    "no_output_delay": 0,
+    "multiple_clock": 0,
+    "generated_clocks": 0,
+    "loops": 0,
+    "partial_input_delay": 0,
+    "partial_output_delay": 0,
+    "latch_loops": 0
+  },
+  "routing": {
+    "routable_nets": 57855,
+    "fully_routed_nets": 57855,
+    "routing_errors": 0
+  },
+  "core_resources": {
+    "total_luts": 41411,
+    "logic_luts": 39447,
+    "lutram": 1964,
+    "srl": 0,
+    "ffs": 18183,
+    "ramb36": 42,
+    "ramb18": 9,
+    "uram": 0,
+    "dsps": 0
+  },
+  "fixture_total_resources": {
+    "total_luts": 41760,
+    "logic_luts": 39796,
+    "lutram": 1964,
+    "srl": 0,
+    "ffs": 20778,
+    "ramb36": 42,
+    "ramb18": 9,
+    "uram": 0,
+    "dsps": 0
+  },
+  "drc_rules": [
+    {
+      "rule": "RTSTAT-10",
+      "severity": "Warning",
+      "count": 1
+    }
+  ],
+  "methodology_rules": [
+    {
+      "rule": "SYNTH-6",
+      "severity": "Warning",
+      "count": 51
+    },
+    {
+      "rule": "SYNTH-16",
+      "severity": "Warning",
+      "count": 51
+    },
+    {
+      "rule": "CLKC-3",
+      "severity": "Advisory",
+      "count": 1
+    }
+  ],
+  "registered_boundary_core_timing_verified": true,
+  "integrated_soc_timing_verified": false,
+  "board_throughput_verified": false,
+  "complete_general_purpose_protocol_stack": false,
+  "service_benchmark": "FULL_ENDPOINT_SERVICE path=UDP_TX payload=0 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=0 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=17 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=17 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=512 cycles_per_packet=40.0000 wire_equivalent_gbps_at_156_25MHz=18.0625\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=512 cycles_per_packet=38.0000 wire_equivalent_gbps_at_156_25MHz=19.0132\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1400 cycles_per_packet=96.0000 wire_equivalent_gbps_at_156_25MHz=19.0885\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1400 cycles_per_packet=94.0000 wire_equivalent_gbps_at_156_25MHz=19.4947\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=64 cycles_per_packet=13.0000 wire_equivalent_gbps_at_156_25MHz=13.6538\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1460 cycles_per_packet=100.0000 wire_equivalent_gbps_at_156_25MHz=19.2250\nFULL_ENDPOINT_SERVICE path=TCP_RX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE_PASS line_rate_target_gbps=10 raw_internal_gbps=20 clock_target_mhz=156.25 physical_timing_verified=false",
+  "production_capacity_rx_probe": {
+    "scope": "Isolated copy; RX ring changed from test 1KiB to production 64KiB; other reduced harness parameters unchanged; no board throughput claim",
+    "script_sha256": "6a91a596d6fb06675f6e7d73f3ac6192055cf28dd64985475ac4fc5e03f6266f",
+    "sha256": {
+      "source-verification.json": "2d56951955857ff05c18bbf9d3aadf464990d5b2957a8b3c1041696804afa453",
+      "src/main/scala/netstack/EthernetTcpHarness.scala": "95961a3a834e95097131212bce97f820400f576b9936cc1390109770a2e394b1",
+      "src/main/scala/netstack/EmitProductionRxProbe.scala": "cd4661e463f5ce2ce5c93c42ddbe601c404ac63d1bc6e483a71768415bff3dbe",
+      "rx-probe.cpp": "0ca0e73462c489c46c863369707f8122ef94f982425cfc35e47e7757c15bf8f1",
+      "generated/EthernetServiceHarness.fir": "615547d2d4036db5ce7dc1d606afc44f9d13e7503a1cb593fa03dca994d83b6e",
+      "result.log": "75e3b6093f2b38dc8bad588e295cf37409641e4e074a1a09bbfc746f088b1f23"
+    },
+    "exit_code": 0,
+    "path": "build/production-rx-probe-20261022T150556Z",
+    "result": "FULL_ENDPOINT_SERVICE path=UDP_TX payload=0 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=0 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=17 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=17 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=512 cycles_per_packet=40.0000 wire_equivalent_gbps_at_156_25MHz=18.0625\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=512 cycles_per_packet=38.0000 wire_equivalent_gbps_at_156_25MHz=19.0132\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1400 cycles_per_packet=96.0000 wire_equivalent_gbps_at_156_25MHz=19.0885\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1400 cycles_per_packet=94.0000 wire_equivalent_gbps_at_156_25MHz=19.4947\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=64 cycles_per_packet=13.0000 wire_equivalent_gbps_at_156_25MHz=13.6538\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1460 cycles_per_packet=100.0000 wire_equivalent_gbps_at_156_25MHz=19.2250\nFULL_ENDPOINT_SERVICE path=TCP_RX_PRODUCTION_CAPACITY payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=TCP_RX_PRODUCTION_CAPACITY payload=64 cycles_per_packet=10.9821 wire_equivalent_gbps_at_156_25MHz=16.1627\nFULL_ENDPOINT_SERVICE path=TCP_RX_PRODUCTION_CAPACITY payload=512 cycles_per_packet=39.0000 wire_equivalent_gbps_at_156_25MHz=18.9103\nFULL_ENDPOINT_SERVICE path=TCP_RX_PRODUCTION_CAPACITY payload=896 cycles_per_packet=63.0000 wire_equivalent_gbps_at_156_25MHz=19.3254\nFULL_ENDPOINT_SERVICE path=TCP_RX_PRODUCTION_CAPACITY payload=1460 cycles_per_packet=98.0000 wire_equivalent_gbps_at_156_25MHz=19.6173\nFULL_ENDPOINT_SERVICE_PASS line_rate_target_gbps=10 raw_internal_gbps=20 clock_target_mhz=156.25 physical_timing_verified=false"
+  },
+  "limits": [
+    "One TCP session",
+    "Eight 2KiB RX reorder slots; overlapping/oversized ranges and overflow drop for sender retransmission; no SACK",
+    "No IP fragmentation/IPv6/PMTU feedback",
+    "No MAC/PCS/PHY or DMA/Linux driver integration",
+    "16KiB default TX storage limits the achievable bandwidth-delay product",
+    "Setup margin is only 1ps beyond the stated 0.1ns uncertainty; repeat timing after integration",
+    "Ordered traffic service rates do not establish sustained throughput under arbitrary reordering"
+  ],
+  "source_set_sha256_encoding": "JSON sorted keys, compact separators, UTF-8",
+  "source_verification_sha256": "2d56951955857ff05c18bbf9d3aadf464990d5b2957a8b3c1041696804afa453",
+  "reassembly_regression": "TCP_REASSEMBLY_PASS cases=46 cycles=61280 bytes=14742 observed_cache_drops=3 wrap=pass overlap=pass exhaustion=pass window_clip=pass ordered_fin=pass invalid_admission=pass abort_reuse=pass old_ack_isolation=pass randomized_backpressure=pass",
+  "worst_path": {
+    "source": "core/udpRx/ip/slice/context_0_reg[56]/C",
+    "destination": "core/udpRx/udp/validator/checksum/result_checksum_reg[10]/D",
+    "logic_levels": "21  (CARRY8=13 LUT1=1 LUT2=3 LUT3=1 LUT4=3)"
+  },
+  "production_capacity_reassembly": {
+    "path": "build/production-rx-probe-20261022T150556Z",
+    "provenance_sha256": "f4b60f17cff0318eaf40a5fc78be32ad410502c98b58f1b3c5db849fd4fa04a0",
+    "script_sha256": "05103f529fabdec0d2fb77a1c7bcf5d585f689800fac65e091a89f2ed2640963",
+    "inputs_sha256": {
+      "/home/openion/Valence-Net/bench/production_reassembly.cpp": "28ee4d6fd1708b3d5e15a312b82c92b2e415787cd53f1157147c74cf0813430e",
+      "/home/openion/Valence-Net/sim/ethernet_peer.h": "d25bd2e2dd8618b51617fd4ef89adfc1ed624eedf638be111fa5db5dde34d8f0"
+    },
+    "result_sha256": "c628f99a1f83fbc813bc97ded72619da99b2241ba129c21e7fcb7400b442ae88",
+    "result": "PRODUCTION_REASSEMBLY_PASS waves=24 bytes=315360 cycles=130923 payload=1460 retained_gap_segments=8 rx_capacity=65536 wrap=pass shuffled=pass consumer_stall=pass checksum=pass",
+    "scope": "Isolated copy; RX ring changed from test 1KiB to production 64KiB; other reduced harness parameters unchanged; no board throughput claim"
+  },
+  "tool_log_critical_warnings": [
+    {
+      "message": "[Designutils 20-1307] Command 'if' is not supported in the xdc constraint file. [E:/VM/Share/Valence-rtl/hardware-netstack-ooc-20261022T150138Z/ValenceNetTimingTop/constraints.xdc:5]",
+      "occurrences": 2
+    },
+    {
+      "message": "[Designutils 20-1307] Command 'if' is not supported in the xdc constraint file. [E:/VM/Share/Valence-rtl/hardware-netstack-ooc-20261022T150138Z/ValenceNetTimingTop/constraints.xdc:6]",
+      "occurrences": 2
+    }
+  ],
+  "constraint_warning_review": "Four occurrences of Designutils 20-1307: unsupported if statements around empty data-input delay sets. This fixture has clock as its only input; all core ports terminate at real registers. The applicable clock, uncertainty, output delays and all coverage checks are present. Source ooc.tcl now emits the conditional outside XDC for future snapshots; the completed frozen run is unchanged."
+}

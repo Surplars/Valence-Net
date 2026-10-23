@@ -52,36 +52,54 @@ class Ipv4TcpTransmit(val beatsPerPacket: Int = 1024) extends Module {
     val command = Reg(new TcpSendCommand)
     val active = RegInit(false.B)
     val waiting = RegInit(false.B)
+    val seedPending = RegInit(false.B)
+    val seed = Reg(UInt(16.W))
+    val tcpLength = Reg(UInt(18.W))
+    val offsetFlags = Reg(UInt(16.W))
+    val optionWords = Reg(Vec(20, UInt(16.W)))
     val count = RegInit(0.U(17.W))
     val bad = RegInit(false.B)
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
     val checksum = Module(new InternetChecksum(16))
     val metadata = Module(new Queue(new TcpSendMetadata, 2))
     val prepend = Module(new VariablePacketPrepend(80))
-    io.command.ready := !active && !waiting
+    io.command.ready := !active && !waiting && !seedPending
     val requestedTotal = io.command.bits.length +& io.command.bits.optionLength +& 40.U
     when(io.command.fire) {
         command := io.command.bits
+        // Retime fixed header derivatives with command capture so option
+        // masking/length addition do not precede the seed reduction stage.
+        tcpLength := io.command.bits.length +& io.command.bits.optionLength +& 20.U
+        offsetFlags := Cat((5.U(4.W) + (io.command.bits.optionLength >> 2))(3, 0),
+            0.U(4.W), io.command.bits.flags)
+        for (i <- 0 until 20) {
+            optionWords(i) := Mux((2 * i).U < io.command.bits.optionLength,
+                Cat(io.command.bits.options(16 * i + 7, 16 * i),
+                    io.command.bits.options(16 * i + 15, 16 * i + 8)), 0.U(16.W))
+        }
         active := true.B
+        seedPending := true.B
         count := 0.U
         bad := requestedTotal > 65535.U || io.command.bits.ttl === 0.U ||
             io.command.bits.optionLength > 40.U || io.command.bits.optionLength(1, 0) =/= 0.U
-    }
-    val tcpLength = command.length +& command.optionLength +& 20.U
-    val offsetFlags = Cat((5.U(4.W) + (command.optionLength >> 2))(3, 0), 0.U(4.W), command.flags)
-    val optionWords = (0 until 20).map { i =>
-        Mux((2 * i).U < command.optionLength,
-            Cat(command.options(16 * i + 7, 16 * i), command.options(16 * i + 15, 16 * i + 8)), 0.U(16.W))
     }
     val seedWords = Seq(command.sourceIp(31, 16), command.sourceIp(15, 0),
         command.destinationIp(31, 16), command.destinationIp(15, 0), 6.U(16.W), tcpLength,
         command.sourcePort, command.destinationPort, command.sequence(31, 16), command.sequence(15, 0),
         command.acknowledgement(31, 16), command.acknowledgement(15, 0), offsetFlags,
-        command.window, command.urgent) ++ optionWords
-    checksum.io.seed := fold(tree(seedWords))
-    io.in.ready := active && buffer.io.in.ready && checksum.io.in.ready
-    buffer.io.in.valid := active && io.in.valid && checksum.io.in.ready
-    checksum.io.in.valid := active && io.in.valid && buffer.io.in.ready
+        command.window, command.urgent) ++ optionWords.toSeq
+    // The latched command's pseudo/header seed commits before its first
+    // payload beat. This splits two complete checksum reductions, rather than
+    // chaining option-length/header arithmetic into the payload checksum.
+    when(seedPending) {
+        seed := OnesComplement.sum16(seedWords)
+        seedPending := false.B
+    }
+    checksum.io.seed := seed
+    val payloadActive = active && !seedPending
+    io.in.ready := payloadActive && buffer.io.in.ready && checksum.io.in.ready
+    buffer.io.in.valid := payloadActive && io.in.valid && checksum.io.in.ready
+    checksum.io.in.valid := payloadActive && io.in.valid && buffer.io.in.ready
     buffer.io.in.bits := io.in.bits
     checksum.io.in.bits := io.in.bits
     buffer.io.inContext := 0.U
@@ -109,7 +127,7 @@ class Ipv4TcpTransmit(val beatsPerPacket: Int = 1024) extends Module {
     val tx = metadata.io.deq.bits.command
     val prefixLength = tx.optionLength +& 40.U
     val totalLength = tx.length + prefixLength
-    val headerSum = tree(Seq("h4500".U(16.W) | tx.tos, totalLength, tx.identification,
+    val headerSum = OnesComplement.sum16(Seq("h4500".U(16.W) | tx.tos, totalLength, tx.identification,
         "h4000".U(16.W), Cat(tx.ttl, 6.U(8.W)), tx.sourceIp(31, 16), tx.sourceIp(15, 0),
         tx.destinationIp(31, 16), tx.destinationIp(15, 0)))
     val header = Wire(Vec(80, UInt(8.W)))
@@ -123,7 +141,7 @@ class Ipv4TcpTransmit(val beatsPerPacket: Int = 1024) extends Module {
     setWord(6, "h4000".U(16.W))
     header(8) := tx.ttl
     header(9) := 6.U
-    setWord(10, ~fold(headerSum))
+    setWord(10, ~headerSum)
     setAddress(12, tx.sourceIp)
     setAddress(16, tx.destinationIp)
     setWord(20, tx.sourcePort)

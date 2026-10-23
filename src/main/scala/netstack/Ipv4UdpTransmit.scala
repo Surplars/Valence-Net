@@ -32,11 +32,6 @@ class Ipv4UdpTransmit(val beatsPerPacket: Int = 1024) extends Module {
         val destinationIp = Output(UInt(32.W))
         val dropped = Output(Bool())
     })
-    def fold(sum: UInt): UInt = {
-        val a = sum(15, 0) +& (sum >> 16)
-        val b = a(15, 0) +& (a >> 16)
-        b(15, 0)
-    }
     val command = Reg(new UdpSendCommand)
     val active = RegInit(false.B)
     val waiting = RegInit(false.B)
@@ -54,10 +49,9 @@ class Ipv4UdpTransmit(val beatsPerPacket: Int = 1024) extends Module {
         bad := io.command.bits.length > 65507.U || io.command.bits.ttl === 0.U
     }
     val udpLength = command.length +& 8.U
-    val pseudo = command.sourceIp(31, 16) +& command.sourceIp(15, 0) +&
-        command.destinationIp(31, 16) +& command.destinationIp(15, 0) +&
-        command.sourcePort +& command.destinationPort +& udpLength +& udpLength +& 17.U
-    checksum.io.seed := fold(pseudo)
+    checksum.io.seed := OnesComplement.sum16(Seq(command.sourceIp(31, 16), command.sourceIp(15, 0),
+        command.destinationIp(31, 16), command.destinationIp(15, 0),
+        command.sourcePort, command.destinationPort, udpLength, udpLength, 17.U(16.W)))
     io.in.ready := active && buffer.io.in.ready && checksum.io.in.ready
     buffer.io.in.valid := active && io.in.valid && checksum.io.in.ready
     checksum.io.in.valid := active && io.in.valid && buffer.io.in.ready
@@ -86,10 +80,9 @@ class Ipv4UdpTransmit(val beatsPerPacket: Int = 1024) extends Module {
 
     val tx = metadata.io.deq.bits.command
     val totalLength = tx.length + 28.U
-    val headerSum = "h4500".U(16.W) +& tx.tos +& totalLength +& tx.identification +&
-        "h4000".U(16.W) +& Cat(tx.ttl, 17.U(8.W)) +& tx.sourceIp(31, 16) +& tx.sourceIp(15, 0) +&
-        tx.destinationIp(31, 16) +& tx.destinationIp(15, 0)
-    val headerChecksum = ~fold(headerSum)
+    val headerChecksum = ~OnesComplement.sum16(Seq("h4500".U(16.W), tx.tos, totalLength,
+        tx.identification, "h4000".U(16.W), Cat(tx.ttl, 17.U(8.W)),
+        tx.sourceIp(31, 16), tx.sourceIp(15, 0), tx.destinationIp(31, 16), tx.destinationIp(15, 0)))
     val header = Wire(Vec(28, UInt(8.W)))
     header.foreach(_ := 0.U)
     def setWord(i: Int, value: UInt): Unit = { header(i) := value(15, 8); header(i + 1) := value(7, 0) }

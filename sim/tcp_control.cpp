@@ -2,6 +2,38 @@
 #include "tcp_control_peer.h"
 using Test=TcpControlPeer<STcpControlHarness>;
 int main(){try{
+    // OPEN owns its configuration and pending SYN even before control.valid.
+    // A producer may change every input immediately after the handshake.
+    {
+        Test q; q.stall=true;
+        q.d.set_io$$receiveWindow(8192); q.d.set_io$$passive(0);
+        q.d.set_io$$localIp(0x0a000001); q.d.set_io$$remoteIp(0x0a000002);
+        q.d.set_io$$localPort(4000); q.d.set_io$$remotePort(5000);
+        q.d.set_io$$initialSequence(0xfffffff0U); q.d.set_io$$localMss(1460);
+        q.d.set_io$$offerScale(1); q.d.set_io$$localScale(15); q.d.set_io$$openValid(1);
+        unsigned guard=0;
+        do { q.step(); check(++guard<100,"snapshot OPEN stalled"); } while(!q.d.get_io$$openReady());
+        q.d.set_io$$openValid(0); q.d.set_io$$passive(1);
+        q.d.set_io$$localIp(0); q.d.set_io$$remoteIp(0);
+        q.d.set_io$$localPort(9); q.d.set_io$$remotePort(10);
+        q.d.set_io$$initialSequence(77); q.d.set_io$$localMss(1);
+        q.d.set_io$$offerScale(0); q.d.set_io$$localScale(0);
+        q.d.set_io$$closeValid(1); q.d.set_io$$abort(1); q.step();
+        check(!q.d.get_io$$closeReady(),"abort bypassed owned pending SYN");
+        q.d.set_io$$closeValid(0); q.step();
+        check(q.d.get_io$$controlValid(),"accepted OPEN lost its SYN");
+        auto captured=q.packet();
+        check(captured.src==0x0a000001 && captured.dst==0x0a000002 &&
+            captured.sport==4000 && captured.dport==5000 && captured.seq==0xfffffff0U &&
+            captured.flags==2 && captured.window==8192 && captured.optlen==8 &&
+            uint32_t(captured.options)==(2U|4U<<8|5U<<16|180U<<24) &&
+            uint32_t(captured.options>>32)==(1U|3U<<8|3U<<16|14U<<24),
+            "SYN used inputs changed after OPEN handshake");
+        q.stall=false; q.drain();
+        check(q.packets.size()==1 && q.d.get_io$$sendActual()==0xfffffff0U,
+            "pending SYN duplicated or advanced unsent sequence");
+        std::cout<<"OPEN configuration capture and pending-SYN abort barrier passed\n";
+    }
     Test t;
     // Active open rejects ACKs for a SYN which is queued but not yet transmitted.
     t.d.set_io$$receiveWindow(200000);t.open(false,0xfffffff0U,true,2);Packet original=t.packets.back();
@@ -85,14 +117,24 @@ int main(){try{
     t.reserve(20);end=t.d.get_io$$sendNext();t.d.set_io$$closeValid(1);t.d.set_io$$abort(0);t.step();
     check(!t.d.get_io$$closeReady()&&t.d.get_io$$rxReady(),"close blocked RX while waiting for queued data");
     t.d.set_io$$completedGeneration(t.epoch);t.d.set_io$$completedEnd(end);t.d.set_io$$completedRetransmission(0);t.d.set_io$$completedValid(1);
-    t.step();check(t.d.get_io$$closeReady(),"close did not see simultaneous wire completion");
-    t.d.set_io$$completedValid(0);t.d.set_io$$closeValid(0);t.drain();t.expectState(FinWait1);
+    t.step();check(!t.d.get_io$$closeReady()&&t.d.get_io$$completionAccepted(),"completion barrier did not commit before close");
+    t.d.set_io$$completedValid(0);t.step();check(t.d.get_io$$closeReady(),"close did not see registered completion");
+    t.d.set_io$$closeValid(0);t.drain();t.expectState(FinWait1);
     lastfin=t.packets.back();check(lastfin.seq==end,"FIN sequence after queued data");t.finish(lastfin);
     s=Segment{};s.seq=4001;s.ack=end;s.flags=16;t.rx(s);t.retry();
     check(t.packets.back().flags==17&&t.packets.back().seq==end&&t.packets.back().retransmission,"FIN replay");
     s.flags=17;t.rx(s);t.expectState(Closing);s.seq=4002;s.ack=end+1;s.flags=16;t.rx(s);t.expectState(TimeWait);
     t.ticks(12);s.seq=4001;s.flags=17;t.rx(s);t.expectState(TimeWait);check(t.packets.back().ack==4002,"duplicate FIN ACK in TIME-WAIT");
     s.seq=4002;s.flags=4;t.rx(s);t.expectState(TimeWait);t.ticks(24);t.expectState(TimeWait);t.ticks(1);t.expectState(Closed);
+
+    // Application credit changes can reopen the advertised receive window
+    // without waiting for another incoming packet.
+    t.active(7000,8000);t.d.set_io$$receiveWindow(0);t.d.set_io$$updateWindow(1);t.step();
+    t.d.set_io$$updateWindow(0);t.drain();check(t.packets.back().window==0,"zero-window update");
+    t.d.set_io$$receiveWindow(512);t.d.set_io$$updateWindow(1);t.step();
+    t.d.set_io$$updateWindow(0);t.drain();
+    check(t.packets.back().flags==16&&t.packets.back().window==512&&t.packets.back().ack==8001,"application credit did not send window ACK");
+    t.abort();t.d.set_io$$receiveWindow(4096);
 
     // With MAX.SND.WND zero, a half-space ACK is neither newer nor older in
     // signed sequence arithmetic. It must still fail the bounded ACK interval.

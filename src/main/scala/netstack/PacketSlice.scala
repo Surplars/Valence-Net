@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 
 class SliceConfig extends Bundle {
-    val skip = UInt(7.W)
+    val skip = UInt(16.W)
     val length = UInt(16.W)
     val context = UInt(128.W)
 }
@@ -23,7 +23,7 @@ class PacketSlice extends Module {
         val context = Output(UInt(128.W))
     })
     val busy = RegInit(false.B)
-    val skip = Reg(UInt(7.W))
+    val skip = Reg(UInt(16.W))
     val remaining = Reg(UInt(16.W))
     val context = Reg(UInt(128.W))
     val reservoir = RegInit(0.U(256.W))
@@ -42,14 +42,20 @@ class PacketSlice extends Module {
     io.in.ready := busy && !inputDone && (count <= 16.U || io.out.fire) && (!io.out.valid || io.out.ready)
 
     val popped = Mux(io.out.fire, Mux(count > 16.U, 16.U, count), 0.U)
-    val afterCount = count - popped
-    val afterData = reservoir >> (popped << 3)
+    val afterCount = Mux(io.out.fire, Mux(count > 16.U, count - 16.U, 0.U), count)
+    val afterData = Mux(io.out.fire, Mux(count > 16.U, reservoir >> 128, 0.U), reservoir)
     val available = PopCount(io.in.bits.keep)
     val discarded = Mux(skip > available, available, skip)(4, 0)
     val usable = available - discarded
     val taken = Mux(remaining > usable, usable, remaining)(4, 0)
-    val inputMask = ((1.U(129.W) << (taken << 3)) - 1.U)(127, 0)
-    val selected = (io.in.bits.data >> (discarded << 3)) & inputMask
+    // The data shift depends only on the registered prefix remainder. Decide
+    // each retained byte in parallel, instead of chaining available/min/sub/
+    // min before the barrel shifter. A skip of at least one full beat retains
+    // no bytes; otherwise i+skip < available is exactly i < usable.
+    val inputMask = VecInit((0 until 16).map(i => Fill(8,
+        skip < 16.U && i.U < remaining &&
+            (skip(3, 0) +& i.U) < available))).asUInt
+    val selected = (io.in.bits.data >> (skip(3, 0) << 3)) & inputMask
 
     when(io.out.fire) {
         count := afterCount

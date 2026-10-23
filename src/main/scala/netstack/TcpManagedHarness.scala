@@ -49,6 +49,7 @@ class TcpManagedHarness extends Module {
         val receiveWindow = Input(UInt(32.W))
         val congestionWindow = Input(UInt(32.W))
         val tick = Input(Bool())
+        val updateWindow = Input(Bool())
         val openReady = Output(Bool())
         val closeReady = Output(Bool())
         val rxReady = Output(Bool())
@@ -143,6 +144,7 @@ class TcpManagedHarness extends Module {
     dut.io.rx.bits.segment.options.scale := io.rxScale
     dut.io.rx.bits.payloadToken := io.payloadToken
     dut.io.rx.bits.payloadStored := io.payloadStored
+    dut.io.rx.bits.reassembled := false.B; dut.io.rx.bits.replayGeneration := 0.U
     dut.io.disposition.ready := io.dispositionReady
     dut.io.control.ready := io.controlReady
     dut.io.ack.ready := io.ackReady
@@ -156,7 +158,10 @@ class TcpManagedHarness extends Module {
     dut.io.replay.ready := io.replayReady
     dut.io.receiveWindow := io.receiveWindow
     dut.io.congestionWindow := io.congestionWindow
+    dut.io.probe.valid := false.B; dut.io.probe.bits := true.B
     dut.io.tick := io.tick
+    dut.io.updateWindow := io.updateWindow
+    dut.io.receiveSack := 0.U.asTypeOf(new TcpSackBlocks)
     io.openReady := dut.io.open.ready
     io.closeReady := dut.io.close.ready
     io.rxReady := dut.io.rx.ready

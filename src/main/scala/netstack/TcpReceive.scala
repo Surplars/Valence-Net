@@ -54,11 +54,8 @@ class TcpValidate extends Module {
     def byte(i: Int): UInt = header(i / 16)(8 * (i % 16) + 7, 8 * (i % 16))
     def field(i: Int, n: Int): UInt = Cat((i until i + n).map(byte))
     val checksum = Module(new InternetChecksum(16))
-    val pseudo = io.sourceIp(31, 16) +& io.sourceIp(15, 0) +& io.destinationIp(31, 16) +&
-        io.destinationIp(15, 0) +& io.ipPayloadLength +& 6.U
-    val fold1 = pseudo(15, 0) +& (pseudo >> 16)
-    val fold2 = fold1(15, 0) +& (fold1 >> 16)
-    checksum.io.seed := fold2(15, 0)
+    checksum.io.seed := OnesComplement.sum16(Seq(io.sourceIp(31, 16), io.sourceIp(15, 0),
+        io.destinationIp(31, 16), io.destinationIp(15, 0), io.ipPayloadLength, 6.U(16.W)))
     checksum.io.in.valid := io.in.valid && !waiting
     checksum.io.in.bits := io.in.bits
     io.in.ready := !waiting && checksum.io.in.ready

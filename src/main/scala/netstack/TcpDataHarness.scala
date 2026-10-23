@@ -79,6 +79,7 @@ class TcpDataHarness extends Module {
     dut.io.reserve.ready := io.reserveReady
     dut.io.replay.valid := io.replayValid
     dut.io.replay.bits := io.replaySequence
+    dut.io.replayLimit := 65535.U
     dut.io.out.ready := io.outReady
     dut.io.enabled := io.enabled
     dut.io.generation := io.generation
@@ -93,6 +94,7 @@ class TcpDataHarness extends Module {
     dut.io.header.destinationPort := io.destinationPort
     dut.io.header.acknowledgement := io.acknowledgement
     dut.io.header.window := io.window
+    dut.io.header.optionLength := 0.U; dut.io.header.options := 0.U
     dut.io.header.ttl := io.ttl
     dut.io.header.tos := io.tos
     dut.io.in.bits.data := Cat(io.hi, io.lo)

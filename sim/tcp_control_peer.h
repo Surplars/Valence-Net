@@ -48,6 +48,7 @@ struct TcpControlPeer{
         d.set_io$$openValid(0);d.set_io$$closeValid(0);d.set_io$$rxValid(0);d.set_io$$reserveValid(0);
         d.set_io$$completedValid(0);if constexpr(requires{d.set_io$$retryValid(0);})d.set_io$$retryValid(0);d.set_io$$tick(0);
         d.set_io$$controlReady(0);d.set_io$$dispositionReady(0);d.set_io$$ackReady(0);d.set_io$$noticeReady(0);d.set_io$$replayReady(0);
+        d.set_io$$updateWindow(0);
         d.set_io$$receiveWindow(4096);d.set_io$$congestionWindow(65535);
         d.set_reset(1);d.step();d.step();d.set_reset(0);step();
     }

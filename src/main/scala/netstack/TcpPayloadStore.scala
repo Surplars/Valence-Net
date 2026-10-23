@@ -107,6 +107,11 @@ class TcpPayloadStore(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
     }
 
     val reading = RegInit(false.B)
+    val validating = RegInit(false.B)
+    val requestOwned = RegInit(false.B)
+    val requestEnd = Reg(UInt(17.W))
+    val requestCapacity = Reg(UInt(16.W))
+    val requestContext = Reg(UInt(64.W))
     val streaming = RegInit(false.B)
     val readBank = Reg(UInt(bankBits.W))
     val readWord = Reg(UInt(wordBits.W))
@@ -160,29 +165,43 @@ class TcpPayloadStore(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
     io.releaseMiss := io.release.valid && !releaseHit
     val requestedBank = io.read.bits.token(bankBits - 1, 0)
     val end = io.read.bits.offset +& io.read.bits.length
-    val readGood = state(requestedBank) === 2.U && token(requestedBank) === io.read.bits.token &&
-        end <= lengths(requestedBank) && !(io.release.valid && io.release.bits === io.read.bits.token)
-    io.read.ready := !reading && !responsePending
+    val ownerGood = state(requestedBank) === 2.U && token(requestedBank) === io.read.bits.token &&
+        !(io.release.valid && io.release.bits === io.read.bits.token)
+    val rangeGood = requestEnd <= requestCapacity
+    val readGood = requestOwned && rangeGood
+    io.read.ready := !reading && !validating && !responsePending
     when(io.read.fire) {
-        responsePending := true.B
+        // Capture the complete request before range/address arithmetic. The
+        // ownership check is independent of the late MSS/segment length.
+        validating := true.B
+        requestOwned := ownerGood
+        requestEnd := end
+        requestCapacity := lengths(requestedBank)
+        requestContext := contexts(requestedBank)
         response.token := io.read.bits.token
         response.length := io.read.bits.length
-        response.context := Mux(readGood, contexts(requestedBank), 0.U)
+        streaming := false.B
+        readBank := requestedBank
+        readWord := (io.read.bits.offset >> 4)(wordBits - 1, 0)
+        readOffset := io.read.bits.offset(3, 0)
+        empty := io.read.bits.length === 0.U
+        issuedLast := false.B
+    }
+    when(validating) {
+        validating := false.B
+        responsePending := true.B
+        response.context := Mux(readGood, requestContext, 0.U)
         response.error := !readGood
-        when(readGood) {
-            reading := true.B
-            streaming := false.B
-            readBank := requestedBank
-            readWord := (io.read.bits.offset >> 4)(wordBits - 1, 0)
-            lastWord := ((end - 1.U) >> 4)(wordBits - 1, 0)
-            lastKeep := Mux(end(3, 0) === 0.U, "hffff".U, ((1.U(17.W) << end(3, 0)) - 1.U)(15, 0))
-            readOffset := io.read.bits.offset(3, 0)
-            empty := io.read.bits.length === 0.U
-            issuedLast := false.B
-        }
+        reading := readGood
+        lastWord := ((requestEnd - 1.U) >> 4)(wordBits - 1, 0)
+        lastKeep := Mux(requestEnd(3, 0) === 0.U, "hffff".U,
+            ((1.U(17.W) << requestEnd(3, 0)) - 1.U)(15, 0))
     }
     when(io.release.valid && releaseHit) {
-        state(releaseBank) := Mux(reading && readBank === releaseBank, 3.U, 0.U)
+        // A valid request already owns its bank during validation. Invalid
+        // ranges never pin a release, and rejected reads issue no RAM data.
+        val pinned = reading || (validating && readGood)
+        state(releaseBank) := Mux(pinned && readBank === releaseBank, 3.U, 0.U)
     }
     when(io.out.fire && io.out.bits.last) {
         reading := false.B

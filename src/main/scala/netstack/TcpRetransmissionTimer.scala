@@ -19,7 +19,8 @@ class TcpTransmissionComplete extends Bundle {
   * Defaults use a 1-ms tick. An extra tick on arming covers tick phase, so the
   * actual delay cannot be less than RTO. Sequence spans must remain < 2^31.
   */
-class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int = 60) extends Module {
+class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int = 60,
+    val pipelineRto: Boolean = true) extends Module {
     require(ticksPerSecond >= 1 && ticksPerSecond <= 1000000)
     require(maxSeconds >= 60 && maxSeconds <= 600)
     val maxTicks = ticksPerSecond * maxSeconds
@@ -73,28 +74,62 @@ class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int
     val retransmission = io.tx.valid && io.tx.bits.retransmission &&
         after(io.tx.bits.endSequence, oldest) && atLeast(next, io.tx.bits.endSequence)
     val nextSent = Mux(newSend, io.tx.bits.endSequence, next)
-    val progress = io.ack.valid && after(io.ack.bits, oldest) && atLeast(nextSent, io.ack.bits)
+    // Compare both candidate right edges before the late TX-completion
+    // qualification. Selecting sequence words before subtract/compare makes
+    // ledger/tag validation part of the timer arithmetic critical path.
+    val ackWithin = Mux(newSend, atLeast(io.tx.bits.endSequence, io.ack.bits),
+        atLeast(next, io.ack.bits))
+    val progress = io.ack.valid && after(io.ack.bits, oldest) && ackWithin
     val nextOldest = Mux(progress, io.ack.bits, oldest)
-    val outstanding = nextOldest =/= nextSent
+    val outstanding = Mux(newSend,
+        Mux(progress, io.ack.bits =/= io.tx.bits.endSequence, oldest =/= io.tx.bits.endSequence),
+        Mux(progress, io.ack.bits =/= next, oldest =/= next))
     val sampleComplete = sampling && progress && atLeast(io.ack.bits, sampleEnd)
     val takeSample = sampleComplete && !ambiguous && !retransmission
-    val ageWithTick = sampleAge +& io.tick.asUInt
-    val measured = Mux(ageWithTick >= maxTicks.U, maxTicks.U, ageWithTick + 1.U)
+    // Tick is a late clock-enable input. Compute both bounded ages in
+    // parallel so it does not feed a carry chain before RTT arithmetic.
+    val measuredNoTick = Mux(sampleAge >= (maxTicks - 1).U, maxTicks.U, sampleAge +& 1.U)
+    val measuredTick = Mux(sampleAge >= (maxTicks - 2).U, maxTicks.U, sampleAge +& 2.U)
+    val measured = Mux(io.tick, measuredTick, measuredNoTick)
+    // Reduce multiple operands with carry-save compressors; only the final
+    // pair propagates a carry. Bounds include every operand, including shifts.
+    def sumMany(xs: Seq[UInt]): UInt = {
+        val width = xs.map(_.getWidth).max + log2Ceil(xs.size)
+        def compress(ys: Seq[UInt]): UInt = {
+            if (ys.size == 1) ys.head
+            else if (ys.size == 2) ys.head +& ys(1)
+            else compress(ys.grouped(3).flatMap {
+                case Seq(a, b, c) => Seq((a ^ b ^ c)(width - 1, 0),
+                    (((a & b) | (b & c) | (a & c)) << 1)(width - 1, 0))
+                case rest => rest
+            }.toSeq)
+        }
+        compress(xs.map(_.pad(width)))
+    }
     val sampleFixed = (measured << fraction).pad(fixedWidth)
     val delta = Mux(srtt >= sampleFixed, srtt - sampleFixed, sampleFixed - srtt)
     // Round upwards at fixed-point truncation boundaries, retaining 8 fraction bits.
-    val updatedVariance = Mux(known, ((variance * 3.U +& delta +& 3.U) >> 2), sampleFixed >> 1)
-    val updatedSrtt = Mux(known, ((srtt * 7.U +& sampleFixed +& 7.U) >> 3), sampleFixed)
-    val varianceTerm = Mux((updatedVariance << 2) < (1 << fraction).U,
-        (1 << fraction).U, updatedVariance << 2)
-    val computedRto = (updatedSrtt +& varianceTerm +& ((1 << fraction) - 1).U) >> fraction
+    val updatedVariance = Mux(known, (sumMany(Seq(variance, variance << 1, delta, 3.U)) >> 2), sampleFixed >> 1)
+    val updatedSrtt = Mux(known, (sumMany(Seq(srtt, srtt << 1, srtt << 2, sampleFixed, 7.U)) >> 3), sampleFixed)
+    // SRTT/RTTVAR commit on the ACK edge; RTO bounding/rearm follows on
+    // the next clock. The timer waits during that single cycle, so this
+    // boundary can only postpone, never advance, the retransmit deadline.
+    val estimateReady = RegNext(takeSample && !io.clear, false.B)
+    val rtoSrtt = if (pipelineRto) srtt else updatedSrtt
+    val rtoVariance = if (pipelineRto) variance else updatedVariance
+    val varianceTerm = Mux((rtoVariance << 2) < (1 << fraction).U,
+        (1 << fraction).U, rtoVariance << 2)
+    val computedRto = sumMany(Seq(rtoSrtt, varianceTerm, ((1 << fraction) - 1).U)) >> fraction
     val boundedRto = Mux(computedRto < ticksPerSecond.U, ticksPerSecond.U,
         Mux(computedRto > maxTicks.U, maxTicks.U, computedRto))
-    val sampledRto = Mux(takeSample, boundedRto, rto)
+    val sampledRto = Mux(if (pipelineRto) estimateReady else takeSample, boundedRto, rto)
     val effectiveRto = Mux(io.handshakeComplete && synFallback && sampledRto < (3 * ticksPerSecond).U,
         (3 * ticksPerSecond).U, sampledRto)
     val restart = outstanding && (progress || retransmission || (newSend && !running && !expired))
-    val timeout = io.tick && running && remaining <= 1.U && !progress && !retransmission
+    val estimating = if (pipelineRto) takeSample else false.B
+    val estimateComplete = if (pipelineRto) estimateReady else false.B
+    val timeout = io.tick && running && remaining <= 1.U && !progress && !retransmission &&
+        !estimating && !estimateComplete
 
     io.expired := expired
     io.running := running
@@ -120,7 +155,9 @@ class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int
         srtt := updatedSrtt
         variance := updatedVariance
     }
-    when(newSend && (!sampling || sampleComplete) && after(io.tx.bits.endSequence, nextOldest)) {
+    val sampleStillOutstanding = Mux(progress, after(io.tx.bits.endSequence, io.ack.bits),
+        after(io.tx.bits.endSequence, oldest))
+    when(newSend && (!sampling || sampleComplete) && sampleStillOutstanding) {
         sampling := true.B
         sampleEnd := io.tx.bits.endSequence
         sampleAge := 0.U
@@ -137,7 +174,11 @@ class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int
         running := false.B
         expired := false.B
         remaining := 0.U
-    }.elsewhen(restart) {
+    }.elsewhen(estimating) {
+        running := false.B
+        expired := false.B
+        remaining := 0.U
+    }.elsewhen(restart || estimateComplete) {
         running := true.B
         expired := false.B
         remaining := effectiveRto + 1.U
@@ -167,7 +208,7 @@ class TcpRetransmissionTimer(val ticksPerSecond: Int = 1000, val maxSeconds: Int
     }
 }
 
-class TcpTimerHarness extends Module {
+class TcpTimerHarness(val pipelined: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val clear = Input(Bool())
         val initialSequence = Input(UInt(32.W))
@@ -193,7 +234,7 @@ class TcpTimerHarness extends Module {
         val varianceFixed = Output(UInt(32.W))
     })
     // One test tick represents 100 ms, keeping the same 1/3/60-second limits.
-    val dut = Module(new TcpRetransmissionTimer(10))
+    val dut = Module(new TcpRetransmissionTimer(10, pipelineRto = pipelined))
     dut.io.clear := io.clear
     dut.io.initialSequence := io.initialSequence
     dut.io.tick := io.tick
@@ -217,3 +258,5 @@ class TcpTimerHarness extends Module {
     io.srttFixed := dut.io.srttFixed
     io.varianceFixed := dut.io.varianceFixed
 }
+
+class TcpPipelinedTimerHarness extends TcpTimerHarness(true)

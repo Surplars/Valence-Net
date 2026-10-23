@@ -38,7 +38,7 @@ class EthernetPad extends Module {
     val deficit = Mux(count < 60.U, 60.U - count, 0.U)
     val needed = Mux(padding, deficit, Mux(io.in.bits.last && deficit > incoming, deficit, incoming))
     val emitted = Mux(needed > 16.U, 16.U, needed)(4, 0)
-    val inputMask = ((1.U(129.W) << (incoming << 3)) - 1.U)(127, 0)
+    val inputMask = VecInit((0 until 16).map(i => Fill(8, i.U < incoming))).asUInt
     io.in.ready := !padding && io.out.ready
     io.out.valid := padding || io.in.valid
     io.out.bits.data := Mux(padding, 0.U, io.in.bits.data & inputMask)

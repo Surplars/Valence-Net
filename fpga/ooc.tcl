@@ -1,6 +1,8 @@
 # Immutable OOC baseline, invoked with the absolute run directory as argv[0].
-# All input/output paths use the native WSL workspace, exposed to Windows Vivado.
-if {$argc != 1} {error "usage: ooc.tcl RUN_DIRECTORY"}
+# Run on a frozen Windows-local snapshot; WSL owns the source and simulation.
+if {$argc < 1 || $argc > 2} {error "usage: ooc.tcl RUN_DIRECTORY ?synth|route?"}
+set phase [expr {$argc == 2 ? [lindex $argv 1] : "route"}]
+if {$phase ni {synth route}} {error "Unknown phase: $phase"}
 set run [file normalize [lindex $argv 0]]
 set part xczu15eg-ffvb1156-2-i
 set period 6.4
@@ -21,7 +23,7 @@ if {[file exists [file join $run targets.txt]]} {
     close $targets_file
 }
 foreach top $tops {
-    if {$top ni {TcpDataTransmit TcpManagedConnection TcpReceive EthernetUdpEndpoint}} {
+    if {$top ni {TcpDataTransmit TcpConnectionTransmit TcpIpv4Endpoint TcpManagedConnection TcpReceive EthernetUdpEndpoint EthernetTcpUdpEndpoint MultiTcpIpv4Endpoint MultiEthernetTcpUdpEndpoint TcpRetransmissionTimer ValenceNetTimingTop}} {
         error "Unsupported module top: $top"
     }
     set work [file join $run $top]
@@ -40,8 +42,12 @@ foreach top $tops {
     puts $xdc {create_clock -name stack_clock -period 6.400 [get_ports clock]}
     puts $xdc {set_clock_uncertainty -setup 0.100 [get_clocks stack_clock]}
     puts $xdc {set_clock_uncertainty -hold 0.050 [get_clocks stack_clock]}
-    puts $xdc {set_input_delay -clock stack_clock -max 1.000 [get_ports -filter {DIRECTION == IN && NAME != clock}]}
-    puts $xdc {set_input_delay -clock stack_clock -min 0.000 [get_ports -filter {DIRECTION == IN && NAME != clock}]}
+    # XDC accepts timing commands, not Tcl conditionals. The timing fixture
+    # has only a clock input; direct module OOC has actual data inputs.
+    if {$top ne "ValenceNetTimingTop"} {
+        puts $xdc {set_input_delay -clock stack_clock -max 1.000 [get_ports -filter {DIRECTION == IN && NAME != clock}]}
+        puts $xdc {set_input_delay -clock stack_clock -min 0.000 [get_ports -filter {DIRECTION == IN && NAME != clock}]}
+    }
     puts $xdc {set_output_delay -clock stack_clock -max 1.000 [get_ports -filter {DIRECTION == OUT}]}
     puts $xdc {set_output_delay -clock stack_clock -min 0.000 [get_ports -filter {DIRECTION == OUT}]}
     close $xdc
@@ -51,17 +57,51 @@ foreach top $tops {
     # OOC does not contain the board's actual clock buffer. Fix its assumed
     # source site so hold analysis has an explicit, reproducible clock origin.
     if {[llength [get_sites -quiet BUFGCE_X0Y0]] != 1} {error "Clock source site missing"}
-    set_property HD.CLK_SRC BUFGCE_X0Y0 [get_ports clock]
+    if {$top eq "ValenceNetTimingTop"} {
+        if {[llength [get_cells -quiet coreClockBuffer]] != 1} {error "Physical clock buffer missing"}
+        set_property LOC BUFGCE_X0Y0 [get_cells coreClockBuffer]
+    } else {
+        set_property HD.CLK_SRC BUFGCE_X0Y0 [get_ports clock]
+    }
     report_utilization -hierarchical -file post_synth_utilization.rpt
     report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file post_synth_timing.rpt
+    report_timing -delay_type max -max_paths 20 -nworst 2 -input_pins -file post_synth_setup_paths.rpt
     write_checkpoint -force post_synth.dcp
+    if {$phase eq "synth"} {
+        puts $result [join [list $top [worst_slack max] [worst_slack min] NA NA [llength [get_cells -quiet -hier -filter {IS_BLACKBOX}]] SYNTH_ONLY] "\t"]
+        flush $result
+        close_project
+        continue
+    }
     set progress [open [file join $run progress.txt] w]
     puts $progress "$top placement/routing"
     close $progress
     opt_design
     place_design
+    report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file post_place_timing.rpt
+    report_timing -delay_type max -max_paths 30 -nworst 3 -input_pins -file post_place_setup_paths.rpt
+    write_checkpoint -force post_place.dcp
     phys_opt_design
+    report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file post_physopt_timing.rpt
+    report_timing -delay_type max -max_paths 30 -nworst 3 -input_pins -file post_physopt_setup_paths.rpt
+    write_checkpoint -force post_physopt.dcp
     route_design
+    # Preserve a failed baseline, then allow one standard physical-refinement
+    # attempt without rebuilding RTL. Successful baseline timing is untouched.
+    set baseline_setup [worst_slack max]
+    set baseline_hold [worst_slack min]
+    if {$baseline_setup ne "NA" && $baseline_hold ne "NA" &&
+        ($baseline_setup < 0 || $baseline_hold < 0)} {
+        report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file baseline_route_timing.rpt
+        report_timing -delay_type max -max_paths 30 -nworst 3 -input_pins -file baseline_route_setup_paths.rpt
+        write_checkpoint -force baseline_route.dcp
+        puts "NETSTACK_POST_ROUTE_REFINE $top setup=$baseline_setup hold=$baseline_hold"
+        set progress [open [file join $run progress.txt] w]
+        puts $progress "$top post-route physical refinement"
+        close $progress
+        phys_opt_design -directive AggressiveExplore
+        route_design -directive Explore
+    }
     report_route_status -file post_route_status.rpt
     report_utilization -hierarchical -file post_route_utilization.rpt
     report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file post_route_timing.rpt
@@ -70,6 +110,8 @@ foreach top $tops {
     set registers [all_registers -clock stack_clock]
     report_timing -from $registers -to $registers -delay_type max -max_paths 20 -nworst 2 \
         -input_pins -file post_route_register_paths.rpt
+    report_timing -from $registers -to $registers -delay_type min -max_paths 20 -nworst 2 \
+        -input_pins -file post_route_register_hold_paths.rpt
     report_drc -file post_route_drc.rpt
     report_methodology -file post_route_methodology.rpt
     write_checkpoint -force post_route.dcp

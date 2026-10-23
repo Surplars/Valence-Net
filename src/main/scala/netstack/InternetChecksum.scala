@@ -19,6 +19,40 @@ class ChecksumResult extends Bundle {
     val error = Bool()
 }
 
+/** End-around carry-save reduction of one's-complement words.
+  * Each 3:2 compressor wraps its top carry into bit zero: 2^16 == 1
+  * modulo 65535. Only the final two operands use a carry-propagating adder.
+  * Splitting wide operands retains their high-word carry and distinguishes
+  * positive zero (all inputs zero) from negative zero (a positive multiple
+  * of 65535), as required by Internet checksum generation.
+  */
+object OnesComplement {
+    def sum16(values: Seq[UInt]): UInt = {
+        require(values.nonEmpty)
+        val words = values.flatMap { value =>
+            val width = value.getWidth
+            require(width > 0, "checksum operands need known widths")
+            (0 until width by 16).map { low =>
+                value(math.min(width - 1, low + 15), low).pad(16)
+            }
+        }
+        def compress(xs: Seq[UInt]): Seq[UInt] = if (xs.size <= 2) xs else {
+            compress(xs.grouped(3).flatMap {
+                case Seq(a, b, c) =>
+                    val carry = (a & b) | (a & c) | (b & c)
+                    Seq(a ^ b ^ c, Cat(carry(14, 0), carry(15)))
+                case rest => rest
+            }.toSeq)
+        }
+        val reduced = compress(words)
+        if (reduced.size == 1) reduced.head else {
+            val total = reduced.head +& reduced(1)
+            // A two-word sum is at most 0x1fffe; this fold cannot overflow.
+            total(15, 0) + total(16)
+        }
+    }
+}
+
 /** RFC 1071 one's-complement sum with an uncomplemented 16-bit seed.
   * Seed is sampled with the first beat (e.g. a folded IPv4 pseudo-header).
   * Partial beats are accepted even in the middle of a packet: odd byte parity
@@ -49,14 +83,7 @@ class InternetChecksum(val bytes: Int = 16) extends Module {
         val b = Mux(io.in.bits.keep(2 * pair + 1), io.in.bits.data(16 * pair + 15, 16 * pair + 8), 0.U(8.W))
         Mux(parity, Cat(b, a), Cat(a, b))
     }
-    def tree(xs: Seq[UInt]): UInt = if (xs.size == 1) xs.head else tree(xs.grouped(2).map {
-        case Seq(a, b) => a +& b
-        case Seq(a) => a
-    }.toSeq)
-    val total = tree(words) +& Mux(active, sum, io.seed)
-    val fold1 = total(15, 0) +& (total >> 16)
-    val fold2 = fold1(15, 0) +& (fold1 >> 16)
-    val folded = fold2(15, 0)
+    val folded = OnesComplement.sum16(words :+ Mux(active, sum, io.seed))
     val legal = (io.in.bits.keep & (io.in.bits.keep + 1.U)) === 0.U
     val error = (active && bad) || !legal || io.in.bits.error
 

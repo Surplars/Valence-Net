@@ -42,12 +42,10 @@ class UdpValidate extends Module {
     def word(byte: Int): UInt = Cat(io.in.bits.data(byte * 8 + 7, byte * 8),
         io.in.bits.data(byte * 8 + 15, byte * 8 + 8))
     val firstLength = word(4)
-    val pseudo = io.sourceIp(31, 16) +& io.sourceIp(15, 0) +&
-        io.destinationIp(31, 16) +& io.destinationIp(15, 0) +& io.ipPayloadLength +& 17.U
-    val fold1 = pseudo(15, 0) +& (pseudo >> 16)
-    val fold2 = fold1(15, 0) +& (fold1 >> 16)
+    val pseudo = OnesComplement.sum16(Seq(io.sourceIp(31, 16), io.sourceIp(15, 0),
+        io.destinationIp(31, 16), io.destinationIp(15, 0), io.ipPayloadLength, 17.U(16.W)))
     val checksum = Module(new InternetChecksum(16))
-    checksum.io.seed := fold2(15, 0)
+    checksum.io.seed := pseudo
     checksum.io.in.bits := io.in.bits
     checksum.io.in.valid := io.in.valid && !waiting
     io.in.ready := checksum.io.in.ready && !waiting

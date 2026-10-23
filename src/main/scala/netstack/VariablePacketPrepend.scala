@@ -43,11 +43,11 @@ class VariablePacketPrepend(val maxHeaderBytes: Int = 80) extends Module {
     io.in.ready := busy && !inputDone &&
         (count <= 16.U || (io.out.fire && count <= 32.U)) && (!io.out.valid || io.out.ready)
     val popped = Mux(io.out.fire, Mux(count > 16.U, 16.U, count), 0.U)
-    val afterCount = count - popped
-    val afterData = reservoir >> (popped << 3)
+    val afterCount = Mux(io.out.fire, Mux(count > 16.U, count - 16.U, 0.U), count)
+    val afterData = Mux(io.out.fire, Mux(count > 16.U, reservoir >> 128, 0.U), reservoir)
     val available = PopCount(io.in.bits.keep)
     val taken = Mux(remaining > available, available, remaining)(4, 0)
-    val mask = ((1.U(129.W) << (taken << 3)) - 1.U)(127, 0)
+    val mask = VecInit((0 until 16).map(i => Fill(8, i.U < taken))).asUInt
     val legal = (io.in.bits.keep & (io.in.bits.keep + 1.U)) === 0.U
     when(io.out.fire) {
         count := afterCount
