@@ -60,6 +60,9 @@ proc timing_is_clean {filename} {
     }
     error "Missing timing summary"
 }
+if {![route_is_clean reference_route_status.rpt]} {
+    error "Reference checkpoint is not fully routed"
+}
 set attempts [open refinement-attempts.tsv w]
 puts $attempts "attempt\toptimization_setup_uncertainty_ns\tsignoff_setup_ns\tsignoff_hold_ns\trouting_clean\ttiming_clean"
 set attempt 0

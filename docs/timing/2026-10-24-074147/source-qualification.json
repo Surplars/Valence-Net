@@ -1,0 +1,21 @@
+{
+  "source_count": 104,
+  "functional_tests": 44,
+  "functional_manifest_sha256": "14b2a9b5554d06ef667e3afa60d7a916cb9436f21b7644058cb7b0ecce0d0927",
+  "source_hashes_match_frozen_rtl": true,
+  "windows_rtl_script_checkpoint_hashes_verified": true,
+  "signoff_period_ns": 6.4,
+  "signoff_setup_uncertainty_ns": 0.1,
+  "signoff_hold_uncertainty_ns": 0.05,
+  "auditor_sha256": "3929647e558c8ff6c907925aa9565c98de20cc1d5965cad339d35f38d9ad6e47",
+  "all_timing_endpoints_covered": true,
+  "routed_timing_verified": true,
+  "soc_or_board_signoff": false,
+  "final_checkpoint_sha256": "70e8af77ba99434d25ad2017d74c0bd4d3ea9f3857ce313d43514ac99d6e78e4",
+  "optimization_setup_uncertainty_used_ns": [
+    0.1
+  ],
+  "routed_reference_checkpoint_sha256": "33d3c6efb421ea17c8219887424f53b732ad8ac08b1400537580d3a40b81d29d",
+  "parent_flow_completed": false,
+  "saved_stage_routing_independently_verified": true
+}

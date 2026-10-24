@@ -1,0 +1,5 @@
+{
+  "reason": "Explore repeatedly oscillated on a few congested nodes; immutable baseline_route checkpoint frozen for independent local refinement",
+  "parent_completed": false,
+  "refinement": "20261024T074147Z"
+}

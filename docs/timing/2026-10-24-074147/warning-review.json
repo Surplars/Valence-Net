@@ -1,0 +1,45 @@
+{
+  "tool_log_critical_warnings": [
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'to' option of 'report_timing' is very large: 115968. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    },
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'from' option of 'report_timing' is very large: 115968. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    }
+  ],
+  "drc_rules": [
+    {
+      "rule": "RTSTAT-10",
+      "severity": "Warning",
+      "count": 1
+    }
+  ],
+  "methodology_rules": [
+    {
+      "rule": "SYNTH-6",
+      "severity": "Warning",
+      "count": 156
+    },
+    {
+      "rule": "SYNTH-16",
+      "severity": "Warning",
+      "count": 156
+    },
+    {
+      "rule": "CLKC-3",
+      "severity": "Advisory",
+      "count": 1
+    }
+  ],
+  "tool_errors": [],
+  "reviewed": true,
+  "notes": [
+    "Vivado 12-4439 warns about large all-register timing collections; both register reports and the final checkpoint completed.",
+    "RTSTAT-10 is the timing-fixture signature output without an external routable load; every routable net is complete.",
+    "Route 35-197 reports no HD.CLK_SRC on the external clock port. The fixture has a physical BUFGCE fixed at BUFGCE_X0Y0; routed internal clock coverage is checked. Board input-clock timing is outside this OOC scope.",
+    "SYNTH-6/16 are retained block-RAM output-register/collision advisories; CLKC-3 concerns the intentionally fixed BUFG site.",
+    "This is source-matched OOC evidence, not integrated SoC or board timing."
+  ]
+}

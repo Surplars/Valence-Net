@@ -60,6 +60,7 @@ def main():
     targets.update({"window_scale": "TcpControlHarness", "body_window": "TcpControlHarness",
                     "tcp_generation": "TcpGenerationHarness"})
     targets.update({"tcp_control_priority": "TcpControlHarness"})
+    targets.update({"sack_snapshot": "TcpSackSnapshotHarness", "handshake_body": "TcpControlHarness"})
     parser = argparse.ArgumentParser()
     parser.add_argument("targets", nargs="*", help="focused tests; omit for all")
     args = parser.parse_args()

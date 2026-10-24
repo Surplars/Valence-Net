@@ -7,6 +7,7 @@ object Emit extends App {
     require(args.length == 1, "usage: netstack.Emit OUTPUT_DIRECTORY")
     val out = Paths.get(args(0))
     Files.createDirectories(out)
+    Files.writeString(out.resolve("TcpSackSnapshotHarness.fir"), ChiselStage.emitCHIRRTL(new TcpSackSnapshotHarness))
     Files.writeString(out.resolve("TcpGenerationHarness.fir"), ChiselStage.emitCHIRRTL(new TcpGenerationHarness))
     Files.writeString(out.resolve("NetworkErrorsHarness.fir"), ChiselStage.emitCHIRRTL(new NetworkErrorsHarness))
     Files.writeString(out.resolve("IcmpErrorsHarness.fir"), ChiselStage.emitCHIRRTL(new IcmpErrorsHarness))

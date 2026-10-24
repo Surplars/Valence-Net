@@ -1,0 +1,5 @@
+create_clock -name stack_clock -period 6.400 [get_ports clock]
+set_clock_uncertainty -setup 0.100 [get_clocks stack_clock]
+set_clock_uncertainty -hold 0.050 [get_clocks stack_clock]
+set_output_delay -clock stack_clock -max 1.000 [get_ports -filter {DIRECTION == OUT}]
+set_output_delay -clock stack_clock -min 0.000 [get_ports -filter {DIRECTION == OUT}]

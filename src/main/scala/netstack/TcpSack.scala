@@ -33,86 +33,129 @@ object TcpSackEncoding {
     }
 }
 
-/** Cold-path snapshot builder. Bubble sorting and range coalescing each use a
-  * single registered step, avoiding a wide combinational merge network.
-  * Input ranges represent committed payload bytes, never FIN sequence space.
-  * Publication is withheld while a newer snapshot is being constructed.
+/** Cold-path SACK snapshot. Two interleaved single-write RAMs hold the sort
+  * scratch space: adjacent entries always occupy different banks. Capture is
+  * atomic; loading, compare/exchange and merging never expose a partial result.
+  * A shortened bubble pass and streaming top-four insertion keep this cold
+  * work bounded without a multiported register-file write/multiplexer network.
   */
 class TcpSackSnapshot(val banks: Int = 8) extends Module {
+    require(isPow2(banks) && banks >= 2 && banks <= 256)
+    val ageBits = log2Ceil(banks + 1)
     val io = IO(new Bundle {
         val valid = Input(Vec(banks, Bool()))
         val left = Input(Vec(banks, UInt(32.W))); val right = Input(Vec(banks, UInt(32.W)))
-        val age = Input(Vec(banks, UInt(log2Ceil(banks + 1).W)))
+        val age = Input(Vec(banks, UInt(ageBits.W)))
         val base = Input(UInt(32.W)); val changed = Input(Bool()); val clear = Input(Bool())
         val blocks = Output(new TcpSackBlocks); val updated = Output(Bool()); val busy = Output(Bool())
     })
     val bits = log2Ceil(banks)
-    val idle :: sorting :: merging :: selecting :: publish :: Nil = Enum(5)
+    val pairBits = math.max(1, bits - 1)
+    val width = 65 + ageBits
+    def leftOf(word: UInt): UInt = word(31, 0)
+    def rightOf(word: UInt): UInt = word(63, 32)
+    def ageOf(word: UInt): UInt = word(63 + ageBits, 64)
+    def validOf(word: UInt): Bool = word(width - 1)
+    def normalized(word: UInt, base: UInt): UInt = Cat(validOf(word), ageOf(word),
+        (rightOf(word) - base)(31, 0), (leftOf(word) - base)(31, 0))
+    def address(index: UInt): UInt = if (banks == 2) 0.U(pairBits.W) else index(bits - 1, 1)
+
+    val idle :: loading :: sorting :: merging :: flushing :: publish :: Nil = Enum(6)
     val state = RegInit(idle); val dirty = RegInit(false.B)
     val available = RegInit(false.B)
-    val valid = Reg(Vec(banks, Bool())); val left = Reg(Vec(banks, UInt(32.W)))
-    val right = Reg(Vec(banks, UInt(32.W))); val age = Reg(Vec(banks, UInt(log2Ceil(banks + 1).W)))
-    val base = Reg(UInt(32.W)); val pos = Reg(UInt(bits.W)); val pass = Reg(UInt(bits.W))
-    val count = Reg(UInt(log2Ceil(banks + 1).W))
-    val block = Reg(UInt(3.W))
-    val result = Reg(new TcpSackBlocks)
+    // Snapshot inputs must remain coherent even if ACK progress or a new
+    // committed range changes the live descriptor table during RAM loading.
+    val captured = Reg(Vec(banks, UInt(width.W)))
+    val base = Reg(UInt(32.W))
+    val load = Reg(UInt(pairBits.W))
+    val pos = Reg(UInt(bits.W)); val pass = Reg(UInt(bits.W))
+    val even = Mem(banks / 2, UInt(width.W))
+    val odd = Mem(banks / 2, UInt(width.W))
+    val evenAddress = (address(pos) + Mux(state === sorting, pos(0), false.B).asUInt)(pairBits - 1, 0)
+    val oddAddress = address(pos)
+    val evenWord = even(evenAddress); val oddWord = odd(oddAddress)
+    val a = Mux(pos(0), oddWord, evenWord)
+    val b = Mux(pos(0), evenWord, oddWord)
+    val exchange = state === sorting && validOf(b) &&
+        (!validOf(a) || leftOf(b) < leftOf(a))
+    val evens = VecInit((0 until banks / 2).map(i => captured(2 * i)))
+    val odds = VecInit((0 until banks / 2).map(i => captured(2 * i + 1)))
+    // Exactly one write port per RAM, including snapshot load and swaps.
+    when(state === loading || exchange) {
+        even.write(Mux(state === loading, load, evenAddress),
+            Mux(state === loading, normalized(evens(load), base), oddWord))
+        odd.write(Mux(state === loading, load, oddAddress),
+            Mux(state === loading, normalized(odds(load), base), evenWord))
+    }
+    val groupValid = RegInit(false.B)
+    val groupLeft = Reg(UInt(32.W)); val groupRight = Reg(UInt(32.W))
+    val groupAge = Reg(UInt(ageBits.W))
+    val bestLeft = Reg(Vec(4, UInt(32.W))); val bestRight = Reg(Vec(4, UInt(32.W)))
+    val bestAge = Reg(Vec(4, UInt(ageBits.W)))
+    val adjacent = groupValid && groupRight === leftOf(a)
+    val finishGroup = (state === merging && validOf(a) && groupValid && !adjacent) ||
+        (state === flushing && groupValid)
+    val insert = VecInit((0 until 4).map(i => groupAge < bestAge(i)))
+    val insertAt = PriorityEncoder(insert.asUInt)
+    when(finishGroup && insert.asUInt.orR) {
+        for (i <- 0 until 4) {
+            when(insertAt <= i.U) {
+                if (i == 0) {
+                    bestLeft(i) := groupLeft; bestRight(i) := groupRight; bestAge(i) := groupAge
+                } else {
+                    bestLeft(i) := Mux(insertAt === i.U, groupLeft, bestLeft(i - 1))
+                    bestRight(i) := Mux(insertAt === i.U, groupRight, bestRight(i - 1))
+                    bestAge(i) := Mux(insertAt === i.U, groupAge, bestAge(i - 1))
+                }
+            }
+        }
+    }
     val published = RegInit(0.U.asTypeOf(new TcpSackBlocks))
     io.busy := state =/= idle || dirty || io.changed
     io.blocks := published
-    // Clear is synchronous. Parent control/data handshakes are cancelled on
-    // the clear cycle; feeding OPEN/abort combinationally into option length
-    // would couple tuple arbitration to payload-read range validation.
     when(!available || io.changed) { io.blocks.count := 0.U }
     io.updated := false.B
     when(io.changed) { dirty := true.B; available := false.B }
     when(state === idle && (dirty || io.changed)) {
-        valid := io.valid; age := io.age; base := io.base
-        // Normalize once at snapshot capture; the repeated sort comparison is
-        // just an unsigned comparator, without a serial modulo subtraction.
-        for (i <- 0 until banks) {
-            left(i) := io.left(i) - io.base; right(i) := io.right(i) - io.base
-        }
-        pos := 0.U; pass := 0.U; state := sorting; dirty := false.B
+        for (i <- 0 until banks) { captured(i) := Cat(io.valid(i), io.age(i), io.right(i), io.left(i)) }
+        base := io.base; load := 0.U; state := loading; dirty := false.B
+        groupValid := false.B; bestAge.foreach(_ := banks.U)
+    }
+    when(state === loading) {
+        when(load === (banks / 2 - 1).U) { pos := 0.U; pass := 0.U; state := sorting }
+            .otherwise { load := load + 1.U }
     }
     when(state === sorting) {
-        val next = pos + 1.U
-        when(valid(next) && (!valid(pos) || left(next) < left(pos))) {
-            valid(pos) := valid(next); left(pos) := left(next); right(pos) := right(next); age(pos) := age(next)
-            valid(next) := valid(pos); left(next) := left(pos); right(next) := right(pos); age(next) := age(pos)
-        }
-        when(pos === (banks - 2).U) {
+        // Each completed pass fixes the largest remaining entry at the end.
+        when(pos === ((banks - 2).U - pass)) {
             pos := 0.U
-            when(pass === (banks - 2).U) { state := merging; count := 0.U }
+            when(pass === (banks - 2).U) { state := merging }
                 .otherwise { pass := pass + 1.U }
         }.otherwise { pos := pos + 1.U }
     }
     when(state === merging) {
-        val previous = (count - 1.U)(bits - 1, 0)
-        when(valid(pos)) {
-            when(count =/= 0.U && right(previous) === left(pos)) {
-                right(previous) := right(pos)
-                age(previous) := Mux(age(previous) < age(pos), age(previous), age(pos))
+        when(validOf(a)) {
+            when(adjacent) {
+                groupRight := rightOf(a)
+                groupAge := Mux(groupAge < ageOf(a), groupAge, ageOf(a))
             }.otherwise {
-                left(count(bits - 1, 0)) := left(pos); right(count(bits - 1, 0)) := right(pos)
-                age(count(bits - 1, 0)) := age(pos); count := count + 1.U
+                groupValid := true.B; groupLeft := leftOf(a); groupRight := rightOf(a); groupAge := ageOf(a)
             }
         }
-        when(pos === (banks - 1).U) {
-            state := selecting; block := 0.U; result := 0.U.asTypeOf(new TcpSackBlocks)
-        }.otherwise { pos := pos + 1.U }
+        when(pos === (banks - 1).U) { state := flushing }
+            .otherwise { pos := pos + 1.U }
     }
-    val choices = (0 until banks).map(i => Mux(i.U < count, age(i), banks.U))
-    val youngest = TcpSackEncoding.minimum(choices)
-    val index = PriorityEncoder(VecInit(choices.map(_ === youngest)).asUInt)
-    when(state === selecting) {
-        when(youngest < banks.U && block < 4.U) {
-            result.left(block(1, 0)) := left(index) + base; result.right(block(1, 0)) := right(index) + base
-            result.count := block + 1.U; age(index) := banks.U; block := block + 1.U
-        }.otherwise { state := publish }
-    }
+    when(state === flushing) { state := publish }
     when(state === publish) {
         state := idle
-        when(!dirty && !io.changed) { published := result; available := true.B; io.updated := true.B }
+        when(!dirty && !io.changed) {
+            published.count := PopCount(bestAge.map(_ < banks.U))
+            for (i <- 0 until 4) {
+                published.left(i) := Mux(bestAge(i) < banks.U, bestLeft(i) + base, 0.U)
+                published.right(i) := Mux(bestAge(i) < banks.U, bestRight(i) + base, 0.U)
+            }
+            available := true.B; io.updated := true.B
+        }
     }
     when(io.clear) {
         state := idle; dirty := false.B; available := false.B; published.count := 0.U

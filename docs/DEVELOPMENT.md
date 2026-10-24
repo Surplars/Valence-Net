@@ -10,7 +10,19 @@ Source, Git, caches and simulation stay in native WSL at
 E:\VM\Share\Valence-rtl. The checkout base is
 0273d8dfb0219889560efdc9aa5066c4b55c69ef.
 
-## Current exception/PMTU revision
+## Current area revision
+
+See [area implementation and comparison](AREA-OPTIMIZATION.md),
+[configuration parameters](PARAMETERS.md) and the
+[44-target source record](verification-2026-10-24-area.json).
+The area revision passes all 44 targets and source-matched routed OOC timing
+in 20261024T074147Z: 180,442 LUTs (4,213 / 2.282% fewer), setup 0.000 ns,
+hold +0.005 ns, with zero failures and complete routing. Original clock
+uncertainties remain 0.100/0.050 ns. The setup margin is tight; SoC/board
+integration is not qualified by this fixture.
+The following exception/PMTU evidence is the 89cefc8 baseline for that change.
+
+## Earlier exception/PMTU revision
 
 The current working revision adds stateless TCP resets, ICMP error handling and
 TCP/UDP PMTU policy. The exact-source complete regression passes all 42 targets.

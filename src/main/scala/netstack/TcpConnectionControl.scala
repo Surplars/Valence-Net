@@ -514,6 +514,22 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
         val next = Mux(durable || acceptFin, advanced, base)
         (skip, kept, acceptFin, next, room)
     }
+    // Initial SYN data starts exactly at its new receive base: offset is
+    // identically zero, with a 16-bit unscaled window. Do not instantiate
+    // the general modular overlap/carry-save network for this special case.
+    def synBody(): (UInt, UInt, Bool, UInt, UInt) = {
+        val fits = rx.payloadLength < synWindow
+        val durable = io.rx.bits.payloadStored
+        val kept = Mux(durable, min(rx.payloadLength, synWindow), 0.U)
+        val room = Mux(durable, Mux(fits, synWindow - rx.payloadLength, 0.U), synWindow)
+        val acceptedFin = fin && fits && (durable || rx.payloadLength === 0.U)
+        val start = rx.sequence + 1.U
+        val payloadEnd = sum32(Seq(rx.sequence, rx.payloadLength, 1.U))
+        val finEnd = sum32(Seq(rx.sequence, rx.payloadLength, 2.U))
+        val windowEnd = sum32(Seq(rx.sequence, synWindow, 1.U))
+        val advanced = Mux(!fits, windowEnd, Mux(acceptedFin, finEnd, payloadEnd))
+        (0.U(16.W), kept, acceptedFin, Mux(durable || acceptedFin, advanced, start), room)
+    }
     def retain(skip: UInt, length: UInt, acceptFin: Bool, beforeEstablished: Bool): Unit = {
         disposition.keep := length =/= 0.U; disposition.skip := skip; disposition.length := length
         disposition.fin := acceptFin; disposition.beforeEstablished := beforeEstablished
@@ -563,7 +579,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                         iss := io.passiveInitialSequence; issNext := io.passiveInitialSequence + 1.U
                         oldest := io.passiveInitialSequence
                         actual := io.passiveInitialSequence; reserved := io.passiveInitialSequence + 1.U
-                        val (skip, kept, acceptedFin, next, room) = body(rx.sequence + 1.U, rx.sequence + 1.U, synWindow)
+                        val (skip, kept, acceptedFin, next, room) = synBody()
                         retain(skip, kept, acceptedFin, true.B)
                         receiveNext := next; deferredFin := acceptedFin
                         state := TcpState.synReceived.U
@@ -577,7 +593,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                     .elsewhen(rst) { when(ackOk) { state := TcpState.closed.U; notify(12.U) } }
                     .elsewhen(syn) {
                         peerSyn()
-                        val (skip, kept, acceptedFin, next, room) = body(rx.sequence + 1.U, rx.sequence + 1.U, synWindow)
+                        val (skip, kept, acceptedFin, next, room) = synBody()
                         retain(skip, kept, acceptedFin, !ackOk)
                         receiveNext := next; deferredFin := acceptedFin && !ackOk
                         when(ackOk) {

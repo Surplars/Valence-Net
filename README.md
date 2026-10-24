@@ -6,11 +6,20 @@ integrated endpoint supports **four independent TCP sessions by default**
 datapath (20 Gb/s raw bandwidth)**. Functional verification, cycle service
 capacity and physical timing are recorded separately.
 
-The current exception/PMTU revision passes **42 functional targets**, including
+The current area revision passes **44 functional targets** with unchanged default
+capacity. Fully routed core use falls from **184,655 to 180,442 LUTs (2.282%)**.
+Its exact 104-file source set matches **156.25 MHz OOC on ZU15EG-2**, with setup
+**0.000 ns**, hold **+0.005 ns**, zero failing endpoints and complete routing.
+The original 0.100/0.050 ns setup/hold uncertainties remain in force; the setup
+margin beyond those requirements is tight. See [area evidence](docs/AREA-OPTIMIZATION.md),
+[current routed report](docs/timing/2026-10-24-074147/post_route_timing.rpt) and
+[elaboration parameters](docs/PARAMETERS.md).
+
+The earlier exception/PMTU revision passes **42 functional targets**, including
 complete-Ethernet single/four-context RX offered at 10G and sustained
 four-context TX. Its exact 101-file source set matches the routed OOC result:
 **156.25 MHz on ZU15EG-2, setup +0.001 ns / hold +0.006 ns**, with zero failing
-endpoints and complete routing. See the [current timing report](docs/timing/2026-10-24-042645/post_route_timing.rpt)
+endpoints and complete routing. See the [earlier timing report](docs/timing/2026-10-24-042645/post_route_timing.rpt)
 and [source qualification](docs/timing/2026-10-24-042645/source-qualification.json).
 
 The earlier 31-target multi-connection/SACK baseline passed routed OOC timing
@@ -214,7 +223,7 @@ byte checked. Final receive-window updates and zero-window reopening are checked
 These measurements use cached ARP and consumers that keep up, with reduced
 harness storage; routed timing uses full production storage.
 
-The current 42-target regression also rechecks the compatible single-session top.
+The current 44-target regression also rechecks the compatible single-session top.
 `ethernet_service` checks complete Ethernet/IP/transport bytes, uses eight
 TX banks, autonomous Reno, cached ARP, prompt modeled physical completions/
 peer ACKs and ready consumers. It measures 256 packets per case, excluding
@@ -233,18 +242,18 @@ startup/drain and the first 32 completion intervals.
 
 UDP TX now waits for the ordered route result used to commit its PMTU history,
 adding one service clock per datagram versus the historical baseline. The
-smallest case still meets the 10G service budget at the target clock; it does
-not establish that this source closes timing.
+smallest case still meets the 10G service budget at the target clock. These are
+scheduling measurements; matching routed clock closure is recorded below.
 
 The current production-capacity probe
-(`build/production-rx-probe-20261024T030328Z`) checks the compatible single-session
+(`build/production-rx-probe-20261024T061221Z`) checks the compatible single-session
 Ethernet top. `python3 bench/production_rx_probe.py` uses an isolated source copy
 and enlarges only the service harness RX ring to the production 64 KiB capacity.
 TCP RX at 1460 bytes measures **98 cycles per packet / 19.617 Gb/s wire-equivalent**.
 The probe retains the harness's reduced ARP/completion/timer geometry, records
 its own source/model/result hashes, and leaves authoritative sources and the
 full-regression manifest untouched. Its frozen source hashes match the current
-42-target source. Earlier production probes remain historical evidence.
+44-target source. Earlier production probes remain historical evidence.
 
 A companion `bench/production_reassembly_probe.py PROBE_DIRECTORY` reuses
 the verified 64 KiB model and checks 24 shuffled waves of eight retained
@@ -314,7 +323,20 @@ simulator-only workaround and does not add RTL RAM resets or relax sanitizers.
 Target part: **xczu15eg-ffvb1156-2-i**. Clock: **6.4 ns**. Setup/hold
 uncertainty: **0.1 / 0.05 ns**. No false-path or multicycle exceptions are used.
 
-The current source closes timing in **20261024T042645Z**, a local refinement
+The current area source passes in **20261024T074147Z**, using local physical
+refinement of the saved fully routed 061030 checkpoint. All **241,104 routable
+nets** are complete; setup/hold each cover **267,119 endpoints** with zero
+failures and zero TNS/THS. Setup is **0.000 ns**, hold **+0.005 ns**, pulse width
+**+2.658 ns**. Coverage and routing/blackbox/DRC/methodology error checks pass.
+This is OOC evidence; SoC/board timing requires a new run.
+
+The routed core uses **180,442 LUTs, 90,361 FFs, 136 RAMB36 and 20 RAMB18**,
+with no URAM/DSP. Against the earlier fully routed exception/PMTU core this
+saves **4,213 LUTs / 2.282%**, while adding 296 FFs and 320 LUTRAM LUTs.
+Original reports, source provenance and warning review are preserved under
+[the current report directory](docs/timing/2026-10-24-074147/artifact-hashes.json).
+
+The earlier exception/PMTU source closes timing in **20261024T042645Z**, a local refinement
 of the fully routed **20261024T030357Z** checkpoint. Signoff remains 6.4 ns with
 0.100/0.050 ns setup/hold uncertainty; the selected attempt used the same
 constraints throughout. All 244,596 routable nets remain fully routed. Setup,
