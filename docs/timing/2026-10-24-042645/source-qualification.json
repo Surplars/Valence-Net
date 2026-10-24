@@ -1,0 +1,19 @@
+{
+  "source_count": 101,
+  "functional_tests": 42,
+  "functional_manifest_sha256": "83bfd4c88d512a235ea6603c2fabf930d0a76b11bee45d854290207e8ccb6837",
+  "source_hashes_match_frozen_rtl": true,
+  "windows_rtl_script_checkpoint_hashes_verified": true,
+  "routed_reference_sha256": "71eacfc4fbe8e573061978839de1bf12d1ba14ada8fc18473f9a54b4da4d4ba0",
+  "signoff_period_ns": 6.4,
+  "signoff_setup_uncertainty_ns": 0.1,
+  "signoff_hold_uncertainty_ns": 0.05,
+  "optimization_setup_uncertainty_used_ns": [
+    0.1
+  ],
+  "auditor_sha256": "3929647e558c8ff6c907925aa9565c98de20cc1d5965cad339d35f38d9ad6e47",
+  "all_timing_endpoints_covered": true,
+  "routed_timing_verified": true,
+  "soc_or_board_signoff": false,
+  "final_checkpoint_sha256": "fa54be175c70e71b91075cb6e695897b8f8db384d98832c0110448bf08b6e946"
+}

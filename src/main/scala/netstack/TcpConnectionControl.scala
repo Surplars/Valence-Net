@@ -33,12 +33,14 @@ class TcpRxDisposition extends Bundle {
 }
 class TcpControlPacket extends Bundle {
     val probe = Bool()
+    val timeoutRetry = Bool() // only a retry explicitly issued by the RTO
     val command = new TcpSendCommand
     val generation = UInt(32.W)
     val retransmission = Bool()
     val sequenceSpace = Bool()
 }
 class TcpConnectionCompletion extends Bundle {
+    val timeoutRetry = Bool()
     val generation = UInt(32.W)
     val endSequence = UInt(32.W)
     val retransmission = Bool()
@@ -56,9 +58,23 @@ class TcpConnectionNotice extends Bundle {
     val flags = UInt(5.W)
 }
 
+/** A validated route feedback update. The endpoint authenticates the quoted
+  * tuple and outstanding sequence before supplying a generation-bound request.
+  * Only an explicit cache-expiry probe may raise the learned ceiling.
+  */
+class TcpPathMtuUpdate extends Bundle {
+    val generation = UInt(32.W)
+    val mtu = UInt(16.W)
+    val allowIncrease = Bool()
+}
+
 class TcpConnectionIO extends Bundle {
         val open = Flipped(Decoupled(new TcpConnectionOpen))
         val passiveInitialSequence = Input(UInt(32.W))
+        val pathMtuLimit = Input(UInt(16.W)) // captured at OPEN
+        val pathMtuUpdate = Flipped(Valid(new TcpPathMtuUpdate))
+        val pathMtu = Output(UInt(16.W))
+        val pathMtuChanged = Output(Bool()) // registered accepted decrease
         val close = Flipped(Decoupled(Bool())) // true abort, false graceful close
         val rx = Flipped(Decoupled(new TcpConnectionRx))
         val disposition = Decoupled(new TcpRxDisposition)
@@ -141,11 +157,33 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
     val receiveNext = RegInit(0.U(32.W))
     val sendWindow = RegInit(0.U(32.W)); val maxSendWindow = RegInit(0.U(32.W))
     val wl1 = Reg(UInt(32.W)); val wl2 = Reg(UInt(32.W))
-    val mss = RegInit(536.U(16.W)); val scaleEnabled = RegInit(false.B); val peerScale = RegInit(0.U(4.W))
+    val mss = RegInit(536.U(16.W))
+    val negotiatedMss = RegInit(536.U(16.W))
+    val pathMtu = RegInit(65535.U(16.W))
+    val pathLimit = RegInit(65535.U(16.W))
+    val pathPayloadMss = RegInit(65495.U(16.W))
+    // Update the effective MSS at a register boundary. Packet scheduling sees
+    // the same registered MSS as before; PMTU adds no comparator to that path.
+    val updatePath = io.pathMtuUpdate.valid &&
+        io.pathMtuUpdate.bits.generation === generation &&
+        state =/= TcpState.closed.U && state =/= TcpState.listen.U && state =/= TcpState.timeWait.U &&
+        io.pathMtuUpdate.bits.mtu >= 68.U && io.pathMtuUpdate.bits.mtu <= pathLimit &&
+        (io.pathMtuUpdate.bits.mtu < pathMtu ||
+            io.pathMtuUpdate.bits.allowIncrease && io.pathMtuUpdate.bits.mtu > pathMtu)
+    val nextPathPayload = io.pathMtuUpdate.bits.mtu - 40.U
+    when(updatePath) {
+        pathMtu := io.pathMtuUpdate.bits.mtu
+        pathPayloadMss := nextPathPayload
+        mss := min(negotiatedMss, nextPathPayload)
+    }
+    io.pathMtu := pathMtu
+    io.pathMtuChanged := RegNext(updatePath && io.pathMtuUpdate.bits.mtu < pathMtu, false.B)
+    val scaleEnabled = RegInit(false.B); val peerScale = RegInit(0.U(4.W))
     val sackEnabled = RegInit(false.B)
     io.sackEnabled := sackEnabled
     val deferredFin = RegInit(false.B)
     val finSequence = Reg(UInt(32.W)); val finOutstanding = RegInit(false.B)
+    val pmtuFinPending = RegInit(false.B)
     val timeWait = RegInit(0.U(log2Ceil(timeWaitTicks + 2).W))
     val challenge = RegInit(0.U(log2Ceil(challengeTicks + 1).W))
     val identification = RegInit(0.U(16.W))
@@ -161,7 +199,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
     val noticeValid = RegInit(false.B); val notice = Reg(new TcpConnectionNotice)
     val replayValid = RegInit(false.B); val replay = Reg(UInt(32.W))
     io.control.valid := controlValid && !controlSackPending; io.control.bits := control
-    io.controlPending := controlValid || activeOpenPending
+    io.controlPending := controlValid || activeOpenPending || pmtuFinPending
     io.disposition.valid := dispositionValid; io.disposition.bits := disposition
     io.ack.valid := ackValid; io.ack.bits := ack
     io.notice.valid := noticeValid; io.notice.bits := notice
@@ -189,9 +227,22 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
     io.invalidCompletion := matchingCompletion && !newCompletion && !retryCompletion && !retiredCompletion
     when(newCompletion) { actual := io.completed.bits.endSequence }
 
-    val localScale = Mux(scaleEnabled, config.localScale, 0.U)
-    val advertised = min(io.receiveWindow >> localScale, 65535.U)(15, 0)
-    val receiveWindow = (advertised.pad(32) << localScale)(31, 0)
+    // Negotiate a one-hot local scale so normal window arithmetic selects
+    // constant shifts. Bit zero also represents OPEN and listener rollback.
+    val activeScale = RegInit(1.U(15.W))
+    def scaleRight(value: UInt): UInt = Mux1H((0 until 15).map(i =>
+        activeScale(i) -> (value >> i).pad(value.getWidth)))
+    // Form each fixed-scale clamp before selection. The one-hot negotiated
+    // scale must not traverse a right shifter, saturation and left shifter
+    // before the receive-window/ACK arithmetic.
+    val scaledWindows = (0 until 15).map { i =>
+        val shifted = io.receiveWindow >> i
+        val clipped = Mux(shifted(shifted.getWidth - 1, 16).orR,
+            65535.U(16.W), shifted(15, 0))
+        (clipped, (clipped << i).pad(32))
+    }
+    val advertised = Mux1H((0 until 15).map(i => activeScale(i) -> scaledWindows(i)._1))
+    val receiveWindow = Mux1H((0 until 15).map(i => activeScale(i) -> scaledWindows(i)._2))
     val synWindow = min(io.receiveWindow, 65535.U)(15, 0)
 
     val (pendingSackLength, pendingSackOptions) =
@@ -234,6 +285,10 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
         }.elsewhen(flags(4) && !flags(2)) {
             when(sackEnabled && io.receiveSack.count =/= 0.U) {
                 controlSack := io.receiveSack
+                // With the IPv4 minimum PMTU of 68, a pure ACK has room for
+                // three padded SACK blocks (40 + 28 bytes), not four.
+                controlSack.count := Mux(pathMtu < 76.U && io.receiveSack.count > 3.U,
+                    3.U, io.receiveSack.count)
                 controlSackPending := true.B
             }
         }
@@ -288,7 +343,11 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
     val flight = reserved - oldest
     val limit = min(sendWindow, io.congestionWindow)
     val available = Mux(limit > flight, limit - flight, 0.U)
-    io.sendReserve.ready := idle && !io.probe.valid && !emitWindowUpdate && !io.open.fire && !io.close.fire && !io.rx.valid && !io.retry.valid &&
+    // Only ESTABLISHED/CLOSE-WAIT can reserve: OPEN cannot fire there, and
+    // idle is already required. Expand close ownership without carrying the
+    // unrelated OPEN acceptance comparator into the payload scheduler.
+    val reserveClose = io.close.valid && !io.completed.valid && canClose
+    io.sendReserve.ready := idle && !io.probe.valid && !emitWindowUpdate && !reserveClose && !io.rx.valid && !io.retry.valid &&
         (state === TcpState.established.U || state === TcpState.closeWait.U) &&
         (if (trustedReservations) true.B else
             io.sendReserve.bits =/= 0.U && io.sendReserve.bits <= mss && io.sendReserve.bits <= available)
@@ -310,6 +369,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
 
     when(io.open.fire) {
         config := io.open.bits
+        activeScale := 1.U
         config.localMss := min(Mux(io.open.bits.localMss === 0.U, 1.U, io.open.bits.localMss), 65495.U)
         config.localScale := min(io.open.bits.localScale, 14.U)
         remoteIp := io.open.bits.remoteIp; remotePort := io.open.bits.remotePort
@@ -319,7 +379,10 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
         reserved := io.open.bits.initialSequence
         receiveNext := 0.U; sendWindow := 0.U; maxSendWindow := 0.U
         scaleEnabled := false.B; sackEnabled := false.B; peerScale := 0.U; deferredFin := false.B; finOutstanding := false.B
-        mss := min(Mux(io.open.bits.localMss === 0.U, 1.U, io.open.bits.localMss), 536.U)
+        val initialMtu = Mux(io.pathMtuLimit < 68.U, 68.U, io.pathMtuLimit)
+        val initialMss = min(Mux(io.open.bits.localMss === 0.U, 1.U, io.open.bits.localMss), 536.U)
+        pathLimit := initialMtu; pathMtu := initialMtu; pathPayloadMss := initialMtu - 40.U
+        negotiatedMss := initialMss; mss := min(initialMss, initialMtu - 40.U)
         challenge := 0.U
         val valid = unicast(io.open.bits.localIp) && io.open.bits.localPort =/= 0.U &&
             (io.open.bits.passive || unicast(io.open.bits.remoteIp) && io.open.bits.remotePort =/= 0.U)
@@ -363,12 +426,36 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
             emit(flags, iss, Mux(state === TcpState.synSent.U, 0.U, receiveNext), synWindow,
                 remoteIp, remotePort, config.localIp, config.localPort,
                 Mux(state === TcpState.synSent.U, config.offerScale, scaleEnabled), true.B, generation)
+            control.timeoutRetry := true.B
         }.elsewhen(finOutstanding && oldest === finSequence) {
             connected(17, finSequence, receiveNext, advertised, true.B)
+            control.timeoutRetry := true.B
+            pmtuFinPending := false.B
         }.elsewhen(state =/= TcpState.closed.U && state =/= TcpState.listen.U && state =/= TcpState.timeWait.U) {
             replayValid := true.B; replay := oldest
         }
     }
+
+    // A FIN may carry SACK options and exceed a newly discovered small PMTU.
+    // It owns no retained payload bank, so repair it in the control plane.
+    // Wait until preceding payload is cumulatively ACKed and the original FIN
+    // has physically completed; an already offered FIN remains immutable.
+    val pmtuFinReady = pmtuFinPending && finOutstanding &&
+        oldest === finSequence && ge(actualNow, finSequence + 1.U) && idle &&
+        !io.open.valid && !io.close.valid && !io.rx.valid && !io.retry.valid &&
+        !io.completed.valid && !emitWindowUpdate
+    when(pmtuFinReady) {
+        connected(17, finSequence, receiveNext, advertised, true.B)
+        // This is path repair, not a timeout attempt.
+        control.timeoutRetry := false.B
+        pmtuFinPending := false.B
+    }
+    val newFin = io.close.fire && !io.close.bits &&
+        (state === TcpState.established.U || state === TcpState.closeWait.U)
+    when(!finOutstanding || state === TcpState.closed.U || state === TcpState.listen.U ||
+        state === TcpState.timeWait.U) { pmtuFinPending := false.B }
+    when(updatePath && io.pathMtuUpdate.bits.mtu < pathMtu &&
+        (finOutstanding || newFin)) { pmtuFinPending := true.B }
 
     val rx = io.rx.bits.segment
     val syn = rx.flags(1); val rst = rx.flags(2); val hasAck = rx.flags(4); val fin = rx.flags(0)
@@ -404,22 +491,26 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
         val skip = Mux(behind, min(offset, rx.payloadLength), 0.U)(15, 0)
         val available = (rx.payloadLength - offset(15, 0))(15, 0)
         val durable = contiguous && io.rx.bits.payloadStored
-        val kept = Mux(durable, min(available, window), 0.U)(15, 0)
         // window-available == window+base-start-increment-payloadLength
         // for the contiguous durable case. Reduce operands in parallel instead
         // of putting two subtractions after the sequence-offset carry chain.
         val roomValue = sum32(Seq(window, base, ~start, ~rx.payloadLength.pad(32),
             (!increment).asUInt, 1.U))
-        val room = Mux(durable, Mux(window > available, roomValue, 0.U), window)
+        // Under contiguous admission, available is 0..65535 and window is
+        // at most 65535 << 14. Thus window-available fits signed 32 bits.
+        // Reuse the parallel reduction for strict fit; equality excludes FIN.
+        val fitsWindow = roomValue =/= 0.U && !roomValue(31)
+        val kept = Mux(durable, Mux(fitsWindow, available, window), 0.U)(15, 0)
+        val room = Mux(durable, Mux(fitsWindow, roomValue, 0.U), window)
         // Equivalent to kept == available && kept < window, without the
         // selected kept/minimum feeding a second comparison on the FIN path.
-        val acceptFin = fin && contiguous && available < window && (durable || available === 0.U)
+        val acceptFin = fin && contiguous && fitsWindow && (durable || available === 0.U)
         // Form candidate right edges in parallel. A late window/FIN decision
         // selects a value instead of passing through two more carry chains.
         val payloadEnd = sum32(Seq(start, rx.payloadLength, increment.asUInt))
         val finEnd = sum32(Seq(start, rx.payloadLength, increment.asUInt, 1.U))
         val windowEnd = (base + window)(31, 0)
-        val advanced = Mux(available >= window, windowEnd, Mux(acceptFin, finEnd, payloadEnd))
+        val advanced = Mux(!fitsWindow, windowEnd, Mux(acceptFin, finEnd, payloadEnd))
         val next = Mux(durable || acceptFin, advanced, base)
         (skip, kept, acceptFin, next, room)
     }
@@ -433,7 +524,10 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
         sackEnabled := sackSupport.B && rx.options.sackPermitted
         irs := rx.sequence; remoteIp := rx.sourceIp; remotePort := rx.sourcePort
         scaleEnabled := negotiateScale; peerScale := Mux(negotiateScale, min(rx.options.scale, 14.U), 0.U)
-        mss := newPeerMss; sendWindow := rx.window; maxSendWindow := rx.window
+        activeScale := Mux(negotiateScale, UIntToOH(config.localScale, 15), 1.U)
+        negotiatedMss := newPeerMss
+        mss := min(newPeerMss, Mux(updatePath, nextPathPayload, pathPayloadMss))
+        sendWindow := rx.window; maxSendWindow := rx.window
         wl1 := rx.sequence; wl2 := rx.acknowledgement
     }
 
@@ -451,7 +545,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                 val (skip, kept, gotFin, next, room) = body(rx.sequence, receiveNext, receiveWindow)
                 retain(skip, kept, gotFin, false.B)
                 receiveNext := next
-                connected(16, actualNow, next, min(room >> localScale, 65535.U))
+                connected(16, actualNow, next, min(scaleRight(room), 65535.U))
                 when(gotFin) {
                     notify(2.U)
                     when(state === TcpState.established.U) { state := TcpState.closeWait.U }
@@ -503,7 +597,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
             }.otherwise {
                 val duplicateSyn = state === TcpState.synReceived.U && syn && !rst && rx.sequence === irs
                 val simultaneousAck = duplicateSyn && hasAck && rx.acknowledgement === issNext &&
-                    ge(actualNow, rx.acknowledgement)
+                    ge(actualNow, issNext)
                 val duplicateFin = state === TcpState.timeWait.U && fin && !rst && !syn && sequenceEnd === receiveNext
                 when(rst) {
                     when(state =/= TcpState.timeWait.U) {
@@ -512,6 +606,9 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                                 state := TcpState.listen.U; generation := generation + 1.U
                                 oldest := iss; actual := iss; reserved := iss
                                 scaleEnabled := false.B; sackEnabled := false.B; peerScale := 0.U; deferredFin := false.B
+                                activeScale := 1.U
+                                pathMtu := pathLimit; pathPayloadMss := pathLimit - 40.U
+                                mss := min(negotiatedMss, pathLimit - 40.U)
                             }.otherwise { state := TcpState.closed.U }
                             finOutstanding := false.B; notify(12.U)
                         }.elsewhen(firstIn) { challengeAck() }
@@ -550,7 +647,10 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                                 when(finAcked) { finOutstanding := false.B }
                                 val canReceive = state === TcpState.established.U || state === TcpState.finWait1.U ||
                                     state === TcpState.finWait2.U || opening && !deferredFin
-                                val (skip, count, takeFin, newNext, room) = body(rx.sequence, receiveNext, receiveWindow, simultaneousAck)
+                                // The earlier SYN&&!simultaneousAck branch excludes
+                                // every other SYN here, while simultaneousAck implies SYN.
+                                // Keep its ACK validation off the receive-body arithmetic.
+                                val (skip, count, takeFin, newNext, room) = body(rx.sequence, receiveNext, receiveWindow, syn)
                                 val kept = Mux(canReceive, count, 0.U)
                                 val gotFin = canReceive && takeFin
                                 when(canReceive) {
@@ -574,7 +674,7 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
                                 }
                                 val nextAck = Mux(canReceive, newNext, receiveNext)
                                 when(rx.payloadLength =/= 0.U || fin || simultaneousAck) {
-                                    connected(16, actualNow, nextAck, min(Mux(canReceive, room, receiveWindow) >> localScale, 65535.U))
+                                    connected(16, actualNow, nextAck, min(scaleRight(Mux(canReceive, room, receiveWindow)), 65535.U))
                                     if (sackSupport) {
                                         when(after(rx.sequence, receiveNext)) {
                                             control.command.optionLength := 0.U
@@ -608,16 +708,16 @@ class TcpConnectionControl(val timeWaitTicks: Int = 120000, val challengeTicks: 
     io.dataHeader.sourcePort := config.localPort; io.dataHeader.destinationPort := remotePort
     io.dataHeader.acknowledgement := receiveNext; io.dataHeader.window := advertised
     // Option validation/packing is registered separately from the payload
-    // scheduler. ACK/window remain live; an ACK/generation/count mismatch
-    // omits the cached option until a compatible encoding has been captured.
+    // scheduler. ACK/window remain live; an ACK/count mismatch omits the
+    // cached option until a compatible encoding has been captured. Generation
+    // changes clear sackEnabled; it cannot reassert before this cache catches up.
     val (nextDataOptionsLength, nextDataOptions) = TcpSackEncoding(io.receiveSack, receiveNext, sackEnabled)
     val encodedDataLength = RegNext(nextDataOptionsLength, 0.U)
     val encodedDataOptions = RegNext(nextDataOptions)
     val encodedDataAck = RegNext(receiveNext, 0.U(32.W))
-    val encodedDataGeneration = RegNext(generation, 0.U(32.W))
     val encodedDataCount = RegNext(io.receiveSack.count, 0.U(3.W))
     val dataOptionsCompatible = sackEnabled && io.receiveSack.count =/= 0.U &&
-        encodedDataAck === receiveNext && encodedDataGeneration === generation &&
+        encodedDataAck === receiveNext &&
         encodedDataCount === io.receiveSack.count
     // Test the registered option length in parallel with live compatibility,
     // rather than comparing MSS after the compatibility-selected length.

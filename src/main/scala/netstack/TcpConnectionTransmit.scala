@@ -41,6 +41,10 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     val io = IO(new Bundle {
         val open = Flipped(Decoupled(new TcpConnectionOpen))
         val passiveInitialSequence = Input(UInt(32.W))
+        val pathMtuLimit = Input(UInt(16.W))
+        val pathMtuUpdate = Flipped(Valid(new TcpPathMtuUpdate))
+        val pathMtu = Output(UInt(16.W)); val pathMtuChanged = Output(Bool())
+        val pathTuple = Output(new TcpPathTuple)
         val close = Flipped(Decoupled(Bool()))
         val rx = Flipped(Decoupled(new TcpConnectionRx))
         val disposition = Decoupled(new TcpRxDisposition)
@@ -83,6 +87,13 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     val data = withReset(reset.asBool || (inactive && !offeredData)) {
         Module(new TcpDataTransmit(banks, beatsPerBank))
     }
+    // Mirrors TcpDataTransmit's four-entry prepared descriptor queue exactly.
+    // Reason metadata is sampled at retained-read acceptance, before the
+    // requester may change, and follows the same abort/drain lifetime.
+    val dataTimeouts = withReset(reset.asBool || (inactive && !offeredData)) {
+        Module(new Queue(Bool(), 4))
+    }
+    val preparingTimeout = RegInit(false.B)
     val control = Module(new Ipv4TcpTransmit(2))
     val controlDescriptors = Module(new Queue(new TcpControlPacket, 4))
     val ledger = Module(new Queue(new TcpWireDescriptor, completionDepth))
@@ -104,6 +115,14 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     connection.io.open.bits := io.open.bits
     io.open.ready := connection.io.open.ready && reusable && !receiveEvents.io.deq.valid && !failed
     connection.io.passiveInitialSequence := io.passiveInitialSequence
+    connection.io.pathMtuLimit := io.pathMtuLimit
+    connection.io.pathMtuUpdate <> io.pathMtuUpdate
+    io.pathMtu := connection.io.pathMtu
+    io.pathMtuChanged := connection.io.pathMtuChanged
+    io.pathTuple.localIp := connection.io.dataHeader.sourceIp
+    io.pathTuple.remoteIp := connection.io.dataHeader.destinationIp
+    io.pathTuple.localPort := connection.io.dataHeader.sourcePort
+    io.pathTuple.remotePort := connection.io.dataHeader.destinationPort
     val receiveAllowed = connection.io.state =/= TcpState.listen.U || reusable
     // Register committed metadata before the arithmetic/control path.
     // The RX allocator retains its payload while this event awaits disposition.
@@ -158,8 +177,10 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     })
     data.io.header := connection.io.dataHeader
     connection.io.sendReserve <> data.io.reserve
-    data.io.replay <> connection.io.replay
-    data.io.replayLimit := 65535.U
+    val lossReplay = Wire(Decoupled(UInt(32.W)))
+    val lossReplayLimit = Wire(UInt(16.W))
+    lossReplay <> connection.io.replay
+    lossReplayLimit := 65535.U
     io.congestionLimit := io.congestionWindow
     io.congestionThreshold := 0.U; io.fastRecovery := false.B
     if (autonomousCongestion) {
@@ -185,10 +206,10 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
         when(cc.io.clear || cc.io.flight =/= 0.U || lastActual =/= connection.io.sendActual) { idleTicks := 0.U }
             .elsewhen(io.tick && idleTicks <= idleLimit) { idleTicks := idleTicks + 1.U }
         connection.io.congestionWindow := Mux(cc.io.window < io.congestionWindow, cc.io.window, io.congestionWindow)
-        data.io.replay.valid := connection.io.replay.valid || cc.io.replay.valid
-        data.io.replay.bits := Mux(connection.io.replay.valid, connection.io.replay.bits, cc.io.replay.bits)
-        connection.io.replay.ready := data.io.replay.ready
-        cc.io.replay.ready := data.io.replay.ready && !connection.io.replay.valid
+        lossReplay.valid := connection.io.replay.valid || cc.io.replay.valid
+        lossReplay.bits := Mux(connection.io.replay.valid, connection.io.replay.bits, cc.io.replay.bits)
+        connection.io.replay.ready := lossReplay.ready
+        cc.io.replay.ready := lossReplay.ready && !connection.io.replay.valid
         if (sackSupport) {
             val sack = Module(new TcpSackRecovery)
             sack.io.enabled := connection.io.sackEnabled
@@ -205,16 +226,100 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
             sack.io.miss := data.io.replayMiss
             val fastValid = Mux(connection.io.sackEnabled, sack.io.replay.valid, cc.io.replay.valid)
             val fastSequence = Mux(connection.io.sackEnabled, sack.io.replay.bits, cc.io.replay.bits)
-            data.io.replay.valid := connection.io.replay.valid || fastValid
-            data.io.replay.bits := Mux(connection.io.replay.valid, connection.io.replay.bits, fastSequence)
-            data.io.replayLimit := Mux(connection.io.replay.valid || !connection.io.sackEnabled, 65535.U, sack.io.limit)
-            sack.io.replay.ready := data.io.replay.ready && !connection.io.replay.valid
+            lossReplay.valid := connection.io.replay.valid || fastValid
+            lossReplay.bits := Mux(connection.io.replay.valid, connection.io.replay.bits, fastSequence)
+            lossReplayLimit := Mux(connection.io.replay.valid || !connection.io.sackEnabled, 65535.U, sack.io.limit)
+            sack.io.replay.ready := lossReplay.ready && !connection.io.replay.valid
             cc.io.replay.ready := Mux(connection.io.sackEnabled, sack.io.request.ready,
-                data.io.replay.ready && !connection.io.replay.valid)
+                lossReplay.ready && !connection.io.replay.valid)
         }
         io.congestionLimit := connection.io.congestionWindow
         io.congestionThreshold := cc.io.threshold; io.fastRecovery := cc.io.recovering
     }
+    // A PMTU reduction repairs the reserved range at the new segment size.
+    // Send one segment, wait for cumulative ACK progress, then continue.
+    // Queued old-size packets keep their original descriptor and drain; their
+    // sequence range is included in the captured horizon and repaired after
+    // actual physical completion. No new sequence or loss retry is allocated.
+    def after(a: UInt, b: UInt): Bool = {
+        val delta = (a - b)(31, 0); delta =/= 0.U && !delta(31)
+    }
+    val pmtuActive = RegInit(false.B)
+    val pmtuGeneration = Reg(UInt(32.W))
+    val pmtuHorizon = Reg(UInt(32.W))
+    val pmtuWaiting = RegInit(false.B)
+    val pmtuPrepared = RegInit(false.B)
+    val pmtuRestart = RegInit(false.B)
+    val pmtuAcknowledgement = Reg(UInt(32.W))
+    val pmtuFlight = (connection.io.sendActual - connection.io.sendOldest)(31, 0)
+    val pmtuRemaining = (pmtuHorizon - connection.io.sendOldest)(31, 0)
+    val pmtuRequest = pmtuActive && !pmtuWaiting && !pmtuPrepared &&
+        pmtuGeneration === connection.io.generation &&
+        pmtuRemaining =/= 0.U && !pmtuRemaining(31) &&
+        pmtuFlight =/= 0.U && !pmtuFlight(31) &&
+        !inactive && !failed
+    // Keep PMTU generation/range arithmetic before a cold register boundary.
+    // Only this registered offer enters shared replay lookup/reclamation logic.
+    // Generation advances only at OPEN in CLOSED or passive RST into LISTEN;
+    // inactive therefore cancels an old offer before a new epoch can use it.
+    val pmtuOffer = RegInit(false.B)
+    val pmtuOfferSequence = Reg(UInt(32.W))
+    val pmtuOfferLimit = Reg(UInt(16.W))
+    when(!pmtuOffer && pmtuRequest) {
+        pmtuOffer := true.B
+        pmtuOfferSequence := connection.io.sendOldest
+        pmtuOfferLimit := Mux(pmtuRemaining > 65535.U, 65535.U, pmtuRemaining)(15, 0)
+    }
+    val pmtuOfferLive = pmtuOffer && !inactive && !failed
+    val selectPmtu = !lossReplay.valid && pmtuOfferLive
+    data.io.replay.valid := lossReplay.valid || pmtuOfferLive
+    data.io.replay.bits := Mux(lossReplay.valid, lossReplay.bits, pmtuOfferSequence)
+    lossReplay.ready := data.io.replay.ready
+    data.io.replayLimit := Mux(selectPmtu, pmtuOfferLimit, lossReplayLimit)
+    when(data.io.replay.fire && selectPmtu) { pmtuOffer := false.B }
+    when(inactive || failed) { pmtuOffer := false.B }
+    when(data.io.replay.fire && selectPmtu && !data.io.replayMiss) {
+        pmtuPrepared := true.B
+    }
+    when(data.io.replay.fire && selectPmtu && data.io.replayMiss) {
+        // A cumulative ACK can retire the sampled offer during bank lookup.
+        // The queue revalidates live flight at acceptance and pins no stale
+        // payload. Rebuild at the current oldest rather than abandoning the
+        // remaining repair horizon. A miss at the current oldest is SYN/FIN
+        // sequence space, handled by the control plane without a RAM-read loop.
+        when(pmtuOfferSequence === connection.io.sendOldest) { pmtuActive := false.B }
+    }
+    when(data.io.prepared.valid && pmtuPrepared) {
+        pmtuPrepared := false.B
+        pmtuWaiting := !pmtuRestart
+        pmtuRestart := false.B
+        pmtuAcknowledgement := data.io.prepared.bits.sequence + data.io.prepared.bits.length
+    }
+    when(pmtuWaiting && !after(pmtuAcknowledgement, connection.io.sendOldest)) {
+        pmtuWaiting := false.B
+    }
+    when(pmtuActive && !after(pmtuHorizon, connection.io.sendOldest)) {
+        pmtuActive := false.B
+    }
+    when(connection.io.pathMtuChanged && !inactive && !failed) {
+        pmtuActive := true.B
+        pmtuGeneration := connection.io.generation
+        pmtuHorizon := connection.io.sendNext
+        pmtuWaiting := false.B
+        pmtuRestart := pmtuPrepared
+        // A previously accepted replay still owns its preparation handshake.
+        // It will be observed below; no second read is possible until then.
+    }
+    when(inactive || failed || (pmtuActive && pmtuGeneration =/= connection.io.generation)) {
+        pmtuActive := false.B; pmtuWaiting := false.B; pmtuPrepared := false.B; pmtuRestart := false.B
+    }
+    when(data.io.reserve.fire) { preparingTimeout := false.B }
+    when(data.io.replay.fire && !data.io.replayMiss) {
+        preparingTimeout := connection.io.replay.valid
+    }
+    dataTimeouts.io.enq.valid := data.io.prepared.valid
+    dataTimeouts.io.enq.bits := preparingTimeout
+    dataTimeouts.io.deq.ready := data.io.out.fire && data.io.out.bits.last
     io.freeBanks := data.io.freeBanks
 
     val commandRoom = controlDescriptors.io.enq.ready && !emptyPayload
@@ -253,6 +358,7 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     meta.completion.endSequence := Mux(meta.data, data.io.packet.sequence + data.io.packet.length,
         cp.command.sequence + cp.command.flags(1).asUInt + cp.command.flags(0).asUInt)
     meta.completion.retransmission := Mux(meta.data, data.io.packet.retransmission, cp.retransmission)
+    meta.completion.timeoutRetry := Mux(meta.data, dataTimeouts.io.deq.bits, cp.timeoutRetry)
     meta.sequenceSpace := meta.data || cp.sequenceSpace
     meta.probe := !meta.data && cp.probe
     meta.destinationIp := Mux(meta.data, connection.io.dataHeader.destinationIp, cp.command.destinationIp)
@@ -319,7 +425,10 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     val invalidReservation = connection.io.sendReserve.fire &&
         (connection.io.sendReserve.bits === 0.U || connection.io.sendReserve.bits > connection.io.sendMss ||
             connection.io.sendReserve.bits > connection.io.sendCredit)
-    io.fault := RegNext(invalidReservation, false.B) || data.io.fault || control.io.dropped ||
+    val timeoutDescriptorFault = RegNext(
+        (dataTimeouts.io.enq.valid && !dataTimeouts.io.enq.ready) ||
+        (data.io.out.valid && !dataTimeouts.io.deq.valid), false.B)
+    io.fault := RegNext(invalidReservation, false.B) || timeoutDescriptorFault || data.io.fault || control.io.dropped ||
         (control.io.out.valid && !controlDescriptors.io.deq.valid) ||
         (ledger.io.enq.valid && !ledger.io.enq.ready) || connection.io.invalidCompletion
     io.timeout <> connection.io.timeout

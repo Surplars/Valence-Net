@@ -21,3 +21,36 @@ Input(Vec(5, UInt(64.W))) produced a uint64_t array but a scalar setter using
 "io$$options != val" and "io$$options = val", which Clang rejected. The harness
 now uses five individually named 64-bit input ports, concatenated internally.
 This changes only host test accessors, not the production command bundle.
+
+GSIM deterministic initialization workaround
+===========================================
+
+Pinned revision: 93b8cd23edd3228807c4f2a08c19c3936a463cb2
+Upstream code: src/cppEmitter.cpp lines 887 and 890
+Generated code (both RANDOMIZE_INIT and normal branches):
+    memset(&_var_start, 0, &_var_end - &_var_start);
+
+Both markers are uint32_t members. Their pointer difference is a word count,
+but memset consumes a byte count, leaving about 3/4 of the generated state
+uncleared. Value-initializing the generated class with {} does not repair this:
+its user-provided default constructor invokes the same defective init().
+
+Reproduction: ethernet_errors.cpp poisons the primitive model-state byte range,
+calls generated init(), and proves the first byte clears while its last byte
+retains the poison. initializeGsimModel then clears the complete byte range and
+reruns init(), followed by normal hardware reset. ASan and UBSan remain enabled.
+The initial failing run read 240 from an uninitialized uint8_t carrier for a
+2-bit order FIFO element and indexed assigned[4] in TcpTransmitQueue. A 2-bit
+RTL value cannot represent 240; this is host-model initialization, not an RTL
+queue-capacity overflow.
+
+The helper operates only on the standard-layout, trivially-copyable generated
+base model's [_var_start, _var_end) byte range. It leaves cycles/log fields,
+activation flags and derived test members alone, then invokes init() to
+activate all combinational logic. It does not modify generated files, RTL RAM
+reset behavior, the pinned simulator checkout, or sanitizer options. This is
+the existing deterministic-zero GSIM policy applied over its intended range;
+it is not a claim that physical unreset SRAM powers up to zero.
+
+When updating GSIM, rerun the reproduction and remove/update the defect
+assertion and helper once the generator initializes the full intended range.

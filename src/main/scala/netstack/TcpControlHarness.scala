@@ -72,6 +72,7 @@ class TcpControlHarness extends Module {
         val sendMss = Output(UInt(16.W))
         val peerScale = Output(UInt(4.W))
         val scaleEnabled = Output(Bool())
+        val advertisedWindow = Output(UInt(16.W))
         val controlValid = Output(Bool())
         val controlGeneration = Output(UInt(32.W))
         val controlRetransmission = Output(Bool())
@@ -121,6 +122,9 @@ class TcpControlHarness extends Module {
     dut.io.open.bits.offerScale := io.offerScale
     dut.io.open.bits.localScale := io.localScale
     dut.io.passiveInitialSequence := io.passiveInitialSequence
+    dut.io.pathMtuLimit := 65535.U
+    dut.io.pathMtuUpdate.valid := false.B
+    dut.io.pathMtuUpdate.bits := 0.U.asTypeOf(new TcpPathMtuUpdate)
     dut.io.close.valid := io.closeValid
     dut.io.close.bits := io.abort
     dut.io.rx.valid := io.rxValid
@@ -152,6 +156,7 @@ class TcpControlHarness extends Module {
     dut.io.completed.bits.generation := io.completedGeneration
     dut.io.completed.bits.endSequence := io.completedEnd
     dut.io.completed.bits.retransmission := io.completedRetransmission
+    dut.io.completed.bits.timeoutRetry := io.completedRetransmission
     dut.io.retry.valid := io.retryValid
     dut.io.retry.bits := io.retryGeneration
     dut.io.replay.ready := io.replayReady
@@ -181,6 +186,7 @@ class TcpControlHarness extends Module {
     io.sendMss := dut.io.sendMss
     io.peerScale := dut.io.peerScale
     io.scaleEnabled := dut.io.scaleEnabled
+    io.advertisedWindow := dut.io.dataHeader.window
     io.controlValid := dut.io.control.valid
     io.controlGeneration := dut.io.control.bits.generation
     io.controlRetransmission := dut.io.control.bits.retransmission

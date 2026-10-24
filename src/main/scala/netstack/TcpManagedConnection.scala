@@ -23,6 +23,10 @@ class TcpManagedConnection(val ticksPerSecond: Int = 1000, val timeWaitTicks: In
     val timer = Module(new TcpRetransmissionTimer(ticksPerSecond))
     control.io.open <> io.open
     control.io.passiveInitialSequence := io.passiveInitialSequence
+    control.io.pathMtuLimit := io.pathMtuLimit
+    control.io.pathMtuUpdate <> io.pathMtuUpdate
+    io.pathMtu := control.io.pathMtu
+    io.pathMtuChanged := control.io.pathMtuChanged
     control.io.rx <> io.rx
     io.disposition <> control.io.disposition
     io.control <> control.io.control
@@ -91,8 +95,11 @@ class TcpManagedConnection(val ticksPerSecond: Int = 1000, val timeWaitTicks: In
     control.io.retry.valid := timer.io.expired && !retryQueued && !timeoutAbort && !inactive
     control.io.retry.bits := control.io.generation
     when(control.io.retry.fire) { retryQueued := true.B }
-    when(control.io.completionAccepted && io.completed.bits.retransmission) {
+    when(control.io.completionAccepted && io.completed.bits.timeoutRetry) {
         retryQueued := false.B
+        // The completion carries its origin through every queue. An older
+        // PMTU/fast replay completing while an RTO retry is queued must not
+        // release that retry's ownership or consume its loss budget.
         when(retries < 255.U) { retries := retries + 1.U }
     }
     when(progress || resetTimer) { retryQueued := false.B; retries := 0.U }

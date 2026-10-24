@@ -2,14 +2,20 @@
 
 Chisel hardware IPv4 TCP/UDP stack for the Valence FPGA SoC. The current
 integrated endpoint supports **four independent TCP sessions by default**
-(configurable from one to eight), together with shared UDP, ARP and ICMP Echo. It targets **10 Gb/s Ethernet** with a **128-bit, 156.25 MHz internal
+(configurable from one to eight), together with shared UDP, ARP, ICMP Echo/error handling and path-MTU feedback. It targets **10 Gb/s Ethernet** with a **128-bit, 156.25 MHz internal
 datapath (20 Gb/s raw bandwidth)**. Functional verification, cycle service
 capacity and physical timing are recorded separately.
 
-The multi-connection/SACK revision passes **31 functional targets**, including
+The current exception/PMTU revision passes **42 functional targets**, including
 complete-Ethernet single/four-context RX offered at 10G and sustained
-four-context TX. The default four-context core passes routed OOC timing at
-**156.25 MHz on ZU15EG-2**, with **+0.004 ns setup / +0.006 ns hold**.
+four-context TX. Its exact 101-file source set matches the routed OOC result:
+**156.25 MHz on ZU15EG-2, setup +0.001 ns / hold +0.006 ns**, with zero failing
+endpoints and complete routing. See the [current timing report](docs/timing/2026-10-24-042645/post_route_timing.rpt)
+and [source qualification](docs/timing/2026-10-24-042645/source-qualification.json).
+
+The earlier 31-target multi-connection/SACK baseline passed routed OOC timing
+at **156.25 MHz on ZU15EG-2**, with **+0.004 ns setup / +0.006 ns hold**.
+That historical margin does not certify the current sources.
 See [development evidence](docs/DEVELOPMENT.md) and the
 [original timing report](docs/timing/2026-10-23-113414/post_route_timing.rpt).
 SoC integration and board throughput remain separate validation steps.
@@ -49,6 +55,13 @@ when invoking tools from Windows. Windows Vivado uses frozen snapshots under
 - Zero-window persist probes with completion-gated exponential scheduling,
   independent of the loss retry budget.
 - ICMPv4 unicast Echo response after complete IP/ICMP checksum validation.
+- Bounded, rate-limited TCP resets for unowned/closed tuples, with complete
+  IPv4/TCP validation and isolation from busy or still-reserved connections.
+- ICMP protocol-unreachable replies and optional UDP port-unreachable replies;
+  validated destination-unreachable, time-exceeded and parameter-problem
+  feedback for locally originated TCP/UDP traffic.
+- Per-connection TCP path-MTU reduction and retained-data repair, plus bounded
+  UDP destination-MTU caching and application-visible oversized-datagram errors.
 
 Raw IP integration is available as `MultiTcpIpv4Endpoint`. The compatible
 single-session `EthernetTcpUdpEndpoint` and `TcpIpv4Endpoint` remain available.
@@ -92,11 +105,18 @@ are hidden until establishment. Normal close preserves unread bytes; reset or
 abort cancels them. Reopening waits for old RX ownership and TX completions to
 drain.
 
-Every submitted TCP IP packet, including ACK-only/probe packets, has an ordered
-tag/generation ledger entry. `txTcp/txTag/txGeneration` identify TCP Ethernet
-frames; `routed` reports route success/drop. The MAC adapter returns exactly
-one `completed` result per TCP submission, in order, echoing tag and generation.
-It must report failure for a routing drop or failed physical transmission.
+Every connection-owned TCP IP packet, including ACK-only/probe packets, has
+an ordered tag/generation ledger entry. `txTcp/txTag/txGeneration` identify
+those Ethernet frames; `routed` reports route success/drop. The MAC adapter
+returns exactly one `completed` result per tagged TCP submission, in order,
+echoing tag and generation. It must report failure for a routing drop or
+failed physical transmission.
+
+Stateless TCP resets use a separate exception path and have `txTcp=false`,
+just like UDP/ICMP/ARP frames. They allocate no connection ledger entry and
+must not receive a TCP `completed` callback, even though their IP protocol is
+TCP. Raw-IP tops expose `exceptionOut/exceptionDestinationIp` separately from
+the connection-owned `out/packet` stream.
 
 **IP/MAC queue acceptance does not mean physical transmission.** Only the
 adapter's actual physical completion can advance transmitted sequence state
@@ -111,6 +131,60 @@ must fit the configured IP MTU and the application's intended path. ISNs and
 passive listener filters are explicit open inputs. The default autonomous
 congestion policy is enabled at integrated endpoint level; `congestionWindow`
 is an additional upper cap. Raw scheduler tests can disable the policy.
+
+## Exception and path-MTU behavior
+
+Unknown TCP tuples can generate a reset only after full packet validation.
+An incoming ACK produces RST with its ACK as the response sequence; otherwise
+RST|ACK acknowledges payload plus SYN/FIN sequence space, including wrap.
+Incoming RST, invalid packets and prohibited broadcast/multicast addresses
+produce no response. Busy/reserved tuples remain silent; an unavailable
+listener is not treated as a closed port. The responder drains excess packets
+when its bounded storage or tick-based response budget is exhausted.
+
+The Ethernet tops suppress replies to link broadcasts. ICMP errors quote the
+original IPv4 header and up to eight payload bytes, excluding Ethernet padding.
+Unknown IP protocols can produce type 3/code 2. An elaboration-time
+`udpPorts` list enables UDP port filtering and type 3/code 3 replies for other
+ports, after UDP length/checksum validation. The default empty list retains
+accept-all UDP delivery. Responses are bounded and rate limited; error traffic
+does not have a line-rate response guarantee.
+
+Received ICMP types 3, 11 and 12 are advisory. Outer IP/ICMP and quoted IP
+checksums, supported lengths and unicast addresses are validated. TCP also
+checks the current four-tuple, generation and quoted sequence against
+physically completed, unacknowledged flight. This deliberately excludes an
+ACK-only quote at SND.NXT with no eligible unacknowledged sequence space;
+an idle sender cannot learn PMTU from that quote. An accepted fragmentation-needed
+report reduces only that connection's path MTU, within the configured link
+limit and IPv4 minimum of 68 bytes. Zero-MTU reports use lower standard
+plateaus anchored to the quoted datagram size; repeats cannot walk the same
+quote down the table.
+
+TCP applies the limit to new segments and repairs retained data without
+allocating new sequence space. Cumulative ACKs still reclaim storage. An
+already offered packet remains stable; subsequent repairs use the new limit,
+including applicable SACK/control-header budgets. PMTU repair does not itself
+consume the timeout-loss retry budget. A ten-minute path entry can return to
+the link ceiling only when no sent or reserved sequence space remains in flight.
+Negotiated peer MSS remains an independent upper bound.
+
+UDP uses four destination entries and eight recent successfully routed
+datagram identities by default. Feedback must match the tuple, IP ID/length,
+and quoted UDP length/checksum. History expires after 60 seconds and learned
+limits after ten minutes; `flushArp` also clears this path state. Route success
+is not a UDP physical-completion claim. A datagram above the selected MTU is
+accepted, fully drained and reported locally, with no transmitted fragment.
+
+`connections(i).pathMtu/networkError` (or single-session
+`pathMtu/networkError`) and `udpNetworkError` expose path state and notices.
+Error notices are `Valid` pulses: the consumer must capture them; they provide
+no backpressure or lossless event queue. A simultaneous local UDP rejection
+takes precedence over an advisory. Other accepted ICMP errors do not
+automatically abort TCP. ICMP quotations are not authenticated, and this
+implementation does not provide black-hole detection or packetization-layer
+PMTU probing. Raw-IP integrations must enforce link-layer broadcast policy and
+supply only validated `icmpError` events.
 
 ## Capacity and measured service budget
 
@@ -130,7 +204,7 @@ application writes also consume one bank apiece: the four-bank stress
 geometry reaches 9.36 Gb/s in that test, while the production eight-bank
 geometry meets the 10G service budget.
 
-The multi-context Ethernet harness uses four TX banks and a 2 KiB RX ring per
+The current multi-context Ethernet harness uses four TX banks and a 2 KiB RX ring per
 context. Sustained four-context TX checks 256 frames with independent physical
 callbacks and peer ACKs: **9 clocks/frame for 1 byte** and **100 clocks/frame for
 1460 bytes** (11.667 and 19.225 Gb/s wire-equivalent scheduling capacity).
@@ -140,7 +214,7 @@ byte checked. Final receive-window updates and zero-window reopening are checked
 These measurements use cached ARP and consumers that keep up, with reduced
 harness storage; routed timing uses full production storage.
 
-The current-source regression rechecks the compatible single-session top.
+The current 42-target regression also rechecks the compatible single-session top.
 `ethernet_service` checks complete Ethernet/IP/transport bytes, uses eight
 TX banks, autonomous Reno, cached ARP, prompt modeled physical completions/
 peer ACKs and ready consumers. It measures 256 packets per case, excluding
@@ -148,23 +222,29 @@ startup/drain and the first 32 completion intervals.
 
 | Path | Payload bytes | Cycles/packet | Wire-equivalent capacity at 156.25 MHz |
 | --- | ---: | ---: | ---: |
-| UDP TX | 0 / 1 / 17 | 9 | 11.667 Gb/s |
+| UDP TX | 0 / 1 / 17 | 10 | 10.500 Gb/s |
 | UDP RX | 0 / 1 / 17 | 7 | 15.000 Gb/s |
-| UDP TX / RX | 512 | 40 / 38 | 18.063 / 19.013 Gb/s |
-| UDP TX / RX | 1400 | 96 / 94 | 19.089 / 19.495 Gb/s |
+| UDP TX / RX | 512 | 41 / 38 | 17.622 / 19.013 Gb/s |
+| UDP TX / RX | 1400 | 97 / 94 | 18.892 / 19.495 Gb/s |
 | TCP TX | 1 | 9 | 11.667 Gb/s |
 | TCP TX | 64 | 13 | 13.654 Gb/s |
 | TCP TX | 1460 | 100 | 19.225 Gb/s |
 | TCP RX | 1 | 9 | 11.667 Gb/s |
 
-The current-source production-capacity probe
-(`build/production-rx-probe-20261023T114045Z`) checks the compatible single-session
+UDP TX now waits for the ordered route result used to commit its PMTU history,
+adding one service clock per datagram versus the historical baseline. The
+smallest case still meets the 10G service budget at the target clock; it does
+not establish that this source closes timing.
+
+The current production-capacity probe
+(`build/production-rx-probe-20261024T030328Z`) checks the compatible single-session
 Ethernet top. `python3 bench/production_rx_probe.py` uses an isolated source copy
-and enlarges only the service harness RX ring to
-the production 64 KiB capacity. TCP RX at 1460 bytes measures **98 cycles per
-packet / 19.617 Gb/s wire-equivalent**. The probe retains the harness's reduced
-ARP/completion/timer geometry, records its own source/model/result hashes,
-and leaves authoritative sources and the full-regression manifest untouched.
+and enlarges only the service harness RX ring to the production 64 KiB capacity.
+TCP RX at 1460 bytes measures **98 cycles per packet / 19.617 Gb/s wire-equivalent**.
+The probe retains the harness's reduced ARP/completion/timer geometry, records
+its own source/model/result hashes, and leaves authoritative sources and the
+full-regression manifest untouched. Its frozen source hashes match the current
+42-target source. Earlier production probes remain historical evidence.
 
 A companion `bench/production_reassembly_probe.py PROBE_DIRECTORY` reuses
 the verified 64 KiB model and checks 24 shuffled waves of eight retained
@@ -183,17 +263,23 @@ The 20G figure describes raw internal width-times-clock bandwidth.
 Dependencies: Mill 1.1.7, Scala 2.13.17, Chisel 7.3.0, Clang 19+ and GSIM
 revision `93b8cd23edd3228807c4f2a08c19c3936a463cb2`. The default GSIM
 checkout is read from /home/openion/Valence/simulator/build/gsim-src;
-override `GSIM_SOURCE` and `GSIM_CXX` for another installation. The build
-does not modify that checkout and does not require Verilator.
+override `GSIM_SOURCE` and `GSIM_CXX` for another installation. The current
+validation uses an independent native-WSL cache at the path shown below, at
+the same pinned revision. The build does not modify that checkout and does
+not require Verilator.
 
 ```sh
 cd /home/openion/Valence-Net
+export GSIM_SOURCE=/home/openion/.cache/valence-net/gsim-src-93b8cd23
+export GSIM_CXX=clang++-19
 python3 sim/run.py
 # Focused development regressions:
 python3 sim/run.py tcp_control tcp_managed tcp_data tcp_connection_tx
 python3 sim/run.py tcp_ring tcp_endpoint tcp_reassembly tcp_congestion tcp_congested_endpoint
 python3 sim/run.py ethernet_tcp ethernet_mixed ethernet_service
 python3 sim/run.py tcp_header_snapshot tcp_sack tcp_multi ethernet_multi ethernet_multi_rx
+python3 sim/run.py icmp_errors tcp_closed tcp_exception tcp_pmtu ethernet_errors network_errors
+python3 sim/run.py tcp_pmtu_pipeline window_scale body_window tcp_generation tcp_control_priority
 ```
 
 The runner emits FIRRTL/SystemVerilog, generates GSIM models, compiles C++20
@@ -211,16 +297,36 @@ mixed TCP/UDP/ICMP traffic and independent backpressure. Reassembly checks
 cover shuffled gaps, overlapping ranges, capacity exhaustion, sequence wrap,
 window clipping, ordered FIN, invalid admission, abort/reuse and old-ACK
 isolation from Reno. Tests use independent
-packet/checksum/byte expectations. They are not a claim of exhaustive TCP
-compliance or interoperability with a physical host.
+packet/checksum/byte expectations. Added adversarial tests cover ACKs overtaking
+staged PMTU repairs, abort/reopen and passive-reset generations, all negotiated
+window scales, clipped/overlapping receive bodies, cached-SACK transitions and
+competing control events. They are not a claim of exhaustive TCP compliance or
+interoperability with a physical host.
 
-The pinned GSIM constant-concatenation issue and equivalent wide-field
-placement are documented in `sim/gsim-known-issues.txt`.
+The pinned GSIM constant-concatenation, Vec-accessor and partial-state-clear
+issues are documented in `sim/gsim-known-issues.txt`. Multi-context peers use
+`gsim_model_init.h` to initialize the intended complete model byte range; the
+integrated error test reproduces the defect with poisoned storage. This is a
+simulator-only workaround and does not add RTL RAM resets or relax sanitizers.
 
 ## Vivado timing
 
 Target part: **xczu15eg-ffvb1156-2-i**. Clock: **6.4 ns**. Setup/hold
 uncertainty: **0.1 / 0.05 ns**. No false-path or multicycle exceptions are used.
+
+The current source closes timing in **20261024T042645Z**, a local refinement
+of the fully routed **20261024T030357Z** checkpoint. Signoff remains 6.4 ns with
+0.100/0.050 ns setup/hold uncertainty; the selected attempt used the same
+constraints throughout. All 244,596 routable nets remain fully routed. Setup,
+hold and pulse-width have zero failing endpoints; coverage, routing, blackbox,
+DRC and methodology error checks are clean.
+
+The core excluding the timing fixture uses **184,655 LUTs, 90,065 FFs,
+136 RAMB36 and 20 RAMB18**, with no DSP/URAM. The positive setup margin is small;
+repeat timing when integrating the SoC. [Original reports, hashes and warning review](docs/timing/2026-10-24-042645/artifact-hashes.json)
+retain the actual advisories rather than describing a warning-free run.
+
+The following figures belong to the earlier multi-context/SACK baseline.
 
 Snapshot **20261023T113414Z** completed route and physical refinement with
 zero failing setup/hold endpoints, clean timing coverage, zero routing errors
@@ -272,9 +378,10 @@ This revision supports 1–8 parallel TCP contexts and one local IPv4
 configuration. IPv4 IHL=5 and unfragmented traffic are supported. Receive gaps
 are retained in eight bounded reorder slots per connection. Cache overflow,
 overlapping cached ranges and oversized ranges are dropped for sender
-retransmission; the missing prefix can still enter a full cache. Unknown tuples
-and busy receive contexts are silently dropped; there is no listening backlog
-or automatic context allocator beyond the explicitly opened listener slots.
+retransmission; the missing prefix can still enter a full cache. Unowned tuples
+use the bounded reset responder; busy/reserved receive contexts are silently
+dropped. There is no listening backlog or automatic context allocator beyond
+the explicitly opened listener slots.
 
 SACK recovery uses a bounded advisory scoreboard and ACK-clocked conservative
 Reno recovery. It is **not a complete RFC 6675 Pipe/IsLost/rescue algorithm**.
@@ -286,9 +393,12 @@ NewReno/ECN, DSACK, delayed ACK aggregation, timestamps negotiation, IPv6,
 IP options/fragments, VLAN, multicast membership and dynamic routing remain
 outside this implementation.
 
-ICMP support currently covers Echo; ICMP errors/PMTU feedback are not
-implemented. TCP TTL/TOS currently use internal defaults. A secure autonomous
-ISN policy and configurable connection user-timeouts are future work.
+ICMP error handling covers the advisory types and locally generated unreachable
+responses described above; Source Quench and Redirect do not drive policy.
+There is no IPv4 fragmentation, forwarding/router error generation, ICMP
+authentication, black-hole fallback or PLPMTUD. TCP TTL/TOS currently use internal
+defaults. A secure autonomous ISN policy and configurable connection user-timeouts
+are future work.
 
 Physical MAC/PCS/PHY integration, DMA/Linux interfaces and board peer tests
 are separate integration work. These boundaries and the timing evidence must
@@ -302,4 +412,5 @@ Protocol references: [TCP](https://www.rfc-editor.org/rfc/rfc9293),
 [ARP](https://www.rfc-editor.org/rfc/rfc826),
 [IPv4](https://www.rfc-editor.org/rfc/rfc791),
 [UDP](https://www.rfc-editor.org/rfc/rfc768),
-[ICMP](https://www.rfc-editor.org/rfc/rfc792).
+[ICMP](https://www.rfc-editor.org/rfc/rfc792),
+[IPv4 PMTU discovery](https://www.rfc-editor.org/rfc/rfc1191).

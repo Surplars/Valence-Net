@@ -1,4 +1,5 @@
 #pragma once
+#include "gsim_model_init.h"
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -33,6 +34,8 @@ template<class Harness,bool Ethernet=false> struct MultiTcpPeer {
  std::map<uint64_t,MultiBlock> blocks;
  using Beat=std::tuple<uint64_t,uint64_t,unsigned,bool,bool,bool,MultiMeta>;
  std::optional<Beat> held;std::optional<MultiMeta> current;bool currentTcp=false;
+ std::vector<std::vector<uint8_t>> otherPackets;
+ unsigned tcpErrors=0,udpErrors=0,udpLocalErrors=0; unsigned lastTcpErrorMtu=0,lastUdpErrorMtu=0;
  std::vector<uint8_t> bytes,udpBytes;std::optional<MultiResult> injection;
  bool autoComplete=true,stallOutput=false,random=true;
  unsigned stallReceiveMask=0,cycles=0,completed=0,invalid=0,drops=0,busyDrops=0,arpFrames=0,icmpFrames=0;
@@ -40,6 +43,8 @@ template<class Harness,bool Ethernet=false> struct MultiTcpPeer {
  bool autoAcknowledge=false;unsigned automaticOffset=0,maxAckQueue=0;
  std::deque<std::vector<uint8_t>> automaticInput;
  MultiTcpPeer(){
+  initializeGsimModel(d, &Harness::init);
+  d.set_io$$exceptionReady(0);d.set_io$$udpCommandValid(0);d.set_io$$udpDataValid(0);
   d.set_io$$appConnection(0);d.set_io$$readConnection(0);
   d.set_io$$netValid(0);d.set_io$$netError(0);d.set_io$$receivedReady(0);
   d.set_io$$openMask(0);d.set_io$$closeMask(0);d.set_io$$allocateValid(0);d.set_io$$valid(0);
@@ -126,9 +131,21 @@ template<class Harness,bool Ethernet=false> struct MultiTcpPeer {
       check(type==0x0800&&bytes[23]==6,"TCP metadata on other protocol");
       bytes=std::vector<uint8_t>(bytes.begin()+14,bytes.begin()+14+u16(bytes,16));
      }else if(type==0x0806)++arpFrames;
-     else {check(type==0x0800&&bytes[23]==1,"unexpected nonTCP egress");++icmpFrames;
+     else {
+      check(type==0x0800,"unexpected non-IP egress");
       auto ip=std::vector<uint8_t>(bytes.begin()+14,bytes.begin()+14+u16(bytes,16));
-      check(sum({ip.begin(),ip.begin()+20})==0&&sum({ip.begin()+20,ip.end()})==0&&ip[20]==0,"bad ICMP reply");
+      check(ip.size()>=20&&sum({ip.begin(),ip.begin()+20})==0,"bad exception/UDP IPv4 header");
+      if(ip[9]==1){++icmpFrames;check(sum({ip.begin()+20,ip.end()})==0,"bad ICMP checksum");
+       check(ip[20]==0||ip[20]==3,"unexpected generated ICMP type");
+      }else if(ip[9]==6||ip[9]==17){
+       unsigned len=ip.size()-20;
+       std::vector<uint8_t>pseudo(ip.begin()+12,ip.begin()+20);pseudo.push_back(0);pseudo.push_back(ip[9]);
+       pseudo.push_back(len>>8);pseudo.push_back(len);pseudo.insert(pseudo.end(),ip.begin()+20,ip.end());
+       check(sum(pseudo)==0,"bad stateless TCP/UDP checksum");
+       if(ip[9]==6)check(ip.size()==40&&(ip[33]&4),"non-owned TCP must be a stateless reset");
+       else check(u16(ip,24)==len,"UDP wire length mismatch");
+      }else check(false,"unexpected IP protocol");
+      otherPackets.push_back(ip);
      }
     }
     if(currentTcp){
@@ -145,6 +162,8 @@ template<class Harness,bool Ethernet=false> struct MultiTcpPeer {
   for(unsigned c=0;c<4;++c)if((d.get_io$$storedValid())&(1U<<c)){
    check(!(d.get_io$$storedError()&(1U<<c)),"store failed");++stored[c];
   }
+  if(d.get_io$$networkErrorValid()){++tcpErrors;lastTcpErrorMtu=d.get_io$$networkErrorMtu();}
+  if(d.get_io$$udpNoticeValid()){++udpErrors;udpLocalErrors+=d.get_io$$udpNoticeLocal();lastUdpErrorMtu=d.get_io$$udpNoticeMtu();}
   drops+=d.get_io$$rxDrops();busyDrops+=d.get_io$$rxBusyDropped();
   if(d.get_io$$receivedValid()&&readReady){
    unsigned n=__builtin_popcount(d.get_io$$receivedKeep());check(n&&expectedRx[read].size()>=n,"unexpected application receive data");

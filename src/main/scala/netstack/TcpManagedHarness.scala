@@ -124,6 +124,9 @@ class TcpManagedHarness extends Module {
     dut.io.open.bits.offerScale := io.offerScale
     dut.io.open.bits.localScale := io.localScale
     dut.io.passiveInitialSequence := io.passiveInitialSequence
+    dut.io.pathMtuLimit := 65535.U
+    dut.io.pathMtuUpdate.valid := false.B
+    dut.io.pathMtuUpdate.bits := 0.U.asTypeOf(new TcpPathMtuUpdate)
     dut.io.close.valid := io.closeValid
     dut.io.close.bits := io.abort
     dut.io.rx.valid := io.rxValid
@@ -155,6 +158,7 @@ class TcpManagedHarness extends Module {
     dut.io.completed.bits.generation := io.completedGeneration
     dut.io.completed.bits.endSequence := io.completedEnd
     dut.io.completed.bits.retransmission := io.completedRetransmission
+    dut.io.completed.bits.timeoutRetry := io.completedRetransmission
     dut.io.replay.ready := io.replayReady
     dut.io.receiveWindow := io.receiveWindow
     dut.io.congestionWindow := io.congestionWindow

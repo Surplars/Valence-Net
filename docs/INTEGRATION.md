@@ -15,7 +15,9 @@ Use explicit packet FIFOs/CDC for independent MAC or system clock domains;
 the existing timing fixture verifies none of those crossings.
 
 Configure local MAC/IP, netmask, gateway and MTU while quiescent. Configure
-TCP MSS to fit the path MTU; there is no ICMP PMTU discovery. Set an appropriate
+TCP MSS as the application/peer upper bound. Each connection captures the link
+MTU at OPEN and reduces its effective send MSS when validated ICMP feedback
+reports a smaller path. Set an appropriate
 `congestionWindow` upper cap even when autonomous Reno is enabled; zero
 prevents new data transmission. Provide an ISN policy through open fields and
 `passiveInitialSequence`; there is no autonomous secure ISN generator.
@@ -180,7 +182,9 @@ bytes may retain older values; checksum and wire-header masking exclude them.
 
 The shared dispatcher validates the tuple prefix before selecting a context;
 the selected core still validates the complete packet before state changes.
-Unknown tuples and busy contexts drop complete packets. `rxBusyDropped` and
+Unknown tuples enter a separate complete-packet validator and rate-limited
+stateless RST responder. Existing but busy/reserved tuples remain owned and
+are dropped without a reset. `rxBusyDropped` and
 `rxDrops` expose drop events; an external MAC adapter still needs its own
 buffer/drop policy. Backpressure on one application's stream must not be
 interpreted as permission to stall the physical wire.
@@ -189,12 +193,91 @@ The UDP interface accepts a `udpSend` command followed by `udpIn` payload;
 `udpOut` carries received datagrams with stable associated address/port/length
 metadata. Empty UDP payloads use a single empty final beat.
 
+## ICMP errors and path MTU
+
+The ICMP input validates the complete outer IPv4 datagram and ICMP checksum,
+then the quoted IPv4 header/checksum and at least eight transport bytes.
+Destination Unreachable (type 3), Time Exceeded (11), and Parameter Problem
+(12) are advisory events. Source Quench and Redirect are ignored. An ICMP
+error alone does not abort a live TCP session.
+
+Each TCP application's `networkError` is a one-cycle Valid event containing
+connection generation, router address, type/code, pointer, quoted sequence and
+MTU. Latch it when valid; it has no ready/backpressure input. The separate
+`pathMtu` output exposes the learned ceiling. These ports do not implement a
+driver event queue or a socket error ABI.
+
+TCP quotes must match the live four-tuple and physically completed but
+unacknowledged sequence range, with modular sequence comparison. Pending
+feedback is checked again before delivery against current generation and ACK
+progress. A quoted unsent, already acknowledged, different-connection or old
+generation packet cannot lower the MTU. This is consistency validation, not
+cryptographic authentication of an ICMP router.
+
+Fragmentation Needed (type 3/code 4) must quote a DF packet and report a smaller
+MTU than both the current ceiling and the quoted packet. The minimum is 68
+bytes. Old routers reporting zero use the RFC 1191 plateau table. ICMP cannot
+raise the ceiling. After ten minutes without an accepted decrease, an idle
+connection may return to its captured link ceiling; publication rechecks that
+there is neither reserved nor completed outstanding sequence space.
+
+The peer-negotiated MSS is retained separately from the path ceiling. Future
+new data and replay fit the smaller MSS, including the exact TCP option bytes.
+A decrease immediately requests one retained-data replay, then advances with
+cumulative ACKs through the reserved horizon. Already offered packets remain
+stable; their bytes are repaired after their physical completions arrive.
+A pending FIN is reserialized with the smaller SACK option budget after
+preceding bytes are acknowledged. At PMTU 68, a control packet carries at
+most three SACK blocks. PMTU repair does not reduce the congestion window
+or consume the RTO retry budget. Internal origin metadata follows each
+retransmission through physical completion to distinguish real RTO attempts.
+
+UDP datagrams are not split by the core. `udpNetworkError` is a one-cycle Valid
+notice carrying destination/ports, payload length and MTU. `local=true`
+reports a rejected oversized application datagram: its complete input payload
+is still drained, no IP frame is emitted, and the notice is raised at the end.
+For `local=false`, type/code/router identify the received advisory ICMP error.
+A local rejection takes precedence if both notices coincide.
+
+The UDP path cache has four destination entries. An ICMP quote must exactly
+match one of the eight most recent successfully routed datagrams, including
+addresses/ports, IP identification, total length and UDP length/checksum.
+A failed route or a mere application command creates no history entry.
+UDP history expires after 60 seconds, learned ceilings after ten minutes;
+`flushArp` also invalidates this cache/history. UDP route success is not a
+physical transmission result and adds no new MAC completion requirement.
+Subsequent datagrams exceeding the learned limit are rejected with the local
+notice; the application chooses a smaller datagram.
+
+The default UDP application stream is a wildcard binding. Optional elaboration
+parameter `udpPorts=Seq(...)` restricts accepted destination ports; a closed
+UDP port generates code 3 only after full IP/UDP length and checksum validation.
+Unknown IP protocols generate code 2 with the actual original header and up to
+eight original payload bytes. Link/IP broadcast, multicast, invalid sources,
+fragments and ICMP errors never elicit these error replies. Stateless TCP
+responses also suppress received RSTs. Both reply paths have bounded storage
+and tick-based rate limits; overload drops exception responses.
+
+The Ethernet receive path retains the link broadcast indication through frame
+validation/header removal. TCP and ICMP on link-broadcast frames are suppressed;
+UDP can still be delivered to a configured/wildcard application. Optional UDP
+port classification adds a two-header-beat classifier only to that optional
+path; the default wildcard path is unchanged.
+
+This is ICMP-based PMTU discovery, without PLPMTUD or automatic recovery from
+routers/firewalls that silently discard ICMP. The source and tests retain the
+scope of IPv4 IHL=5, unfragmented packets. MAC/PHY, DMA/CSR and Linux adaptation
+remain separate work.
+
 ## Physical completion adapter
 
 Each TCP context has a 16-entry completion ledger by default. The multi core
 adds a shared ledger of `connectionCount * completionDepth` entries (64 by
-default), translating each global tag to the owner's local tag/generation. Every TCP
-packet needs one result, including pure ACKs and persist probes.
+default), translating each global tag to the owner's local tag/generation. Every
+connection-owned TCP packet needs one result, including pure ACKs and persist
+probes. Stateless CLOSED-tuple resets have no TCB or ledger ownership:
+`txTcp=false` for those frames, and no `completed` callback is expected.
+Classify completion ownership using this sideband, not IP protocol number.
 
 At the MAC-facing stream, latch `txTcp`, `txTag` and `txGeneration` for
 each accepted TCP frame. `txConnection` identifies its application context;

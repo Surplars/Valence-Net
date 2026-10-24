@@ -87,7 +87,7 @@ class TcpEndpointHarness(val autonomous: Boolean = false) extends Module {
         val reorderCount = Output(UInt(4.W)); val reorderDropped = Output(Bool())
         val congestionLimit = Output(UInt(32.W)); val congestionThreshold = Output(UInt(32.W)); val fastRecovery = Output(Bool())
     })
-    val dut = Module(new TcpIpv4Endpoint(4, 128, 64, 128, 10, 24, 4, 3, 4, autonomous))
+    val dut = Module(new TcpIpv4Endpoint(4, 128, 64, 128, 10, 24, 4, 3, 4, autonomous, closedResponses = false))
     dut.io.in.bits.data := Cat(io.hi,io.lo)
     dut.io.open.valid := io.openValid
     dut.io.open.bits.passive := io.passive
@@ -161,6 +161,9 @@ class TcpEndpointHarness(val autonomous: Boolean = false) extends Module {
     io.freeBanks := dut.io.freeBanks
     io.outstanding := dut.io.outstanding
     dut.io.localIp := io.localIp
+    dut.io.netmask := "hffffff00".U; dut.io.pathMtuLimit := 65535.U
+    dut.io.icmpError.valid := false.B; dut.io.icmpError.bits := 0.U.asTypeOf(new IcmpErrorEvent)
+    dut.io.exceptionOut.ready := true.B
     dut.io.rx.valid := io.netValid; io.netReady := dut.io.rx.ready
     dut.io.rx.bits.data := Cat(io.netHi, io.netLo); dut.io.rx.bits.keep := io.netKeep
     dut.io.rx.bits.last := io.netLast; dut.io.rx.bits.error := io.netError

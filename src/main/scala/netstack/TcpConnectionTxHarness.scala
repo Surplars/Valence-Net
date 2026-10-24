@@ -132,6 +132,9 @@ class TcpConnectionTxHarness extends Module {
     dut.io.open.bits.offerScale := io.offerScale
     dut.io.open.bits.localScale := io.localScale
     dut.io.passiveInitialSequence := io.passiveInitialSequence
+    dut.io.pathMtuLimit := 65535.U
+    dut.io.pathMtuUpdate.valid := false.B
+    dut.io.pathMtuUpdate.bits := 0.U.asTypeOf(new TcpPathMtuUpdate)
     dut.io.close.valid := io.closeValid
     dut.io.close.bits := io.abort
     dut.io.rx.valid := io.rxValid

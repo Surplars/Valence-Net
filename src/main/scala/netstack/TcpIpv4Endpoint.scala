@@ -15,9 +15,16 @@ class TcpIpv4Endpoint(val txBanks: Int = 8, val txBeats: Int = 128,
     val ticksPerSecond: Int = 1000, val timeWaitTicks: Int = 120000,
     val challengeTicks: Int = 10, val maxRetries: Int = 8,
     val completionDepth: Int = 16, val autonomousCongestion: Boolean = true, val sackSupport: Boolean = true,
-    val deferOpenClear: Boolean = false, val pipelineCompletions: Boolean = false) extends Module {
+    val deferOpenClear: Boolean = false, val pipelineCompletions: Boolean = false,
+    val closedResponses: Boolean = true) extends Module {
     val io = IO(new Bundle {
-        val localIp = Input(UInt(32.W))
+        val localIp = Input(UInt(32.W)); val netmask = Input(UInt(32.W))
+        val pathMtuLimit = Input(UInt(16.W))
+        val icmpError = Flipped(Valid(new IcmpErrorEvent))
+        val networkError = Valid(new TcpNetworkError)
+        val pathMtu = Output(UInt(16.W))
+        val exceptionOut = Decoupled(new PacketBeat(16))
+        val exceptionDestinationIp = Output(UInt(32.W))
         val open = Flipped(Decoupled(new TcpConnectionOpen))
         val passiveInitialSequence = Input(UInt(32.W))
         val close = Flipped(Decoupled(Bool()))
@@ -64,7 +71,38 @@ class TcpIpv4Endpoint(val txBanks: Int = 8, val txBeats: Int = 128,
     ip.io.out.ready := !selected || tcp.io.in.ready
     tcp.io.sourceIp := ip.io.source; tcp.io.destinationIp := ip.io.destination
     tcp.io.ipPayloadLength := ip.io.payloadLength
-    receive.io.metadata <> tcp.io.metadata; receive.io.payload <> tcp.io.payload
+    if (closedResponses) {
+        val responder = Module(new TcpResetTransmit(challengeTicks))
+        responder.io.localIp := io.localIp; responder.io.netmask := io.netmask; responder.io.tick := io.tick
+        io.exceptionOut <> responder.io.out; io.exceptionDestinationIp := responder.io.destinationIp
+        val listener = RegEnable(io.open.bits, io.open.fire)
+        val seg = tcp.io.metadata.bits
+        val tuple = connection.io.pathTuple
+        val exact = seg.sourceIp === tuple.remoteIp && seg.destinationIp === tuple.localIp &&
+            seg.sourcePort === tuple.remotePort && seg.destinationPort === tuple.localPort
+        val listening = connection.io.state === TcpState.listen.U &&
+            seg.destinationIp === io.localIp && seg.destinationPort === listener.localPort &&
+            (listener.remoteIp === 0.U || seg.sourceIp === listener.remoteIp) &&
+            (listener.remotePort === 0.U || seg.sourcePort === listener.remotePort)
+        val reserved = connection.io.state =/= TcpState.closed.U || !connection.io.ownershipDrained
+        val known = (reserved && connection.io.state =/= TcpState.listen.U && exact) || listening
+        val heldOld = connection.io.state === TcpState.closed.U && !connection.io.ownershipDrained && exact
+        val unknown = !known
+        responder.io.in.valid := tcp.io.metadata.valid && unknown && !connection.io.open.fire
+        responder.io.in.bits := seg
+        receive.io.metadata.valid := tcp.io.metadata.valid && known && !heldOld
+        receive.io.metadata.bits := seg
+        tcp.io.metadata.ready := Mux(unknown, responder.io.in.ready,
+            heldOld || receive.io.metadata.ready)
+        val discard = RegEnable(unknown || heldOld, tcp.io.metadata.fire)
+        receive.io.payload.valid := tcp.io.payload.valid && !discard
+        receive.io.payload.bits := tcp.io.payload.bits
+        tcp.io.payload.ready := discard || receive.io.payload.ready
+    } else {
+        receive.io.metadata <> tcp.io.metadata; receive.io.payload <> tcp.io.payload
+        io.exceptionOut.valid := false.B; io.exceptionOut.bits := 0.U.asTypeOf(new PacketBeat(16))
+        io.exceptionDestinationIp := 0.U
+    }
     connection.io.rx <> receive.io.rx;
     io.rxConsumed := connection.io.rxConsumed
     io.ownershipDrained := connection.io.ownershipDrained && receive.io.empty
@@ -97,6 +135,16 @@ class TcpIpv4Endpoint(val txBanks: Int = 8, val txBeats: Int = 128,
     connection.io.open.bits.localIp := io.localIp
     io.open.ready := connection.io.open.ready && receive.io.empty
     connection.io.passiveInitialSequence := io.passiveInitialSequence
+    connection.io.pathMtuLimit := io.pathMtuLimit
+    val feedback = Module(new TcpIcmpFeedback(ticksPerSecond))
+    feedback.io.error := io.icmpError; feedback.io.tuple := connection.io.pathTuple
+    feedback.io.state := connection.io.state; feedback.io.generation := connection.io.generation
+    feedback.io.oldest := connection.io.sendOldest; feedback.io.actual := connection.io.sendActual
+    feedback.io.reserved := connection.io.sendNext
+    feedback.io.pathMtu := connection.io.pathMtu; feedback.io.limit := io.pathMtuLimit
+    feedback.io.tick := io.tick; feedback.io.clear := connection.io.open.fire
+    connection.io.pathMtuUpdate := feedback.io.update
+    io.networkError := feedback.io.notice; io.pathMtu := connection.io.pathMtu
     connection.io.close <> io.close
     connection.io.tick := io.tick
     connection.io.congestionWindow := io.congestionWindow

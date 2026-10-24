@@ -4,8 +4,24 @@ import chisel3._
 import chisel3.util._
 
 /** Four-context test adapter; production interfaces remain explicit per-port. */
-class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
+class MultiTcpEndpointHarness(val ethernet: Boolean = false, val udpPorts: Seq[Int] = Seq.empty) extends Module {
     val io = IO(new Bundle {
+        val exceptionReady = Input(Bool()); val exceptionValid = Output(Bool())
+        val exceptionLo = Output(UInt(64.W)); val exceptionHi = Output(UInt(64.W))
+        val exceptionKeep = Output(UInt(16.W)); val exceptionLast = Output(Bool())
+        val exceptionDestination = Output(UInt(32.W))
+        val pathMtu = Output(UInt(16.W)); val sendMss = Output(UInt(16.W))
+        val networkErrorValid = Output(Bool()); val networkErrorType = Output(UInt(8.W))
+        val networkErrorCode = Output(UInt(8.W)); val networkErrorMtu = Output(UInt(16.W))
+        val udpCommandValid = Input(Bool()); val udpCommandReady = Output(Bool())
+        val udpTxDestination = Input(UInt(32.W)); val udpTxSourcePort = Input(UInt(16.W))
+        val udpTxDestinationPort = Input(UInt(16.W)); val udpTxLength = Input(UInt(16.W))
+        val udpTxIdentification = Input(UInt(16.W))
+        val udpDataValid = Input(Bool()); val udpDataReady = Output(Bool())
+        val udpDataLo = Input(UInt(64.W)); val udpDataHi = Input(UInt(64.W))
+        val udpDataKeep = Input(UInt(16.W)); val udpDataLast = Input(Bool())
+        val udpNoticeValid = Output(Bool()); val udpNoticeLocal = Output(Bool())
+        val udpNoticeMtu = Output(UInt(16.W)); val udpNoticeType = Output(UInt(8.W)); val udpNoticeCode = Output(UInt(8.W))
         val appConnection = Input(UInt(2.W)); val readConnection = Input(UInt(2.W))
         val openMask = Input(UInt(4.W)); val openReady = Output(UInt(4.W)); val openConflict = Output(UInt(4.W))
         val passive = Input(Bool()); val remoteIp = Input(UInt(32.W))
@@ -64,7 +80,9 @@ class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
     io.outKeep := tx.bits.keep; io.outLast := tx.bits.last; io.outError := tx.bits.error
 
     if (ethernet) {
-        val dut = Module(new MultiEthernetTcpUdpEndpoint(4, 128, 4, 128, 128, 4, 10, 24, 4, true))
+        io.exceptionValid := false.B; io.exceptionLo := 0.U; io.exceptionHi := 0.U
+        io.exceptionKeep := 0.U; io.exceptionLast := false.B; io.exceptionDestination := 0.U
+        val dut = Module(new MultiEthernetTcpUdpEndpoint(4, 128, 4, 128, 128, 4, 10, 24, 4, true, udpPorts))
         dut.io.localIp := "h0a000001".U; dut.io.localMac := "h020000000001".U
         dut.io.netmask := "hffffff00".U; dut.io.gateway := 0.U; dut.io.mtu := 1500.U
         dut.io.tick := io.tick; dut.io.flushArp := false.B
@@ -73,8 +91,19 @@ class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
         io.packetConnection := dut.io.packetConnection; io.txTcp := dut.io.txTcp
         io.routedValid := dut.io.routed.valid; io.routedFailed := dut.io.routed.bits.failed
         io.routedTag := dut.io.routed.bits.tag; io.routedGeneration := dut.io.routed.bits.generation
-        dut.io.udpSend.valid := false.B; dut.io.udpSend.bits := 0.U.asTypeOf(new UdpSendCommand)
-        dut.io.udpIn.valid := false.B; dut.io.udpIn.bits := 0.U.asTypeOf(new PacketBeat(16))
+        dut.io.udpSend.valid := io.udpCommandValid; io.udpCommandReady := dut.io.udpSend.ready
+        dut.io.udpSend.bits := 0.U.asTypeOf(new UdpSendCommand)
+        dut.io.udpSend.bits.sourceIp := "h0a000001".U
+        dut.io.udpSend.bits.destinationIp := io.udpTxDestination
+        dut.io.udpSend.bits.sourcePort := io.udpTxSourcePort; dut.io.udpSend.bits.destinationPort := io.udpTxDestinationPort
+        dut.io.udpSend.bits.length := io.udpTxLength; dut.io.udpSend.bits.identification := io.udpTxIdentification
+        dut.io.udpSend.bits.ttl := 64.U
+        dut.io.udpIn.valid := io.udpDataValid; io.udpDataReady := dut.io.udpIn.ready
+        dut.io.udpIn.bits.data := Cat(io.udpDataHi, io.udpDataLo); dut.io.udpIn.bits.keep := io.udpDataKeep
+        dut.io.udpIn.bits.last := io.udpDataLast; dut.io.udpIn.bits.error := false.B
+        io.udpNoticeValid := dut.io.udpNetworkError.valid; io.udpNoticeLocal := dut.io.udpNetworkError.bits.local
+        io.udpNoticeMtu := dut.io.udpNetworkError.bits.mtu
+        io.udpNoticeType := dut.io.udpNetworkError.bits.icmpType; io.udpNoticeCode := dut.io.udpNetworkError.bits.icmpCode
         dut.io.udpOut.ready := io.udpReady
         io.udpValid := dut.io.udpOut.valid; io.udpLo := dut.io.udpOut.bits.data(63, 0)
         io.udpHi := dut.io.udpOut.bits.data(127, 64); io.udpKeep := dut.io.udpOut.bits.keep
@@ -83,8 +112,19 @@ class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
         io.outstanding := dut.io.outstanding; io.fault := dut.io.fault || dut.io.conflict
         io.rxDrops := dut.io.rxDrops; io.rxBusyDropped := dut.io.rxBusyDropped
     } else {
+        io.udpCommandReady := false.B; io.udpDataReady := false.B
+        io.udpNoticeValid := false.B; io.udpNoticeLocal := false.B; io.udpNoticeMtu := 0.U
+        io.udpNoticeType := 0.U; io.udpNoticeCode := 0.U
         val dut = Module(new MultiTcpIpv4Endpoint(4, 4, 128, 128, 128, 10, 24, 4, 3, 4, true))
         dut.io.localIp := "h0a000001".U; dut.io.tick := io.tick
+        dut.io.netmask := "hffffff00".U
+        dut.io.pathMtuLimit := 65535.U
+        dut.io.icmpError.valid := false.B; dut.io.icmpError.bits := 0.U.asTypeOf(new IcmpErrorEvent)
+        dut.io.exceptionOut.ready := io.exceptionReady
+        io.exceptionValid := dut.io.exceptionOut.valid
+        io.exceptionLo := dut.io.exceptionOut.bits.data(63, 0); io.exceptionHi := dut.io.exceptionOut.bits.data(127, 64)
+        io.exceptionKeep := dut.io.exceptionOut.bits.keep; io.exceptionLast := dut.io.exceptionOut.bits.last
+        io.exceptionDestination := dut.io.exceptionDestinationIp
         dut.io.rx <> rx; tx <> dut.io.out; apps <> dut.io.connections
         dut.io.completed := completed; packet := dut.io.packet
         io.packetConnection := dut.io.packetConnection; io.txTcp := true.B
@@ -124,6 +164,10 @@ class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
     io.closeReady := VecInit(apps.map(_.close.ready)).asUInt
     io.noticeValid := VecInit(apps.map(_.notice.valid)).asUInt
     io.states := VecInit(apps.map(_.state)).asUInt
+    io.pathMtu := app.pathMtu; io.sendMss := app.sendMss
+    io.networkErrorValid := app.networkError.valid
+    io.networkErrorType := app.networkError.bits.icmpType; io.networkErrorCode := app.networkError.bits.icmpCode
+    io.networkErrorMtu := app.networkError.bits.mtu
     io.generation := app.generation; io.sendOldest := app.sendOldest
     io.sendNext := app.sendNext; io.sendActual := app.sendActual; io.receiveNext := app.receiveNext
     io.receiveWindow := app.receiveWindow; io.retries := app.retries; io.freeBanks := app.freeBanks
@@ -138,3 +182,5 @@ class MultiTcpEndpointHarness(val ethernet: Boolean = false) extends Module {
 }
 
 class MultiEthernetTcpHarness extends MultiTcpEndpointHarness(true)
+
+class MultiEthernetPortHarness extends MultiTcpEndpointHarness(true, Seq(1300))

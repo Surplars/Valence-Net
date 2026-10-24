@@ -18,6 +18,9 @@ for name, expected in provenance["rtl_sha256"].items():
         raise RuntimeError("Frozen RTL changed: " + name)
 if hashlib.sha256((root / "ooc.tcl").read_bytes()).hexdigest() != provenance["script_sha256"]:
     raise RuntimeError("Timing script changed after snapshot")
+for name, expected in provenance.get("checkpoint_sha256", {}).items():
+    if hashlib.sha256((root / name).read_bytes()).hexdigest() != expected:
+        raise RuntimeError("Frozen checkpoint input changed: " + name)
 progress = (root / "progress.txt").read_text().strip()
 if progress != "completed" and not args.partial:
     raise RuntimeError("Run is still incomplete: " + progress)
@@ -129,12 +132,26 @@ for top in provenance["targets"]:
         data[label] = {"source": source.group(1).strip() if source else None,
                        "destination": dest.group(1).strip() if dest else None,
                        "logic_levels": levels.group(1).strip() if levels else None}
-    data["numeric_timing_met"] = all(data[k] >= 0 for k in ["setup_wns_ns", "hold_whs_ns", "pulse_width_slack_ns"])
+    # Rounded WNS/WHS can print 0.000 while failing endpoints remain. Require
+    # the endpoint totals and the tool's final result as well as visible slack.
+    data["timing_failing_endpoints_clean"] = all(data[k] == 0 for k in [
+        "setup_failing_endpoints", "hold_failing_endpoints", "pulse_width_failing_endpoints"])
+    data["timing_totals_clean"] = all(data[k] == 0 for k in [
+        "setup_tns_ns", "hold_ths_ns", "pulse_width_total_slack_ns"])
+    data["tool_timing_status"] = rows[top]["status"]
+    data["numeric_timing_met"] = (all(data[k] >= 0 for k in [
+        "setup_wns_ns", "hold_whs_ns", "pulse_width_slack_ns",
+        "register_setup_ns", "register_hold_ns"]) and
+        all(float(rows[top][k]) >= 0 for k in ["setup_wns_ns", "hold_whs_ns"]) and
+        data["timing_failing_endpoints_clean"] and data["timing_totals_clean"] and
+        data["tool_timing_status"] == "TIMING_MET")
     data["timing_coverage_clean"] = all(checks[k] == 0 for k in required_checks)
     data["routed_timing_verified"] = (data["numeric_timing_met"] and
                                        data["timing_coverage_clean"] and
                                        data["routing_clean"] and data["blackboxes"] == 0 and
-                                       data["drc_errors"] == 0)
+                                       data["drc_errors"] == 0 and data["methodology_errors"] == 0 and
+                                       not report.get("tool_log_errors", []) and
+                                       not report.get("native_console_errors", []))
     data["stage"] = "routed"
     report["modules"][top] = data
 output = root / ("summary-partial.json" if progress != "completed" else "summary.json")

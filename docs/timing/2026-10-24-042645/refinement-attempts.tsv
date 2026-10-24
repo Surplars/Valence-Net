@@ -1,0 +1,2 @@
+attempt	optimization_setup_uncertainty_ns	signoff_setup_ns	signoff_hold_ns	routing_clean	timing_clean
+1	0.100	0.001	0.006	1	1

@@ -1,0 +1,2 @@
+top	setup_wns_ns	hold_whs_ns	register_setup_ns	register_hold_ns	blackboxes	status
+ValenceNetTimingTop	0.001	0.006	0.001	0.006	0	TIMING_MET

@@ -86,9 +86,13 @@ class EthernetIpv4Receive(val beatsPerPacket: Int = 1024) extends Module {
         val in = Flipped(Decoupled(new PacketBeat(16)))
         val out = Decoupled(new PacketBeat(16))
         val dropped = Output(Bool())
+        val linkBroadcast = Output(Bool())
     })
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
-    val metadata = Module(new Queue(UInt(16.W), 2))
+    val metadata = Module(new Queue(new Bundle {
+        val length = UInt(16.W); val broadcast = Bool()
+    }, 2))
+    val linkBroadcast = Reg(Bool())
     val slice = Module(new PacketSlice)
     val count = RegInit(0.U(17.W))
     val bad = RegInit(false.B)
@@ -100,6 +104,7 @@ class EthernetIpv4Receive(val beatsPerPacket: Int = 1024) extends Module {
     val nextCount = count +& PopCount(io.in.bits.keep)
     val legalKeep = (io.in.bits.keep & (io.in.bits.keep + 1.U)) === 0.U
     when(io.in.fire) {
+        when(count === 0.U) { linkBroadcast := io.in.bits.data(0) }
         count := Mux(nextCount > 131071.U, 131071.U, nextCount)
         bad := bad || !legalKeep || io.in.bits.keep === 0.U || io.in.bits.error ||
             (!io.in.bits.last && io.in.bits.keep =/= "hffff".U) ||
@@ -109,15 +114,17 @@ class EthernetIpv4Receive(val beatsPerPacket: Int = 1024) extends Module {
     buffer.io.verdict.valid := pending && metadata.io.enq.ready
     buffer.io.verdict.bits := !bad
     metadata.io.enq.valid := pending && buffer.io.verdict.ready && !bad && !buffer.io.dropped
-    metadata.io.enq.bits := (count - 14.U)(15, 0)
+    metadata.io.enq.bits.length := (count - 14.U)(15, 0)
+    metadata.io.enq.bits.broadcast := linkBroadcast
     when(buffer.io.verdict.fire) { count := 0.U; bad := false.B; pending := false.B }
     slice.io.config.valid := metadata.io.deq.valid
     metadata.io.deq.ready := slice.io.config.ready
     slice.io.config.bits.skip := 14.U
-    slice.io.config.bits.length := metadata.io.deq.bits
-    slice.io.config.bits.context := 0.U
+    slice.io.config.bits.length := metadata.io.deq.bits.length
+    slice.io.config.bits.context := metadata.io.deq.bits.broadcast
     slice.io.in <> buffer.io.out
     io.out <> slice.io.out
+    io.linkBroadcast := slice.io.context(0)
     io.dropped := buffer.io.dropped
 }
 

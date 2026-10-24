@@ -1,0 +1,20 @@
+{
+  "scope": "Explicit review of advisories; raw reports retained. Not a warning-free or board-qualified claim.",
+  "tool_critical_warnings": [
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'to' option of 'report_timing' is very large: 115032. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    },
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'from' option of 'report_timing' is very large: 115032. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    }
+  ],
+  "disposition": {
+    "Vivado 12-4439": "Four performance/large-collection warnings from complete register-path queries; requested reports and final DCP completed. No tool/native ERROR.",
+    "RTSTAT-10": "Only the fixture signature[63:0] output has no external routable loads; all actual routable nets are fully routed.",
+    "SYNTH-6/SYNTH-16": "Inferred BRAM output-register/collision advisories, retained for hardware/integration review; no methodology errors. Packet/storage ownership cases are covered by functional tests.",
+    "CLKC-3": "Intentionally fixed BUFG site of the reproducible timing fixture; required clock and uncertainty unchanged."
+  },
+  "reviewed": true
+}

@@ -7,6 +7,8 @@ import chisel3.util._
   * each port has independent flow control, receive credit and notifications.
   */
 class MultiTcpApplicationPort(val txBanks: Int, val completionDepth: Int) extends Bundle {
+    val pathMtu = Output(UInt(16.W))
+    val networkError = Valid(new TcpNetworkError)
     val open = Flipped(Decoupled(new TcpConnectionOpen))
     val passiveInitialSequence = Input(UInt(32.W))
     val close = Flipped(Decoupled(Bool()))
@@ -39,8 +41,8 @@ class MultiTcpApplicationPort(val txBanks: Int, val completionDepth: Int) extend
   * temporarily reserves a listener; a rejected packet releases that reservation.
   * Different listeners may share a local port and have optional peer filters.
   *
-  * Unknown tuples, unsupported IP headers and busy receive contexts are silently
-  * dropped, once per complete packet. No reset is generated for an unknown tuple.
+  * Unknown tuples use a bounded, rate-limited, fully validated reset responder.
+  * Unsupported headers and busy/reserved receive contexts are silently dropped.
   * A busy context does not hold the common ingress waiting for application space.
   *
   * Physical completions are GLOBAL submission order. packetConnection identifies
@@ -57,10 +59,14 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val connectionBits = math.max(1, log2Ceil(connectionCount))
     val globalDepth = connectionCount * completionDepth
     val io = IO(new Bundle {
-        val localIp = Input(UInt(32.W)); val tick = Input(Bool())
+        val localIp = Input(UInt(32.W))
+        val pathMtuLimit = Input(UInt(16.W))
+        val icmpError = Flipped(Valid(new IcmpErrorEvent)); val netmask = Input(UInt(32.W)); val tick = Input(Bool())
         val connections = Vec(connectionCount, new MultiTcpApplicationPort(txBanks, completionDepth))
         val rx = Flipped(Decoupled(new PacketBeat(16)))
         val out = Decoupled(new PacketBeat(16))
+        val exceptionOut = Decoupled(new PacketBeat(16))
+        val exceptionDestinationIp = Output(UInt(32.W))
         val packet = Output(new TcpWireDescriptor)
         val packetConnection = Output(UInt(connectionBits.W))
         val completed = Flipped(Valid(new TcpWireResult))
@@ -73,7 +79,7 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val cores = Seq.fill(connectionCount)(Module(new TcpIpv4Endpoint(txBanks, txBeats,
         rxWords, packetBeats, ticksPerSecond, timeWaitTicks, challengeTicks,
         maxRetries, completionDepth, autonomousCongestion,
-        deferOpenClear = true, pipelineCompletions = true)))
+        deferOpenClear = true, pipelineCompletions = true, closedResponses = false)))
     val config = Reg(Vec(connectionCount, new TcpConnectionOpen))
     val claimed = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))
     val releaseListener = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))
@@ -94,6 +100,11 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val routeValid = RegInit(false.B)
     val route = RegInit(0.U(connectionBits.W))
     val routeBusy = RegInit(false.B)
+    val routeClosed = RegInit(false.B)
+    val closed = Module(new TcpClosedResponder(packetBeats, challengeTicks))
+    closed.io.localIp := io.localIp; closed.io.netmask := io.netmask; closed.io.tick := io.tick
+    io.exceptionOut <> closed.io.out
+    io.exceptionDestinationIp := closed.io.destinationIp
     val ingress = Module(new Queue(new PacketBeat(16), 8))
     ingress.io.enq.valid := io.rx.valid && receiveState =/= classify && !inputDone
     ingress.io.enq.bits := io.rx.bits
@@ -122,10 +133,15 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val tupleOwned = Wire(Vec(connectionCount, Bool()))
     val exact = Wire(Vec(connectionCount, Bool()))
     val listen = Wire(Vec(connectionCount, Bool()))
+    val knownListener = Wire(Vec(connectionCount, Bool()))
     for (i <- 0 until connectionCount) {
         tupleOwned(i) := claimed(i) && config(i).localPort === destinationPort &&
             peerIp(i) === sourceIp && peerPort(i) === sourcePort
         exact(i) := tupleOwned(i) && !releaseListener(i) && cores(i).io.state =/= TcpState.closed.U
+        knownListener(i) := cores(i).io.state === TcpState.listen.U &&
+            config(i).localPort === destinationPort &&
+            (config(i).remoteIp === 0.U || config(i).remoteIp === sourceIp) &&
+            (config(i).remotePort === 0.U || config(i).remotePort === sourcePort)
         listen(i) := !claimed(i) && !releaseListener(i) && inFlight(i) === 0.U && cores(i).io.state === TcpState.listen.U &&
             config(i).localPort === destinationPort &&
             (config(i).remoteIp === 0.U || config(i).remoteIp === sourceIp) &&
@@ -153,14 +169,23 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
         receiveState := forward; route := chosen
         routeValid := supported && found && capacity
         routeBusy := supported && found && !capacity
+        // An owned tuple stays protected across abort, validation and completion
+        // drain. A temporarily unavailable LISTEN slot must not reject its SYN.
+        // LISTEN ignores non-SYN/non-ACK packets; an ACK may receive a reset.
+        routeClosed := supported && !found && !tupleOwned.asUInt.orR &&
+            (!knownListener.asUInt.orR || flags(4))
     }
+    closed.io.in.valid := receiveState === forward && routeClosed && ingress.io.deq.valid
+    closed.io.in.bits := ingress.io.deq.bits
+    // closed.in is always ready and may drop an entire packet while busy.
+    // Exception output congestion cannot add shared input backpressure.
     ingress.io.deq.ready := receiveState === forward && (!routeValid || indexed(rxReady, route))
     val receiveDone = ingress.io.deq.fire && ingress.io.deq.bits.last
     io.rxDropped := receiveDone && !routeValid
     io.rxBusyDropped := io.rxDropped && routeBusy
     when(receiveDone) {
         receiveState := collect; headerCount := 0.U; inputDone := false.B
-        routeValid := false.B; routeBusy := false.B
+        routeValid := false.B; routeBusy := false.B; routeClosed := false.B
     }
 
     val countFaults = Wire(Vec(connectionCount, Bool()))
@@ -214,6 +239,9 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
         acceptedOpens(i) := app.open.fire
         core.io.passiveInitialSequence := app.passiveInitialSequence
         core.io.close <> app.close; core.io.congestionWindow := app.congestionWindow
+        core.io.netmask := io.netmask; core.io.pathMtuLimit := io.pathMtuLimit
+        core.io.icmpError := io.icmpError; core.io.exceptionOut.ready := true.B
+        app.pathMtu := core.io.pathMtu; app.networkError := core.io.networkError
         app.notice <> core.io.notice; core.io.allocate <> app.allocate
         core.io.in <> app.in; app.stored <> core.io.stored; app.received <> core.io.received
         app.congestionLimit := core.io.congestionLimit; app.congestionThreshold := core.io.congestionThreshold

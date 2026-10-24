@@ -57,6 +57,11 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
     // subtract/compare behind a selected minimum.
     def min3(a: UInt, b: UInt, c: UInt): UInt =
         Mux(a <= b && a <= c, a, Mux(b <= c, b, c))
+    // Keep every replay bound comparison parallel; a selected MSS minimum
+    // would otherwise feed a second comparison before issuing the RAM read.
+    def min4(a: UInt, b: UInt, c: UInt, d: UInt): UInt =
+        Mux(a <= b && a <= c && a <= d, a,
+            Mux(b <= c && b <= d, b, Mux(c <= d, c, d)))
     def ge(a: UInt, b: UInt): Bool = !(a - b)(31)
     val store = Module(new TcpPayloadStore(banks, beatsPerBank))
     store.io.allocate <> io.allocate
@@ -152,9 +157,11 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
     // at the request handshake, without feeding them back into bank selection.
     val wireFlight = io.sendActual - io.sendOldest
     val replayInFlight = (replaySequence - io.sendOldest) < wireFlight
-    val effectiveMss = Mux(io.replayLimit < io.mss, io.replayLimit, io.mss)
-    val replayLength = min3(replayAvailable, effectiveMss, io.sendActual - replaySequence)(15, 0)
-    val replayGood = replayFound && replayInFlight && effectiveMss =/= 0.U
+    val replayLength = min4(replayAvailable, io.replayLimit, io.mss,
+        io.sendActual - replaySequence)(15, 0)
+    // min(limit, MSS) is nonzero exactly when both unsigned bounds are nonzero.
+    // Validity must not wait for the selected minimum used by length arithmetic.
+    val replayGood = replayFound && replayInFlight && io.replayLimit =/= 0.U && io.mss =/= 0.U
     val replayResolved = lookup === 2.U && sameRequest
     io.replay.ready := !pending && store.io.read.ready && replayResolved
     io.replayMiss := io.replay.fire && !replayGood

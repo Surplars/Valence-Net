@@ -1,0 +1,129 @@
+{
+  "scope": "Source-matched fully routed production core; local physical refinement, required 6.4ns / 0.100ns setup / 0.050ns hold signoff unchanged",
+  "part": "xczu15eg-ffvb1156-2-i",
+  "period_ns": 6.4,
+  "progress": "completed",
+  "frozen_rtl_hashes_verified": true,
+  "modules": {
+    "ValenceNetTimingTop": {
+      "setup_wns_ns": 0.001,
+      "setup_tns_ns": 0.0,
+      "setup_failing_endpoints": 0.0,
+      "setup_endpoints": 265035.0,
+      "hold_whs_ns": 0.006,
+      "hold_ths_ns": 0.0,
+      "hold_failing_endpoints": 0.0,
+      "hold_endpoints": 265035.0,
+      "pulse_width_slack_ns": 2.658,
+      "pulse_width_total_slack_ns": 0.0,
+      "pulse_width_failing_endpoints": 0.0,
+      "pulse_width_endpoints": 115189.0,
+      "coverage_checks": {
+        "no_clock": 0,
+        "constant_clock": 0,
+        "pulse_width_clock": 0,
+        "unconstrained_internal_endpoints": 0,
+        "no_input_delay": 0,
+        "no_output_delay": 0,
+        "multiple_clock": 0,
+        "generated_clocks": 0,
+        "loops": 0,
+        "partial_input_delay": 0,
+        "partial_output_delay": 0,
+        "latch_loops": 0
+      },
+      "register_setup_ns": 0.001,
+      "register_hold_ns": 0.006,
+      "blackboxes": 0,
+      "resources": {
+        "total_luts": 185643,
+        "logic_luts": 176543,
+        "lutram": 9100,
+        "srl": 0,
+        "ffs": 96796,
+        "ramb36": 136,
+        "ramb18": 20,
+        "uram": 0,
+        "dsps": 0
+      },
+      "core_module": "MultiEthernetTcpUdpEndpoint",
+      "core_resources": {
+        "total_luts": 184655,
+        "logic_luts": 175555,
+        "lutram": 9100,
+        "srl": 0,
+        "ffs": 90065,
+        "ramb36": 136,
+        "ramb18": 20,
+        "uram": 0,
+        "dsps": 0
+      },
+      "routing": {
+        "routable_nets": 244596,
+        "fully_routed_nets": 244596,
+        "routing_errors": 0
+      },
+      "routing_clean": true,
+      "drc_rules": [
+        {
+          "rule": "RTSTAT-10",
+          "severity": "Warning",
+          "count": 1
+        }
+      ],
+      "drc_errors": 0,
+      "methodology_rules": [
+        {
+          "rule": "SYNTH-6",
+          "severity": "Warning",
+          "count": 156
+        },
+        {
+          "rule": "SYNTH-16",
+          "severity": "Warning",
+          "count": 156
+        },
+        {
+          "rule": "CLKC-3",
+          "severity": "Advisory",
+          "count": 1
+        }
+      ],
+      "methodology_errors": 0,
+      "route_status_report": "/home/openion/Valence-Net/build/vivado/20261024T042645Z/ValenceNetTimingTop/post_route_status.rpt",
+      "drc_report": "/home/openion/Valence-Net/build/vivado/20261024T042645Z/ValenceNetTimingTop/post_route_drc.rpt",
+      "methodology_report": "/home/openion/Valence-Net/build/vivado/20261024T042645Z/ValenceNetTimingTop/post_route_methodology.rpt",
+      "worst_path": {
+        "source": "core/tcp/ledger/deq_ptr_value_reg[5]/C",
+        "destination": "core/ethTx/prepend/reservoir_reg[81]/D",
+        "logic_levels": "21  (CARRY8=1 LUT2=3 LUT3=2 LUT4=2 LUT5=5 LUT6=8)"
+      },
+      "worst_register_path": {
+        "source": "core/tcp/ledger/deq_ptr_value_reg[5]/C",
+        "destination": "core/ethTx/prepend/reservoir_reg[81]/D",
+        "logic_levels": "21  (CARRY8=1 LUT2=3 LUT3=2 LUT4=2 LUT5=5 LUT6=8)"
+      },
+      "timing_failing_endpoints_clean": true,
+      "timing_totals_clean": true,
+      "tool_timing_status": "TIMING_MET",
+      "numeric_timing_met": true,
+      "timing_coverage_clean": true,
+      "routed_timing_verified": true,
+      "stage": "routed"
+    }
+  },
+  "integrated_soc_timing_verified": false,
+  "tool_log_critical_warnings": [
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'to' option of 'report_timing' is very large: 115032. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    },
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'from' option of 'report_timing' is very large: 115032. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    }
+  ],
+  "tool_log_errors": [],
+  "native_console_errors": [],
+  "tool_log_review_required": true
+}
