@@ -1,0 +1,499 @@
+
+****** Vivado v2025.2 (64-bit)
+  **** SW Build 6299465 on Fri Nov 14 19:35:11 GMT 2025
+  **** IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+  **** SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+  **** Start of session at: Sun Oct 25 16:21:01 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source {E:\VM\Share\Valence-rtl\memory-lab-20261025-selective\synth.tcl} -notrace
+read_verilog: Time (s): cpu = 00:00:13 ; elapsed = 00:00:05 . Memory (MB): peak = 538.070 ; gain = 226.004
+Command: synth_design -top MemoryQueueHarness -part xczu15eg-ffvb1156-2-i
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xczu15eg'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xczu15eg'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 3600
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 1082.746 ; gain = 536.922
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'MemoryQueueHarness' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueueHarness.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'MemoryQueue' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue.sv:46]
+INFO: [Synth 8-6157] synthesizing module 'bram_fifo_2x128' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_2x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'bram_fifo_2x128' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_2x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'MemoryQueue' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue.sv:46]
+INFO: [Synth 8-6157] synthesizing module 'MemoryQueue_1' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue_1.sv:46]
+INFO: [Synth 8-6157] synthesizing module 'bram_fifo_3x128' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_3x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'bram_fifo_3x128' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_3x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'MemoryQueue_1' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue_1.sv:46]
+INFO: [Synth 8-6157] synthesizing module 'MemoryQueue_2' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue_2.sv:46]
+INFO: [Synth 8-6157] synthesizing module 'bram_fifo_16x128' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_16x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'bram_fifo_16x128' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_16x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'MemoryQueue_2' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueue_2.sv:46]
+INFO: [Synth 8-6155] done synthesizing module 'MemoryQueueHarness' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/MemoryQueueHarness.sv:2]
+WARNING: [Synth 8-6014] Unused sequential element _R0_en_d0_reg was removed.  [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_2x128.sv:75]
+WARNING: [Synth 8-6014] Unused sequential element _R0_en_d0_reg was removed.  [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_3x128.sv:75]
+WARNING: [Synth 8-6014] Unused sequential element _R0_en_d0_reg was removed.  [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/queue/bram_fifo_16x128.sv:75]
+WARNING: [Synth 8-7129] Port R0_en in module bram_fifo_16x128 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port R0_en in module bram_fifo_3x128 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port R0_en in module bram_fifo_2x128 is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 1203.121 ; gain = 657.297
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1203.121 ; gain = 657.297
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xczu15eg-ffvb1156-2-i
+INFO: [Synth 8-6742] Reading net delay rules and data
+INFO: [Device 21-403] Loading part xczu15eg-ffvb1156-2-i
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 1203.121 ; gain = 657.297
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6430] The Block RAM "bram_fifo_2x128:/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+INFO: [Synth 8-7082] The signal Memory_reg is implemented as Block RAM but is better mapped onto distributed LUT RAM for the following reason(s): The depth (1 address bits) is shallow. Please use attribute (* ram_style = "distributed" *) to instruct Vivado to infer distributed LUT RAM.
+WARNING: [Synth 8-6430] The Block RAM "bram_fifo_3x128:/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+INFO: [Synth 8-7082] The signal Memory_reg is implemented as Block RAM but is better mapped onto distributed LUT RAM for the following reason(s): The depth (2 address bits) is shallow. Please use attribute (* ram_style = "distributed" *) to instruct Vivado to infer distributed LUT RAM.
+WARNING: [Synth 8-6430] The Block RAM "bram_fifo_16x128:/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 1203.121 ; gain = 657.297
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input    5 Bit       Adders := 1     
+	   2 Input    4 Bit       Adders := 2     
+	   2 Input    2 Bit       Adders := 4     
+	   2 Input    1 Bit       Adders := 2     
++---Registers : 
+	              128 Bit    Registers := 3     
+	                5 Bit    Registers := 1     
+	                4 Bit    Registers := 3     
+	                2 Bit    Registers := 5     
+	                1 Bit    Registers := 6     
++---RAMs : 
+	               2K Bit	(16 X 128 bit)          RAMs := 1     
+	              384 Bit	(3 X 128 bit)          RAMs := 1     
+	              256 Bit	(2 X 128 bit)          RAMs := 1     
++---Muxes : 
+	   2 Input  128 Bit        Muxes := 3     
+	   4 Input   64 Bit        Muxes := 2     
+	   4 Input    5 Bit        Muxes := 1     
+	   2 Input    4 Bit        Muxes := 6     
+	   2 Input    2 Bit        Muxes := 8     
+	   2 Input    1 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 3528 (col length:168)
+BRAMs: 1488 (col length: RAMB18 168 RAMB36 84)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+RAM Pipeline Warning: Read Address Register Found For RAM queues_0/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_0/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_0/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+WARNING: [Synth 8-6430] The Block RAM "MemoryQueueHarness/queues_0/bram_fifo_ext/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+INFO: [Synth 8-7082] The signal queues_0/bram_fifo_ext/Memory_reg is implemented as Block RAM but is better mapped onto distributed LUT RAM for the following reason(s): The depth (1 address bits) is shallow. Please use attribute (* ram_style = "distributed" *) to instruct Vivado to infer distributed LUT RAM.
+RAM Pipeline Warning: Read Address Register Found For RAM queues_1/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_1/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_1/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+WARNING: [Synth 8-6430] The Block RAM "MemoryQueueHarness/queues_1/bram_fifo_ext/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+INFO: [Synth 8-7082] The signal queues_1/bram_fifo_ext/Memory_reg is implemented as Block RAM but is better mapped onto distributed LUT RAM for the following reason(s): The depth (2 address bits) is shallow. Please use attribute (* ram_style = "distributed" *) to instruct Vivado to infer distributed LUT RAM.
+RAM Pipeline Warning: Read Address Register Found For RAM queues_2/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_2/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_2/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+WARNING: [Synth 8-6430] The Block RAM "MemoryQueueHarness/queues_2/bram_fifo_ext/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_0/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_1/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM queues_2/bram_fifo_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:13 ; elapsed = 00:00:18 . Memory (MB): peak = 2086.223 ; gain = 1540.398
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name        | RTL Object                        | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|MemoryQueueHarness | queues_0/bram_fifo_ext/Memory_reg | 2 x 128(READ_FIRST)    | W |   | 2 x 128(WRITE_FIRST)   |   | R | Port A and B     | 0      | 2      |                 | 
+|MemoryQueueHarness | queues_1/bram_fifo_ext/Memory_reg | 3 x 128(READ_FIRST)    | W |   | 3 x 128(WRITE_FIRST)   |   | R | Port A and B     | 0      | 2      |                 | 
+|MemoryQueueHarness | queues_2/bram_fifo_ext/Memory_reg | 16 x 128(READ_FIRST)   | W |   | 16 x 128(WRITE_FIRST)  |   | R | Port A and B     | 0      | 2      |                 | 
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:13 ; elapsed = 00:00:18 . Memory (MB): peak = 2086.223 ; gain = 1540.398
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name        | RTL Object                        | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|MemoryQueueHarness | queues_0/bram_fifo_ext/Memory_reg | 2 x 128(READ_FIRST)    | W |   | 2 x 128(WRITE_FIRST)   |   | R | Port A and B     | 0      | 2      |                 | 
+|MemoryQueueHarness | queues_1/bram_fifo_ext/Memory_reg | 3 x 128(READ_FIRST)    | W |   | 3 x 128(WRITE_FIRST)   |   | R | Port A and B     | 0      | 2      |                 | 
+|MemoryQueueHarness | queues_2/bram_fifo_ext/Memory_reg | 16 x 128(READ_FIRST)   | W |   | 16 x 128(WRITE_FIRST)  |   | R | Port A and B     | 0      | 2      |                 | 
++-------------------+-----------------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance queues_0/bram_fifo_ext/Memory_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance queues_0/bram_fifo_ext/Memory_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance queues_1/bram_fifo_ext/Memory_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance queues_1/bram_fifo_ext/Memory_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance queues_2/bram_fifo_ext/Memory_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance queues_2/bram_fifo_ext/Memory_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:13 ; elapsed = 00:00:18 . Memory (MB): peak = 2086.223 ; gain = 1540.398
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |BUFG     |     1|
+|2     |LUT1     |     4|
+|3     |LUT2     |    10|
+|4     |LUT3     |     9|
+|5     |LUT4     |   262|
+|6     |LUT5     |     6|
+|7     |LUT6     |   144|
+|8     |RAMB36E2 |     6|
+|9     |FDRE     |   410|
+|10    |IBUF     |   134|
+|11    |OBUF     |   135|
++------+---------+------+
+
+Report Instance Areas: 
++------+------------------+-----------------+------+
+|      |Instance          |Module           |Cells |
++------+------------------+-----------------+------+
+|1     |top               |                 |  1121|
+|2     |  queues_0        |MemoryQueue      |   275|
+|3     |    bram_fifo_ext |bram_fifo_2x128  |   133|
+|4     |  queues_1        |MemoryQueue_1    |   278|
+|5     |    bram_fifo_ext |bram_fifo_3x128  |   134|
+|6     |  queues_2        |MemoryQueue_2    |   298|
+|7     |    bram_fifo_ext |bram_fifo_16x128 |   138|
++------+------------------+-----------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 12 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+Synthesis Optimization Complete : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 2280.613 ; gain = 1734.789
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 2295.168 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 135 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2409.578 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 135 instances were transformed.
+  BUFG => BUFGCE: 1 instance 
+  IBUF => IBUF (IBUFCTRL, INBUF): 134 instances
+
+Synth Design complete | Checksum: 930483bb
+INFO: [Common 17-83] Releasing license: Synthesis
+37 Infos, 12 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:19 ; elapsed = 00:00:26 . Memory (MB): peak = 2409.578 ; gain = 1871.508
+Command: synth_design -top UltraStoreProbe -part xczu15eg-ffvb1156-2-i
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xczu15eg'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xczu15eg'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 7 processes.
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'UltraStoreProbe' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/ultra/UltraStoreProbe.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'memory_1024x128' [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/ultra/memory_1024x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'memory_1024x128' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/ultra/memory_1024x128.sv:60]
+INFO: [Synth 8-6155] done synthesizing module 'UltraStoreProbe' (0#1) [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/ultra/UltraStoreProbe.sv:2]
+WARNING: [Synth 8-6014] Unused sequential element _R0_en_d0_reg was removed.  [E:/VM/Share/Valence-rtl/memory-lab-20261025-selective/ultra/memory_1024x128.sv:75]
+WARNING: [Synth 8-7129] Port R0_en in module memory_1024x128 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module UltraStoreProbe is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xczu15eg-ffvb1156-2-i
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6430] The Block RAM "memory_1024x128:/Memory_reg" may get memory collision error if read and write address collide. Use attribute (* rw_addr_collision= "yes" *) to avoid collision 
+WARNING: [Synth 8-12185] The ram_style = "ultra" set on RAM "memory_1024x128:/Memory_reg" is ignored because clocks on ports do not match.
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:07 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Registers : 
+	               10 Bit    Registers := 1     
++---RAMs : 
+	             128K Bit	(1024 X 128 bit)          RAMs := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 3528 (col length:168)
+BRAMs: 1488 (col length: RAMB18 168 RAMB36 84)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7129] Port reset in module UltraStoreProbe is either unconnected or has no load
+WARNING: [Synth 8-7129] Port io_re in module UltraStoreProbe is either unconnected or has no load
+RAM Pipeline Warning: Read Address Register Found For RAM memory_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM memory_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+RAM Pipeline Warning: Read Address Register Found For RAM memory_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+WARNING: [Synth 8-12182] Small sized RAM "UltraStoreProbe/memory_ext/Memory_reg" will be implemented using URAM because of explicit ram_style = "ultra" attribute.
+INFO: [Synth 8-5780] Default cascade height of 1 will be used for URAM '"UltraStoreProbe/memory_ext/Memory_reg"'.
+RAM Pipeline Warning: Read Address Register Found For RAM memory_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+WARNING: [Synth 8-12182] Small sized RAM "UltraStoreProbe/memory_ext/Memory_reg" will be implemented using URAM because of explicit ram_style = "ultra" attribute.
+INFO: [Synth 8-5780] Default cascade height of 1 will be used for URAM '"UltraStoreProbe/memory_ext/Memory_reg"'.
+RAM Pipeline Warning: Read Address Register Found For RAM memory_ext/Memory_reg. We will not be able to pipeline it. This may degrade performance. 
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6057] Memory: "memory_ext/Memory_reg" defined in module: "UltraStoreProbe" implemented as Ultra-Ram has no pipeline registers. It is recommended to use pipeline registers to achieve high performance.
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Ultra RAM: Preliminary Mapping Report (see note below)
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+|Module Name     | RTL Object            | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | URAM288 | Matrix Shape | FF provided for Pipeline | FF absorbed | 
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+|UltraStoreProbe | memory_ext/Memory_reg | 1 K x 128              | W |   | 1 K x 128              |   | R | Port A and B     | 2       | 1x1          | 0                        | 0           | 
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+
+Note: The table above is a preliminary report that shows the Ultra RAMs at the current stage of the synthesis flow. Some Ultra RAMs may be reimplemented as non Ultra RAM primitives later in the synthesis flow. Multiple instantiated Ultra RAMs are reported only once. Fields "FF provided for Pipeline" and "FF absorbed" respectively indicate number of registers available for pipelining and number of registers absorbed in the URAM matrix for pipelining. 
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-6057] Memory: "memory_ext/Memory_reg" defined in module: "UltraStoreProbe" implemented as Ultra-Ram has no pipeline registers. It is recommended to use pipeline registers to achieve high performance.
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Ultra RAM: Final Mapping Report
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+|Module Name     | RTL Object            | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | URAM288 | Matrix Shape | FF provided for Pipeline | FF absorbed | 
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+|UltraStoreProbe | memory_ext/Memory_reg | 1 K x 128              | W |   | 1 K x 128              |   | R | Port A and B     | 2       | 1x1          | 0                        | 0           | 
++----------------+-----------------------+------------------------+---+---+------------------------+---+---+------------------+---------+--------------+--------------------------+-------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance memory_ext/Memory_reg_uram_0 (implemented as a Ultra RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance memory_ext/Memory_reg_uram_1 (implemented as a Ultra RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:07 ; elapsed = 00:00:09 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |URAM288 |     2|
+|3     |IBUF    |   150|
+|4     |OBUF    |   128|
++------+--------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 11 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+Synthesis Optimization Complete : Time (s): cpu = 00:00:10 ; elapsed = 00:00:12 . Memory (MB): peak = 2409.578 ; gain = 0.000
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 2409.578 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 151 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2422.203 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 151 instances were transformed.
+  BUFG => BUFGCE: 1 instance 
+  IBUF => IBUF (IBUFCTRL, INBUF): 150 instances
+
+Synth Design complete | Checksum: 8837d549
+INFO: [Common 17-83] Releasing license: Synthesis
+55 Infos, 23 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:12 ; elapsed = 00:00:16 . Memory (MB): peak = 2422.203 ; gain = 12.625
+INFO: [Common 17-206] Exiting Vivado at Sun Oct 25 16:21:53 2026...

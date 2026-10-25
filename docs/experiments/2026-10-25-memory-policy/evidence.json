@@ -1,0 +1,25 @@
+{
+  "scope": "Synthesis-only discarded RAM-policy candidate; no routed timing qualification",
+  "candidate": "20261025T080158Z",
+  "part": "xczu15eg-ffvb1156-2-i",
+  "changed_source_to_selective_candidate": [
+    "src/main/scala/netstack/MemoryQueue.scala"
+  ],
+  "core": {
+    "total_luts": 173903,
+    "logic_luts": 172799,
+    "lutram": 1104,
+    "ffs": 100994,
+    "ramb36": 327,
+    "ramb18": 72,
+    "uram": 16,
+    "dsps": 0
+  },
+  "stop_reason": "Shallow BRAM queues inflated the control serializers, offsetting shared receive area savings.",
+  "sha256": {
+    "all-wide-MemoryQueue.scala": "91742478589e1453765a7d542cc08a745589718466e9369864cf0fe76d5ffc0b",
+    "post_synth_utilization.rpt": "122c428e31d625ccdb15ef6e50155440e2d8644bc51925f4b18f204d7095c186",
+    "stopped.json": "c792bc78fc680433ad6a7e656e2fef7b97d7017b61b4fd8fb4c3f768fa9fd3fb",
+    "provenance.json": "644d0999e463857e9a7265044e238b08323ce910b17c7b7c8cdc301628d4ba64"
+  }
+}

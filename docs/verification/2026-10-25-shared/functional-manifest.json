@@ -1,0 +1,973 @@
+{
+  "gsim_revision": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+  "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)",
+  "generated_models": {
+    "ChecksumHarness": {
+      "fingerprint": "fd71f4043276572f59d855826dc330a2a91ea2c2c5ef18aae4327a40f2c54328",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "ChecksumHarness.h": "c9c5dbc1378bb9db994d1a94daf1d6a382c284d157be8a54707f5032448a776f",
+          "ChecksumHarness0.cpp": "80b1fc555e6f3e5ec1cdb5c7cb5ba65a0fd4e8ce740af7923d1f459234a283cf"
+        }
+      },
+      "object_sha256": {
+        "fd71f4043276572f59d855826dc330a2a91ea2c2c5ef18aae4327a40f2c54328-0.o": "8620b1557225666843f126b90dfabd42843ca7bad8320f6d268f11415d124d4a"
+      }
+    },
+    "UdpHarness": {
+      "fingerprint": "a385625079066f185c1aa6cd467a342d5f16fe4271b23fdb7fd07bf210fdd990",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "UdpHarness.h": "27bb0fd1e7b9e49371d317e52615573aa008fbd5f89bec611cbddab0050464eb",
+          "UdpHarness0.cpp": "7055ad4212bd479c199802696c00df1f90f2ba952e030320cb6a23db58dadee5"
+        }
+      },
+      "object_sha256": {
+        "a385625079066f185c1aa6cd467a342d5f16fe4271b23fdb7fd07bf210fdd990-0.o": "2892b3b9d58e73bc94e273e09b1ee07e24b5fe26ff66c6fd443d9fa7849d38bf"
+      }
+    },
+    "BufferHarness": {
+      "fingerprint": "7fd90f325e6d23aa102dc0d94cb2c48d1a21bb07375acd689781a04d18861c22",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "BufferHarness.h": "45be982a55a6179573975463879bf4afde6dfaa922615e1b50ae589a165ba09a",
+          "BufferHarness0.cpp": "2ac5601431308b9508e57374a243dd9b1e5ffa4e7aeb375bfb8b2f24a9c97264"
+        }
+      },
+      "object_sha256": {
+        "7fd90f325e6d23aa102dc0d94cb2c48d1a21bb07375acd689781a04d18861c22-0.o": "dcda8a32709ed182815c17ae5b8533f7f80eb071b40f5b1aacb14be1f565255f"
+      }
+    },
+    "ReceiveHarness": {
+      "fingerprint": "b242ad4f9bd7b4303a0ffb5c86e77b35786350e4acdf5a0cd4ede431279d8a2b",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "ReceiveHarness.h": "c4f4ef9fe45871ef718d98d012184ea922ee8e21f985088446d84b206b7d810b",
+          "ReceiveHarness0.cpp": "74a934d5f7ac6be49a4b46560c669ca5b609c3a387fff12100a8f0c65c58253a"
+        }
+      },
+      "object_sha256": {
+        "b242ad4f9bd7b4303a0ffb5c86e77b35786350e4acdf5a0cd4ede431279d8a2b-0.o": "c68ecf37d9fb8fb9d5419d85947376b5a29561cd31f83d119a99d3ff5b1fb9f7"
+      }
+    },
+    "SliceHarness": {
+      "fingerprint": "6d64249e23352b3f5c3489013cffee52f35b557eb5a297d05015f4b30edf66d8",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "SliceHarness.h": "2620d1f26e2ac5532a206baf14b504d6cbb208075c2d67959570fd5e6e6408b1",
+          "SliceHarness0.cpp": "b3ab4e3bc0c3d90ea2bd5ea3bb0c9b9a845980487efbf3c7aeec5880f7d89dfd"
+        }
+      },
+      "object_sha256": {
+        "6d64249e23352b3f5c3489013cffee52f35b557eb5a297d05015f4b30edf66d8-0.o": "146ee8123d57f65c768598e6519adaba825c70e45bf742423524c66bc6f64519"
+      }
+    },
+    "IpReceiveHarness": {
+      "fingerprint": "598a2c5dfcc4061939e10d792a86ed75e1310224acfd8c6be3b51115f10e8f68",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "IpReceiveHarness.h": "187045e81e8554ac7bbbf6af76b440d9da19cbdd8f0d18aaddeeaaeda7369e75",
+          "IpReceiveHarness0.cpp": "b61986d67aea7eeb6f5f721fe32f248ca43502973a8f018b4c4c511c2547c4d1"
+        }
+      },
+      "object_sha256": {
+        "598a2c5dfcc4061939e10d792a86ed75e1310224acfd8c6be3b51115f10e8f68-0.o": "6eb08ea4c061d2a811238da623ebac7f1e9fa63f1f967c92576cbb75c5b33cd7"
+      }
+    },
+    "TransmitHarness": {
+      "fingerprint": "3be8fdd9220bf565805955543bcb6d120999397ff0037c821d2f0e8dda39f707",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TransmitHarness.h": "9b254d841ea337dba0cfbc3a08e8844b4dc2e8eaf370571cf6adc1cf76cf2aec",
+          "TransmitHarness0.cpp": "8ca81551e9e4a6dbc215ef637fb3a8b2c237fc06e0216953767229e6d7444917"
+        }
+      },
+      "object_sha256": {
+        "3be8fdd9220bf565805955543bcb6d120999397ff0037c821d2f0e8dda39f707-0.o": "00b7311271459936a8155470664863f529744e02322fdeac00efef3901418714"
+      }
+    },
+    "ArpHarness": {
+      "fingerprint": "11f48224e295851829ddeba1b61818ae72798dd2268233d29211541e676862df",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "ArpHarness.h": "d2bfcfe7ffae86b6c2aa67e63a59843882299923e45f64be8ae22cd97c32de5a",
+          "ArpHarness0.cpp": "78117f5b1d41c7fde26a98169b483bf0ab3a27d7b86f9844a3a96916a1356915"
+        }
+      },
+      "object_sha256": {
+        "11f48224e295851829ddeba1b61818ae72798dd2268233d29211541e676862df-0.o": "9b5465a30456e0fe292912c04706f05508487831998fb29a0180a694a121644c"
+      }
+    },
+    "EthernetHarness": {
+      "fingerprint": "b57b433b3383c640d50280f5a8296c4b63b52b57812b747c74f8d75c5874ed92",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "EthernetHarness.h": "0fd8ab116525334968bb20c375d13ec7272e9939d5f9049992668e280af1511e",
+          "EthernetHarness0.cpp": "681d969e04a814a10b60385bc4be23ed7f9c871c4cadb2f2ab79bd89a9abc4ba"
+        }
+      },
+      "object_sha256": {
+        "b57b433b3383c640d50280f5a8296c4b63b52b57812b747c74f8d75c5874ed92-0.o": "ce4891006f28c19f4ac21a74797200f7ace0888bec2fc296ee27ef6aca2bf8cb"
+      }
+    },
+    "TcpReceiveHarness": {
+      "fingerprint": "eda04b92f9c11b0e1d3bc1d5cb0631778093181a322fc432d261c85f5ad21035",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpReceiveHarness.h": "982030e2ad5eb2d4f65e4d91d09e63750f858365fa45af1c9ccdfbc08b91e909",
+          "TcpReceiveHarness0.cpp": "a757d10d6271843b33e74a32b3611bfb17cf079aecce4390e6478c555390546b"
+        }
+      },
+      "object_sha256": {
+        "eda04b92f9c11b0e1d3bc1d5cb0631778093181a322fc432d261c85f5ad21035-0.o": "56dfa50de54a0c0d77fb6a18535299959d4227b244adca10b0b8845031b87743"
+      }
+    },
+    "TcpTransmitHarness": {
+      "fingerprint": "475fdcf8d1cfa5b873fa7e6ada0b85ea4fde354757b52246ec28f918fd9805c6",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpTransmitHarness.h": "1d534dc577aa0db86d7357d8ce7fb603bd7a339cd60051a32e98b8105f37f1fd",
+          "TcpTransmitHarness0.cpp": "9e6b40ca5b57e051b690e4acef4a351333daf08289d536681dfd316109c2850c"
+        }
+      },
+      "object_sha256": {
+        "475fdcf8d1cfa5b873fa7e6ada0b85ea4fde354757b52246ec28f918fd9805c6-0.o": "ef6253fdcf273c1d8d5ebf918a9f3286d480d1985e266874f778bfd17747bfd9"
+      }
+    },
+    "TcpTimerHarness": {
+      "fingerprint": "e787ab206974d9df61cc6ece42fcb67afcdf95da4b4ff2ab0e79a24225a05163",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpTimerHarness.h": "3b9ab6dd9b3f4b25f5d6f4bd1383b8d27541ad1c5e233856dd3fa83c2eb39bcd",
+          "TcpTimerHarness0.cpp": "1b871aeed86d043e88e71de6be889875019d559b4c65d1d616bd35c055f0a1cd"
+        }
+      },
+      "object_sha256": {
+        "e787ab206974d9df61cc6ece42fcb67afcdf95da4b4ff2ab0e79a24225a05163-0.o": "9450938c8582721fd5c4384e5da2d7115e671bdeb356dfa2d5120d2e1579d56c"
+      }
+    },
+    "TcpPipelinedTimerHarness": {
+      "fingerprint": "ba984a5064cb7c69722d8c461097b6d84a07de0d7b02a6d84274e51c58ccc5ea",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpPipelinedTimerHarness.h": "0521915941e84ab8ed8d796e92b0c13e6651567bd793d7cd2f462e401d0304a9",
+          "TcpPipelinedTimerHarness0.cpp": "578fac14f8fc22a3f38e1673f7c5f0d4f0a9cb461bbfc50b3e642f08ba59c446"
+        }
+      },
+      "object_sha256": {
+        "ba984a5064cb7c69722d8c461097b6d84a07de0d7b02a6d84274e51c58ccc5ea-0.o": "82217ae28191d01160e97c5d91508b52fa090816c9a30701581e26dd0a3534af"
+      }
+    },
+    "TcpStoreHarness": {
+      "fingerprint": "25c17e65bd018fe073681e61622bff4726bc86c151d28b795e02dbb86e1632bd",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpStoreHarness.h": "ae4d703cc68d7020ce3505a0a7fdd429ba4ac4d8091c7e96559316c5a872fadd",
+          "TcpStoreHarness0.cpp": "d43f604b83def34f5f4a9e18cbf366713f6c8e85607ce39ab941befdc9ae171a"
+        }
+      },
+      "object_sha256": {
+        "25c17e65bd018fe073681e61622bff4726bc86c151d28b795e02dbb86e1632bd-0.o": "b3b01803cc67f2217852fb6b0a74892db6263f863a1fa4a4114f2fd779c3637b"
+      }
+    },
+    "TcpControlHarness": {
+      "fingerprint": "8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpControlHarness.h": "e3c911acea8b4e93c84b7b81beed075f695093ad9d57c4ecc2f673e25a9778da",
+          "TcpControlHarness0.cpp": "14fa19d6a90f8de60dc1ec574771c3622444224c74c50367f241e7833807a970"
+        }
+      },
+      "object_sha256": {
+        "8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o": "e6cd0068c4e5f5cb3fc0f85d895f2ee7eb040ab40b3741e546a38e279356c5fc"
+      }
+    },
+    "TcpManagedHarness": {
+      "fingerprint": "977d9bd301eb0450b86ef71780875a95e11ed964428d71909601a74f9879c30b",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpManagedHarness.h": "ed3f2552059ad3f9647f8b4c86d4f66857486c774250ef73ab46fd5b15c0ed8a",
+          "TcpManagedHarness0.cpp": "28f9ebe62d6750ce116c79737df4cdc9e303f84b29aeb6eb226f185a1dff693e"
+        }
+      },
+      "object_sha256": {
+        "977d9bd301eb0450b86ef71780875a95e11ed964428d71909601a74f9879c30b-0.o": "3cd47b89e01caa8e81a07340e60094658bd0d1ff15ee823e2423bc1dc7d15a65"
+      }
+    },
+    "TcpDataHarness": {
+      "fingerprint": "7eaf55bd3eb9beae7523495b8f53867ccb57c3f3e759c4f94070d749f6c7ac30",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpDataHarness.h": "02bf9799f5cfe9fa0f78e8d909c34493e362557d7d758c39547e8b2b706061dd",
+          "TcpDataHarness0.cpp": "b2a31e580a3cfa0a0f9651438fe7223be2545c37b71592f7c10e2e778be51817"
+        }
+      },
+      "object_sha256": {
+        "7eaf55bd3eb9beae7523495b8f53867ccb57c3f3e759c4f94070d749f6c7ac30-0.o": "c7717a9aafb0a1eef9df671a2d3096f232b064a918c97f9da60df24cde31e982"
+      }
+    },
+    "TcpConnectionTxHarness": {
+      "fingerprint": "1451bb8ae9a0adeaecdc97d46f978e962f621b864a70e17b65268603dff3a8dd",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpConnectionTxHarness.h": "e7ad9b7464ffa70eb8fda3efcfb16806454bb284b6e50efcfbdda9f2dab98ecb",
+          "TcpConnectionTxHarness0.cpp": "c3d753eb3aaebead3a6e324cdb339fb2ae8f9c4228b414e84a102202ef35fde3"
+        }
+      },
+      "object_sha256": {
+        "1451bb8ae9a0adeaecdc97d46f978e962f621b864a70e17b65268603dff3a8dd-0.o": "389aaa88cc00e3946ba2b0af6e55d9f9678a0e8967dd290556f6d9a6d937b703"
+      }
+    },
+    "TcpRingHarness": {
+      "fingerprint": "d35b4aea89eb6364c7ea591bf88e5cfcb8b662a3396521bf43bc73f65404837f",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpRingHarness.h": "1c365960f8985d3d9b991dc98b4ccb6a3ac466e0c171ef031e6c8d6a5f0eca81",
+          "TcpRingHarness0.cpp": "2c2817864c3f3314cb5303aabdc246bffef6404a80954e21957abb36b091618b"
+        }
+      },
+      "object_sha256": {
+        "d35b4aea89eb6364c7ea591bf88e5cfcb8b662a3396521bf43bc73f65404837f-0.o": "ab0abdd827b3aec0841aab60197da43b731adb5b51b30114f305f5d2f0305d72"
+      }
+    },
+    "TcpEndpointHarness": {
+      "fingerprint": "7284848e910f8e173e1bc4fcdb4c0a5928ec6069f5af1e5358d674cb8bcb684b",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpEndpointHarness.h": "5cb3437eb5d06992d1a3bf681b2594ca5a29a7e8e2ea08ac1e2c9b517c766ca8",
+          "TcpEndpointHarness0.cpp": "6154471e7ff1184697211542360d73d0ae5d96202660af5f0fb0655955e17e80"
+        }
+      },
+      "object_sha256": {
+        "7284848e910f8e173e1bc4fcdb4c0a5928ec6069f5af1e5358d674cb8bcb684b-0.o": "5a061400d619afcc98d023f6f46e4151af44bcf93d36ad91a0d2f31a347a7852"
+      }
+    },
+    "TcpCongestedEndpointHarness": {
+      "fingerprint": "b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpCongestedEndpointHarness.h": "fce46041f6a6c9d46993d0ddac62eb9f8370881aedfb7aa58c540cf765d220dc",
+          "TcpCongestedEndpointHarness0.cpp": "8ca285f2b2dcf5eb97f60edea413e13172ac99720f47697ea06a725887ce6b33"
+        }
+      },
+      "object_sha256": {
+        "b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288-0.o": "7c39f70dab7952857ee1ce2d62b6646f8ba6447cd3e61cc9857ec2bc339beaec"
+      }
+    },
+    "EthernetTcpHarness": {
+      "fingerprint": "ae0fb0b3d02ee2250debc6407e6f709219e9d4a46876d08aa1e50904297540c1",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "EthernetTcpHarness.h": "113622bb9afc20635734321375f54e2b5018c603fd9248f0c1b99127ef63f547",
+          "EthernetTcpHarness0.cpp": "0e329cb55c1e15e951232041b301961d8bcf98ce73fea5410648d2ae1d11796b"
+        }
+      },
+      "object_sha256": {
+        "ae0fb0b3d02ee2250debc6407e6f709219e9d4a46876d08aa1e50904297540c1-0.o": "4ff0a5dbf647b830740a4d6924934b2e550a3ee4a21c1c4dfe98e6930134df44"
+      }
+    },
+    "TcpCongestionHarness": {
+      "fingerprint": "f5fe6e8ae973c2b5983b379d26ad4c4edece6452c22cafc1590d15ba4a62d68b",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpCongestionHarness.h": "9eccc433698ac400486ae46e79f03b130c27cb206312d9ec4b91bd13f7a13df5",
+          "TcpCongestionHarness0.cpp": "4df7d956e1cd272f97830d7270b985efe0a7081e519be1bca3a83549e23200ea"
+        }
+      },
+      "object_sha256": {
+        "f5fe6e8ae973c2b5983b379d26ad4c4edece6452c22cafc1590d15ba4a62d68b-0.o": "e80b5010e2395105daecc31dfff745fef587da5910e795947c74ab2a70689c60"
+      }
+    },
+    "EthernetServiceHarness": {
+      "fingerprint": "330198820946b0f8ad35d890b7c1831c815ffc557c6f5f21910e0a9ec49255e6",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "EthernetServiceHarness.h": "6e0803eb00889ff41e632c024978ff804c776d68bd05e361cfc19d728edc06e8",
+          "EthernetServiceHarness0.cpp": "f1a21fe424e7a9f06b04a9660517281e5eb37e443db5916a46ade899710ade3d"
+        }
+      },
+      "object_sha256": {
+        "330198820946b0f8ad35d890b7c1831c815ffc557c6f5f21910e0a9ec49255e6-0.o": "c505d8cab26ff720fed414a599ebbde00737d73ea3c2e0b94bf79121a022b6d7"
+      }
+    },
+    "TcpHeaderSnapshotHarness": {
+      "fingerprint": "10bbda1dab3cf519e9004556689d20d699bf53f517b5fa13856e179ac00cf8ab",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpHeaderSnapshotHarness.h": "4407326c11b5a0a95ac758e4613504eeecc7e69846a9ba3687e8de5abbf31a3e",
+          "TcpHeaderSnapshotHarness0.cpp": "1d02d014b67bcf932a8c0834b5f2b4331c86ba4d47cb054a424f6934815060c9"
+        }
+      },
+      "object_sha256": {
+        "10bbda1dab3cf519e9004556689d20d699bf53f517b5fa13856e179ac00cf8ab-0.o": "c33beb36ee1181592a1d8610c7da509a8c1b46aa07080293ef2178bbdee63964"
+      }
+    },
+    "MultiTcpEndpointHarness": {
+      "fingerprint": "ecdb7efaff93b612142140a23687be345e7bbc507242f9092b28db8e9580cb41",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "MultiTcpEndpointHarness.h": "a72093b953442ec59e9fe446c018eec02b417933b6a6be5208a9d0e168c036e7",
+          "MultiTcpEndpointHarness0.cpp": "5f21c17dff44ed839da28bf17f5bfefdd87baee5836a853542062331edc20f55"
+        }
+      },
+      "object_sha256": {
+        "ecdb7efaff93b612142140a23687be345e7bbc507242f9092b28db8e9580cb41-0.o": "638a52d0171e590a94f931b506348f50406c8218519bf6dec4db4d9959ba45e9"
+      }
+    },
+    "MultiEthernetTcpHarness": {
+      "fingerprint": "78baab44d71835827301c7cdd1ec1c8665d4953cdaa9b72d0b7e7a9846fc9b1a",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "MultiEthernetTcpHarness.h": "377bd8cbdc40433236900cfb550129c83497d2adbe4aad56bc8c446bd6e5fa7f",
+          "MultiEthernetTcpHarness0.cpp": "9c1b66c55512ade3ff35de02a34dffe1ce45ca51c86c1ee1a4af00798edf5c3e"
+        }
+      },
+      "object_sha256": {
+        "78baab44d71835827301c7cdd1ec1c8665d4953cdaa9b72d0b7e7a9846fc9b1a-0.o": "f19b0487c08c57e26f776ecee6c01aad6d10c31b99d21d6fb77cbf3f4d083658"
+      }
+    },
+    "IcmpErrorsHarness": {
+      "fingerprint": "efe9e532638f40a79c850434aef7a9838e9937079927bdcce33ac5bc67ea5cb7",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "IcmpErrorsHarness.h": "19b03e97fc579e007dca2778d2624e3603f919f923035be1cd7d2ed4eb239d5d",
+          "IcmpErrorsHarness0.cpp": "498327812d4d0046e949a33a29058c4db300cd5765be87e0297de72fa1f02351"
+        }
+      },
+      "object_sha256": {
+        "efe9e532638f40a79c850434aef7a9838e9937079927bdcce33ac5bc67ea5cb7-0.o": "9fbd77d0af1018af68f846b6a90818ec65ac1508942e52f088efd7d27cf4522c"
+      }
+    },
+    "TcpClosedHarness": {
+      "fingerprint": "c62a24e26167b0a173139e2535f817da84a60d6621891ab9a703f82e48179954",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpClosedHarness.h": "f0e41450c4789da03c1b5f9b569f357fbbac6938ea9798d95ff54300bc531100",
+          "TcpClosedHarness0.cpp": "30c603b6f5ddbeab9f78448a44e3854f9d6da1e9d75675c62f4915a821a9fed8"
+        }
+      },
+      "object_sha256": {
+        "c62a24e26167b0a173139e2535f817da84a60d6621891ab9a703f82e48179954-0.o": "042a0767e919e7535eb2c690511ced2e82463ae1a5b0d4f97af0a4f1d2a8759a"
+      }
+    },
+    "TcpPmtuHarness": {
+      "fingerprint": "2e429983f78a5e8b4771d04de3143c8dea0bf2121dda16fea084e8b9f6d0eda5",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpPmtuHarness.h": "2f6d0f604e5a0122035f345ad2dc7e2741272a7b065b280a745eb4dbe987fae5",
+          "TcpPmtuHarness0.cpp": "e5f2e382f4846526e7b384a06fecfeaf5dccbd628bfd337f4fae988839cc68f2"
+        }
+      },
+      "object_sha256": {
+        "2e429983f78a5e8b4771d04de3143c8dea0bf2121dda16fea084e8b9f6d0eda5-0.o": "7f32789fec29ecd14ee7fefc054e86158b0d110468a9d418c0d07f2bab91677e"
+      }
+    },
+    "MultiEthernetPortHarness": {
+      "fingerprint": "588e5047aa6be7caba191cad605e7c33cb6dd6ebaa9712a86994a2dbbb44bba5",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "MultiEthernetPortHarness.h": "d3484a90ba14ae06632b393aa819f32974ae86e4ad826f1129fe44b2ffee30d3",
+          "MultiEthernetPortHarness0.cpp": "f75089dd67b23bcb5d562dfbe18a5c536ba9c940418ed797a0e9ddae9836ebfb"
+        }
+      },
+      "object_sha256": {
+        "588e5047aa6be7caba191cad605e7c33cb6dd6ebaa9712a86994a2dbbb44bba5-0.o": "5a8149d1b803d92396559d6d99175d7b5ddd0460d2cc2045e686a9d27b460ec1"
+      }
+    },
+    "NetworkErrorsHarness": {
+      "fingerprint": "d38cb28dd900e7b927a57edb56b069dd810db715b0bd34f0243c5e0375b12592",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "NetworkErrorsHarness.h": "6d52bedd80ee67e2d8065169226fa7dac75f538a108bebb65beed70b5b06b0bf",
+          "NetworkErrorsHarness0.cpp": "dfcbe01b1985bbf2afb7bdac5f9e20d05ee829731375f5cc9490e7adecc2d09c"
+        }
+      },
+      "object_sha256": {
+        "d38cb28dd900e7b927a57edb56b069dd810db715b0bd34f0243c5e0375b12592-0.o": "66eb8396e02a2ec9b5dcfbc1931b282beab001bbe4893e6ed2f449dd0511d6a5"
+      }
+    },
+    "MemoryQueueHarness": {
+      "fingerprint": "e7124cca336fbd9e68c197e128d29483d33844f2e72b3d1abc4ecffdddedd169",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "MemoryQueueHarness.h": "c63d98bc8c31445a38f436bb7b1954d3325d4d87958cc0f2822c5ea4f9050d3f",
+          "MemoryQueueHarness0.cpp": "2a2740786f7e12206d37b2f25b2bf84044376a094b7c549fdf4c64d2409e8663"
+        }
+      },
+      "object_sha256": {
+        "e7124cca336fbd9e68c197e128d29483d33844f2e72b3d1abc4ecffdddedd169-0.o": "ad52a943e0a8758814299e157079da34fb85daf059e5e230e2f3edfa08c585ef"
+      }
+    },
+    "SharedTcpReceiveHarness": {
+      "fingerprint": "f867af6d063e7d32e246b7805b221485610601a423bc5afa1a28744524cc3f42",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "SharedTcpReceiveHarness.h": "b314d06e2b40d82ca2660c483512e7dd89ed44d4a53ae6f1fc07fa34ddc07d0b",
+          "SharedTcpReceiveHarness0.cpp": "156b208723bdb89514c4a6409e5a7310e795c0172b47a85fc42eea3db8d6d18f"
+        }
+      },
+      "object_sha256": {
+        "f867af6d063e7d32e246b7805b221485610601a423bc5afa1a28744524cc3f42-0.o": "601e0c18b4374695d1973715739df29fdd1eb7c91490874ef33b4c7172f88fd4"
+      }
+    },
+    "TcpGenerationHarness": {
+      "fingerprint": "258ac9e7091f853d3ed9796d6e9d2c569e2cb9b77eacd9b74b2d173a000df1be",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpGenerationHarness.h": "45829fff20846d64575d37524ff971124b04d792f66aae399304790f92c9d2e8",
+          "TcpGenerationHarness0.cpp": "8b4366ef010e4945db96587409b0a19fecddfa4e94a2d3d07cd50645f56674da"
+        }
+      },
+      "object_sha256": {
+        "258ac9e7091f853d3ed9796d6e9d2c569e2cb9b77eacd9b74b2d173a000df1be-0.o": "9a4fb2200ffa3c760e24716333080990ed1d97f2aa85d8407c1f2052f2a3452b"
+      }
+    },
+    "TcpSackSnapshotHarness": {
+      "fingerprint": "3e2bd2816ee078f96000fd06f181e9681af667e0ade67d28ba20775edc03277b",
+      "identity": {
+        "compiler": "Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n",
+        "compiler_path": "/usr/bin/clang++-19",
+        "flags": [
+          "-std=c++20",
+          "-O1",
+          "-g",
+          "-fsanitize=address,undefined",
+          "-fno-sanitize-recover=all"
+        ],
+        "inputs": {
+          "TcpSackSnapshotHarness.h": "ed10b5b0593ea91014eac07b94feb9ec5f3d7a4874ee3b86446617113910b8b7",
+          "TcpSackSnapshotHarness0.cpp": "3a147468b663a32d55e46e2f8de6ce1954bc723270216ef13e24454049000290"
+        }
+      },
+      "object_sha256": {
+        "3e2bd2816ee078f96000fd06f181e9681af667e0ade67d28ba20775edc03277b-0.o": "2e771f491688ba1b419e95d6a176697128bad7336428c059bfeb3cf2f84221f7"
+      }
+    }
+  },
+  "source_sha256": {
+    "src/main/scala/netstack/ArpEngine.scala": "db014d8dcdc18900a042ffae232b154fea35c0c9ad65f86d1bbef555f175a4b8",
+    "src/main/scala/netstack/ArpWire.scala": "637358d3635a2e88dd7ab5967f8c37efb5575804b5aeb0ca32c71586160148cd",
+    "src/main/scala/netstack/Emit.scala": "3b9ba68cb4bf9ba117e765c2066c78b2c990f97d5801e159bef5dcc052f3e5a9",
+    "src/main/scala/netstack/Ethernet.scala": "c9515cc9df1f01b0b159d46e455c13cd19a97bbf9ef2641904fa163437d55985",
+    "src/main/scala/netstack/EthernetTcpHarness.scala": "c53945a02ad5200e26207ae4ebf21d5231655d7c8247595db5c2e03cf5ed3e51",
+    "src/main/scala/netstack/EthernetTcpUdpEndpoint.scala": "1689b5c0033699a9de3abe75af4591f9a95f3bfbad4bd0c775e6592a631a8197",
+    "src/main/scala/netstack/EthernetUdpEndpoint.scala": "ef782b9568d716233d5b28c3b07a923a9faa9d43af4ca6287ea8bd8d5289228e",
+    "src/main/scala/netstack/IcmpErrorsHarness.scala": "38fb4ce5ba9f6446d14de683a9c493a2746670a115a8b288d513cdad339982c1",
+    "src/main/scala/netstack/InternetChecksum.scala": "0629c1b18479ba6eae9c7b6a85455524b40c33c2f62d9b5aaf7f30b735a167e6",
+    "src/main/scala/netstack/Ipv4IcmpEcho.scala": "05c309c720f857dd3a9413fbbf585b8b21172724f9d73c42ea7f348dab36f6c5",
+    "src/main/scala/netstack/Ipv4IcmpErrors.scala": "c04f1ddc7d5fc3c72ada99179a1a8505ad87e80569dc564f20b89defc84f85d7",
+    "src/main/scala/netstack/Ipv4Receive.scala": "b394d209cd279dbb0de5fae38a3f451911a09b636bcdd0714bd656fc9e834485",
+    "src/main/scala/netstack/Ipv4TcpTransmit.scala": "05708d6ac14375676e99d7826f3ab1a9259df149ddd9e1664cb9eab0e3590ff8",
+    "src/main/scala/netstack/Ipv4UdpPathTransmit.scala": "8040682e7856f02341aecc8616c6dbef1476b724aa60fe6a7da944ca029001e8",
+    "src/main/scala/netstack/Ipv4UdpPortDispatch.scala": "16288614d05c5dca3b9b995d8f737ea9997651972f11d237a80abae077c94017",
+    "src/main/scala/netstack/Ipv4UdpTransmit.scala": "d54f1f79029c610db5ce7d21e687dc06de0503ebdf9ec0cd4b2d094c67ffcbcd",
+    "src/main/scala/netstack/Ipv4Validate.scala": "65274712683c57ad9e42f7e5e8189d027fb4abf09698c5751b5f25a8727a1ecb",
+    "src/main/scala/netstack/MemoryExport.scala": "e37c61a56c5d1f41c5cb03271b911d945dd79697ec87b2bc4877e550bfa62a85",
+    "src/main/scala/netstack/MemoryQueue.scala": "e4195357684331c83b4ebdc6ed09e61b6393dfdba32d4270b29b4721300c2ebf",
+    "src/main/scala/netstack/MultiEthernetTcpUdpEndpoint.scala": "410c78d5fd9ba4ecc61a11f9bba9bcdd55c9b8399df46894fa4257ef10eaafed",
+    "src/main/scala/netstack/MultiTcpEndpointHarness.scala": "472be7eba574ced0171cdb7f4cf56ebed38e28610a029cabf369f39878f94100",
+    "src/main/scala/netstack/MultiTcpIpv4Endpoint.scala": "3a974399f896f98df33e340b9e7613b599df13e4bf9f3ef6d5e1c37dbbe44c5e",
+    "src/main/scala/netstack/NetworkErrorsHarness.scala": "cfba66de677c018d56bcee1a7b98bd648b2f931f3704410d943b0ba161bb1570",
+    "src/main/scala/netstack/PacketCommitBuffer.scala": "268be6f5ba8f6b8ffd116008a2f6f85d5478b85df886de7ee4625265eeec52cc",
+    "src/main/scala/netstack/PacketPrepend.scala": "7fc3cd08c97e5e6a693a6ba6add510b8c63d3833ab9680ee53e1f520e5927a6b",
+    "src/main/scala/netstack/PacketSlice.scala": "e8df90da97791174748fd021cd793ccec5519df3f788150284e9ebae81015f16",
+    "src/main/scala/netstack/SharedTcpReceive.scala": "d252d505943794602f1baf37851558a923b7a266360e03563551fc682f8738c4",
+    "src/main/scala/netstack/SharedTcpReceiveHarness.scala": "911091151600103d89810af3c2cc3380064d8d611bc128bd393a4df6a5fdd039",
+    "src/main/scala/netstack/TcpClosedResponder.scala": "e03be09a78ad94a66679325df7aa20bc464060fd3a3ce04e14f607d7d46096f8",
+    "src/main/scala/netstack/TcpCongestionControl.scala": "21e402d8aa303fd58e4d5d2367bc321b304336baab6382dd8d59d138fc8b600a",
+    "src/main/scala/netstack/TcpConnectionControl.scala": "21d214adec808efa96a03c0b2b4ae8697a6486438b19c32613c49ef7aec75d11",
+    "src/main/scala/netstack/TcpConnectionTransmit.scala": "24aece45a0669d84a4c1a9b63cef6af72f8321f041a89ed82f0aca2d1f4b2d19",
+    "src/main/scala/netstack/TcpConnectionTxHarness.scala": "1197cc4439e7fd69e1d1fb3133b1693aa001b8dc9470f26230f30a501ab8ad84",
+    "src/main/scala/netstack/TcpControlHarness.scala": "edb8646138ec1f3460bd583628fadca302db7626e0c627e38f17cb99dc43e027",
+    "src/main/scala/netstack/TcpDataHarness.scala": "bc5f17b364fc4a6863e5e58d059938c02d0c1c46d4a5bc98015649abeb47c8e4",
+    "src/main/scala/netstack/TcpEndpointHarness.scala": "94ce587431a0e6409dd80ade3e9ef26451d38872bfa99852415f5b8ae0940df0",
+    "src/main/scala/netstack/TcpGenerationHarness.scala": "1b0298b44251c904622a2598670c3cd8e60760f9730ff90df0d9a0e47dd689c6",
+    "src/main/scala/netstack/TcpHeaderSnapshotHarness.scala": "da1c0eb5a23d8c9249ce43363c3e62737f1bd3a6eac56dadb0d67db07203f83f",
+    "src/main/scala/netstack/TcpIcmpFeedback.scala": "79515734212cdf29647874082c427d93c2e6e322b81553bdfc9441316c384aa0",
+    "src/main/scala/netstack/TcpIpv4Endpoint.scala": "be5c9135e03103d0f91d84a324cd74526c30a38460cb6b9619fdb1ae1888e6b2",
+    "src/main/scala/netstack/TcpManagedConnection.scala": "7c0d33bd70fc51634cc48c44bc90a2bb3a116919ea04abbcca524c65a6a51041",
+    "src/main/scala/netstack/TcpManagedHarness.scala": "b254714d81a2e22761aa9bbc64e4692a91e8521050ed6f43d82bf317ec97ab83",
+    "src/main/scala/netstack/TcpPayloadStore.scala": "2062ad3b9232879b050696831a76b100da555d86310d93f266260a1685973341",
+    "src/main/scala/netstack/TcpPmtuHarness.scala": "d9aefc9db47fcc790c4a20334eec6cf0d8f8646dfb93a4639a121a5b560de3d1",
+    "src/main/scala/netstack/TcpReceive.scala": "b5b38898764f34af5aaaa144fe9e5f042e77c63793b2df5802687e55c93717e4",
+    "src/main/scala/netstack/TcpReceiveQueue.scala": "7f04a5ab1330f415fb281cf06f4b12152b00914cdc2d8c16b5962a302bf71c59",
+    "src/main/scala/netstack/TcpReceiveRing.scala": "cd1e604d98d2ad46aa1e6f374ca64d390199a8d2eff054505844f2068f432768",
+    "src/main/scala/netstack/TcpReorderBuffer.scala": "ba09789d9f5fb4e61831ac24fa4474b5d9fc5fe01a38a0963f10cca2fcc7ad98",
+    "src/main/scala/netstack/TcpRetransmissionTimer.scala": "9404186e77e103fd535046b18d4f9f29cca10d92e214fa9deabdf7ac2ee154a8",
+    "src/main/scala/netstack/TcpSack.scala": "e424d385db21756d3744284bb5c0d1947180308537dbab8d409b314c6f6ed349",
+    "src/main/scala/netstack/TcpSackSnapshotHarness.scala": "1f988b6a52d19cac94be79bd6edcaa8a214f6f55a85353ac0607b0a06281c50b",
+    "src/main/scala/netstack/TcpTransmitQueue.scala": "a396826d24bebc5934e7e0a464512c00cd3c591038975f2c06200eb344722e3c",
+    "src/main/scala/netstack/TcpValidatedReceiveBuffer.scala": "46fa26ac130d8474107275f517d839cdf7a57c280788f148605a961bab6986e3",
+    "src/main/scala/netstack/UdpReceive.scala": "42c0f50e1a22518ee274686621182158940ea36d4e25a8a347b7e0469b141518",
+    "src/main/scala/netstack/UdpValidate.scala": "e494a271d4a2f2b84e1b0ee3802d45c69bccd735063746cb61dea89a18e0c95e",
+    "src/main/scala/netstack/VariablePacketPrepend.scala": "2333f12d447310aa4f28f49c597c01de312fbeb0436ccac6842689f72abd4471",
+    "sim/arp.cpp": "71c8c02af9c7a1aa9bbc6983a3511a176b6f6bfab4d95f1dc685ea5f5c39faea",
+    "sim/body_window.cpp": "5ef18f11875d550a5631a765eb74a464194335100e62cb511323b8f515526d28",
+    "sim/buffer.cpp": "b01c0ff1ae3ee2b8e978d79636c2cd107248a3094873c08ac2c698eaea1da891",
+    "sim/checksum.cpp": "e2f2a51d3acb455cfc4eb04181c62cafc4867ae9a4229cda49c11361db4eca60",
+    "sim/ethernet.cpp": "bb29f4e960adf8707103068ae9656a230dd71a2b8f2f418a777d76826c54bad6",
+    "sim/ethernet_errors.cpp": "eadc25ce3337c1e80a59c8740ba46beafef7455112868fea68d3152f77ffda73",
+    "sim/ethernet_mixed.cpp": "cfb570e59b59a783c2c8c60cb028832e256880a63e0d3a673f0c046fd7e5b86e",
+    "sim/ethernet_multi.cpp": "46f764a6ade98cdd0d14a5b1449e2a878b8ecdcbf60607d13c591798459d6b91",
+    "sim/ethernet_multi_rx.cpp": "287a9f567e2064427a4cb58257938a179ecb36e9c711856465439a4b49e02c5f",
+    "sim/ethernet_peer.h": "d25bd2e2dd8618b51617fd4ef89adfc1ed624eedf638be111fa5db5dde34d8f0",
+    "sim/ethernet_service.cpp": "0819997754f7b3671d275e323d519a65a86388cc9612ba8bcc67e9558e61c827",
+    "sim/ethernet_tcp.cpp": "4328a6a8932675d8ea500afcd7dc20e9852a20ada69d7513969f5183e04e2d36",
+    "sim/gsim-known-issues.txt": "9a3ce59be209486276686c65f539c20f17951c0cc6f38564462d9ce9e2f4fd7d",
+    "sim/gsim_model_init.h": "2e722e5c0d08ee5b4054dc2917c535cb0f9dfc0f5d844bc8ee142c4062c5dee6",
+    "sim/handshake_body.cpp": "f38608f58cd8f815a07dadc04f562b7ab87614c0f60c10ef3d2a1fcd57f7bb87",
+    "sim/icmp_errors.cpp": "6e5b4f1d4615bb6eb59562571f338e45c6e563d905455b7ee56a6ca973aae70d",
+    "sim/ip_receive.cpp": "d99c5d12204f8617acd423736e509986fcb41cd66f026c1baa4e7139f2108bdb",
+    "sim/memory_queue.cpp": "7c51f1e693fba674ae138d1fe290b67f8dabf8ade407b954e9931706b708960a",
+    "sim/multi_tcp_peer.h": "404631a9f9c99d345a36ca67412ebb9b5698e6ba2d7a3dfdfa0e417b1ce0022c",
+    "sim/network_errors.cpp": "2fb858d41ceeb3cdedbb440f8362679c00b224a4e10d0bb2c287b309adfd5729",
+    "sim/receive.cpp": "bed720e5a54dc4eeacb536a5fefced80d58a5953961770d31dbf043e52080dab",
+    "sim/run.py": "958c575ab19b7e73b7ab8e819bd9c3d7708e62a57da679a83bd003228021d041",
+    "sim/sack_snapshot.cpp": "5c53b770e59cea2129f32c87ad2fd33979fbf8e5bb6cd34d318b3d1d1370a008",
+    "sim/shared_receive.cpp": "bc4f46fd735e6d6e0588f7cbefcac0800f9cd604d587970bf2f9e281a692142d",
+    "sim/slice.cpp": "50788eed7eab105c539ebe54274acf4f1e760eb249448880d0795d01a8a00613",
+    "sim/tcp_closed.cpp": "032bc471679f1d51106c5a238ef4f8a0214096bfbd3908cc5d11d0c0321cd085",
+    "sim/tcp_congested_endpoint.cpp": "941007aac85d5704b00f8c06346552025c5599121bc63a0ec6e4768f4a051987",
+    "sim/tcp_congestion.cpp": "31c229c62a8eaf1a91bc6c2fc5ed700e8c328a711985841884cd78d30cd8b69c",
+    "sim/tcp_connection_tx.cpp": "d613e255e6e831816b8aadec75475b626b5ac0bfd7fa861f3e683958925babab",
+    "sim/tcp_control.cpp": "b82da831c35cd7a6dd0711861a0746ffd4728302da5b3d710277011d74fac426",
+    "sim/tcp_control_peer.h": "7f8df13ec3e783f047ad430a8ee02da28185bd8378db7b18245fab0f44a27046",
+    "sim/tcp_control_priority.cpp": "9307b8ecf3e841131116e8fb0c604ee0b44d057099c46b695272589a8c104280",
+    "sim/tcp_data.cpp": "2ed973b95280ca74fe9649e354d020c620dfcd0a79da489e72d5ec6804e30217",
+    "sim/tcp_endpoint.cpp": "6e58e173bc734af174644590850aecff552debad0d1220de0ba0fc7c2e75a866",
+    "sim/tcp_endpoint_peer.h": "61a722f59d7d414925d033dea207c5d9a1a2d252f442eae961eef33ea349a688",
+    "sim/tcp_exception.cpp": "c2117ebdf55ed27ae341ce8695cc64aa42d55d52617d9f652ccdc0f283e08639",
+    "sim/tcp_generation.cpp": "d267542aaaaa5e027f12eb2aef03c79611ec0a849a3ad6437932074ccca0c3a9",
+    "sim/tcp_header_snapshot.cpp": "35334d6045cab8a8a2c6ba8efdfab1b9491defbd828d9c68ed271657457a45bd",
+    "sim/tcp_managed.cpp": "88c4550ea128a1dfb204d5095f7270eb66ffaac8b65a6fe97bf095bf449cfe7a",
+    "sim/tcp_multi.cpp": "13b8309f4825ea02bcb8a468a496098f3ec4186a5b9ed3291fb95e361f82f21e",
+    "sim/tcp_pmtu.cpp": "d922e8fe640f0402e0626638d746eaee9f73ce99aae1a06d9f23eca9b59b51c0",
+    "sim/tcp_pmtu_pipeline.cpp": "5c80c50cad5b7d227f2a94f56b920c485d51c37b1e9a06666b696c7bf4bb1006",
+    "sim/tcp_reassembly.cpp": "bfb8cd73b241e236c94170074aebd1ae49cbe90b84580fbf8ddbe7716d55b236",
+    "sim/tcp_receive.cpp": "48116e089541671036f28f96a7e4e85d565e4451b200c7c370d6ca68f5cda1e0",
+    "sim/tcp_ring.cpp": "143a00b5972adabd75c7abbb41cf4c9d28b64e9877082e37100133470ece785c",
+    "sim/tcp_sack.cpp": "fca4b0ec7de7bf9a93da2da30e3c26ebefa1aa2292e7586cedcea594b00d1d7c",
+    "sim/tcp_store.cpp": "546041ea879fc70295fc466e730e03b758d1e13d7a9a1dc736427176dfb9fc6b",
+    "sim/tcp_timer.cpp": "222824b5076ef77d50b8f9fc067c079edf7f5bfe43794d44873724b728d1af14",
+    "sim/tcp_timer_peer.h": "f8ce4795aa5d3d310f87e6dc4833b7603d7e9e9e1c63d63b799237521f948964",
+    "sim/tcp_timer_pipeline.cpp": "a1bd469b72084a0ede0195fa803619f2bdce53f433fc557baee3a786d30b77c7",
+    "sim/tcp_transmit.cpp": "ac6195449603aba1857a50b5ad1e78c4e2275a3206e4cb261f9e71c21d0cbc48",
+    "sim/transmit.cpp": "ad2df861d82de7a7a9e4c6e51f30660d524e8568948a9b711237f0201b4afa36",
+    "sim/udp.cpp": "e3121aed8a89f8519901d137044ba1374e100a415d056ca34c25bb79e89ece5d",
+    "sim/window_scale.cpp": "97dfd32d8589130ce297406097ec226838b896484002502927569bd4f31f7d11",
+    "build.mill": "0f4ebd997d5d0897c0dffb30f2fdebea1f3e21133e9c6e36b90f6d696d31d81e"
+  },
+  "tests_run": [
+    "checksum",
+    "udp",
+    "buffer",
+    "receive",
+    "slice",
+    "ip_receive",
+    "transmit",
+    "arp",
+    "ethernet",
+    "tcp_receive",
+    "tcp_transmit",
+    "tcp_timer",
+    "tcp_timer_pipeline",
+    "tcp_store",
+    "tcp_control",
+    "tcp_managed",
+    "tcp_data",
+    "tcp_connection_tx",
+    "tcp_ring",
+    "tcp_endpoint",
+    "tcp_reassembly",
+    "ethernet_tcp",
+    "tcp_congestion",
+    "tcp_congested_endpoint",
+    "ethernet_mixed",
+    "ethernet_service",
+    "tcp_header_snapshot",
+    "tcp_sack",
+    "tcp_multi",
+    "ethernet_multi",
+    "ethernet_multi_rx",
+    "icmp_errors",
+    "tcp_closed",
+    "tcp_exception",
+    "tcp_pmtu",
+    "ethernet_errors",
+    "network_errors",
+    "memory_queue",
+    "shared_receive",
+    "tcp_pmtu_pipeline",
+    "window_scale",
+    "body_window",
+    "tcp_generation",
+    "tcp_control_priority",
+    "sack_snapshot",
+    "handshake_body"
+  ],
+  "results": {
+    "checksum": "CHECKSUM_PASS packets=6400 beats=3162746 cycles=3957178 stalled_results=4986 keep_masks=65536",
+    "udp": "UDP_VALIDATE_PASS packets=2600 accepted=600 rejected=2000 cycles=774519 verdict_stalls=10180",
+    "buffer": "PACKET_BUFFER_PASS packets=4000 dropped=2279 output_beats=14410 concurrent_rx_tx=7368 stall_cycles=19266 cycles=88782",
+    "receive": "UDP_RECEIVE_PASS packets=1800 delivered=600 dropped=1200 cycles=28231 stalled_outputs=6791",
+    "slice": "PACKET_SLICE_PASS packets=2500 truncated=330 cycles=289916 stalls=151501",
+    "ip_receive": "IPV4_UDP_RECEIVE_PASS packets=2400 delivered=600 ip_drops=1500 udp_drops=200 other_protocol=100 cycles=51050 stalls=4990",
+    "transmit": "IPV4_UDP_TRANSMIT_PASS packets=1800 emitted=750 dropped=1050 cycles=49868 stalls=6999",
+    "arp": "ARP_ENDPOINT_PASS learned_peers=120 malformed=52 retries=3 expiry=pass flush=pass eviction=pass wrong_replies=pass tx_frames=135 resolutions=131 cycles=8265",
+    "ethernet": "ETHERNET_SERVICE payload=0 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000\nETHERNET_SERVICE payload=1 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000\nETHERNET_SERVICE payload=17 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000\nETHERNET_SERVICE payload=512 packets=256 tx_cycles_per_packet=40.000 rx_cycles_per_packet=38.000 tx_service_gbps_at_156_25mhz=18.062 rx_service_gbps_at_156_25mhz=19.013\nETHERNET_SERVICE payload=896 packets=256 tx_cycles_per_packet=64.000 rx_cycles_per_packet=62.000 tx_service_gbps_at_156_25mhz=18.789 rx_service_gbps_at_156_25mhz=19.395\nETHERNET_UDP_ENDPOINT_PASS tx_datagrams=1467 rx_datagrams=1460 arp_probes=6 arp_replies=21 tx_drops=4 rx_drops=6 cycles=42924 cold_lookup=retained arbitration=stable gateway=pass padding=pass",
+    "tcp_receive": "TCP_RECEIVE_PASS segments=2400 delivered=1000 dropped=1400 cycles=58185 mss_ws_ts_sack=pass malformed_options=pass zero_checksum=pass reserved_bits=ignored",
+    "tcp_transmit": "IPV4_TCP_TRANSMIT_PASS packets=2600 emitted=1400 dropped=1200 cycles=83025 stalls=21357 header_lengths=20..60 zero_checksum=pass reset=pass",
+    "tcp_timer": "TCP_RETRANSMISSION_TIMER_PASS cycles=84069 samples=1027 timeouts=134 rejected_acks=6701 karn_exclusions=410 wrap=pass backoff=pass syn_fallback=pass deadline_priority=pass",
+    "tcp_timer_pipeline": "TCP_PIPELINED_TIMER_PASS cycles=84069 samples=1027 timeouts=134 rejected_acks=6701 karn_exclusions=410 wrap=pass backoff=pass syn_fallback=pass deadline_priority=pass",
+    "tcp_store": "TCP_PAYLOAD_STORE_PASS writes=1409 rejected_writes=200 replays=4801 rejected_reads=1005 releases=1201 stale_releases=601 concurrent_read_write_cycles=1311 cycles=105961 resets=10 pinned_release=pass arbitrary_slice=pass generation=pass",
+    "tcp_control": "OPEN configuration capture and pending-SYN abort barrier passed\nTCP_CONNECTION_CONTROL_PASS cycles=67642 segments=8087 reservations=1286 control_packets=8095 dispositions=8087 ack_events=6747 notices=750 states=11 handshake=pass half_close=pass time_wait=pass simultaneous_open=pass durable_ack=pass stale_generation=pass",
+    "tcp_managed": "TCP_MANAGED_CONNECTION_PASS cycles=1059 segments=12 controls=19 data_replays=2 timeouts=1 syn_fin_retry=pass partial_ack=pass wire_timer=pass ack_stall=pass retry_bound=pass",
+    "tcp_data": "TCP_DATA_SERVICE payload=1 cycles_per_packet=7 hypothetical_gbps_at_156_25MHz=15\nTCP_DATA_SERVICE payload=64 cycles_per_packet=10 hypothetical_gbps_at_156_25MHz=17.75\nTCP_DATA_SERVICE payload=1460 cycles_per_packet=98 hypothetical_gbps_at_156_25MHz=19.6173\nTCP_DATA_PASS cycles=218180 writes=2256 rejected=200 reservations=3580 packets=3881 replays=302 misses=904 prepare_overlap=3745 simultaneous_io=68189 ack_during_retry=1328 resets=42 wire_bytes=pass partial_ack=pass wrap=pass backpressure=pass",
+    "tcp_connection_tx": "TCP_CONNECTION_TX_PASS cycles=26455 opens=27 writes=102 data_packets=385 retransmissions=25 controls=57 completions=442 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass",
+    "tcp_ring": "TCP_RECEIVE_RING_PASS cycles=300603 reservations=7672 bytes=2788617 concurrent=121097 full_stalls=55300 resets=20 byte_packing=pass wrap=pass reserved_credit=pass backpressure=pass",
+    "tcp_endpoint": "TCP_IPV4_ENDPOINT_PASS cycles=86956 opens=30 writes=102 data_packets=468 retransmissions=25 controls=281 received_bytes=3509 rx_drops=2 completions=749 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass",
+    "tcp_reassembly": "TCP_REASSEMBLY_PASS cases=46 cycles=61474 bytes=14742 observed_cache_drops=3 wrap=pass overlap=pass exhaustion=pass window_clip=pass ordered_fin=pass invalid_admission=pass abort_reuse=pass old_ack_isolation=pass randomized_backpressure=pass",
+    "ethernet_tcp": "ETHERNET_TCP_ENDPOINT_PASS cycles=99012 opens=31 writes=102 data_packets=456 retransmissions=25 controls=281 arp_requests=5 received_bytes=3509 rx_drops=2 completions=738 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass",
+    "tcp_congestion": "TCP_CONGESTION_PASS cycles=40031 fast_retransmits=1121 loss_events=353 request_stalls=632 slow_start=pass byte_counting=pass fast_recovery=pass rto=pass idle_restart=pass",
+    "tcp_congested_endpoint": "TCP_CONGESTED_ENDPOINT_PASS cycles=3890 data_packets=14 retransmissions=2 actual_window=pass slow_start=pass duplicate_ack_replay=pass rto_loss=pass idle_restart=pass persist=pass",
+    "ethernet_mixed": "ETHERNET_MIXED_PASS cycles=9987 udp_tx=82 udp_rx=60 echo_replies=60 tcp_packets=1 received_tcp_bytes=132 shared_routing=pass arbitration=pass checksum=pass empty_payload=pass backpressure=pass",
+    "ethernet_service": "FULL_ENDPOINT_SERVICE path=UDP_TX payload=0 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=0 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=17 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=17 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=512 cycles_per_packet=41.0000 wire_equivalent_gbps_at_156_25MHz=17.6220\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=512 cycles_per_packet=38.0000 wire_equivalent_gbps_at_156_25MHz=19.0132\nFULL_ENDPOINT_SERVICE path=UDP_TX payload=1400 cycles_per_packet=97.0000 wire_equivalent_gbps_at_156_25MHz=18.8918\nFULL_ENDPOINT_SERVICE path=UDP_RX payload=1400 cycles_per_packet=94.0000 wire_equivalent_gbps_at_156_25MHz=19.4947\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=64 cycles_per_packet=13.0000 wire_equivalent_gbps_at_156_25MHz=13.6538\nFULL_ENDPOINT_SERVICE path=TCP_TX payload=1460 cycles_per_packet=100.0000 wire_equivalent_gbps_at_156_25MHz=19.2250\nFULL_ENDPOINT_SERVICE path=TCP_RX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667\nFULL_ENDPOINT_SERVICE_PASS line_rate_target_gbps=10 raw_internal_gbps=20 clock_target_mhz=156.25 physical_timing_verified=false",
+    "tcp_header_snapshot": "PASS tcp_header_snapshot: exact reserve/replay handshake option changes, both directions, MTU, checksums and retained bytes",
+    "tcp_sack": "PASS tcp_sack: negotiation/fallback, durable merged latest-first blocks, duplicate recency, FIN, wrap, multiple holes, malicious blocks, retention/reneging/RTO, generations and MTU",
+    "tcp_multi": "multi independent: four active tuples, reordered RX, per-context windows/storage/RTO and bad packets passed\nmulti listeners: shared port, bad/duplicate SYN, RST return and duplicate active OPEN passed\npassive SYNACK/RST ownership barrier and post-drain tuple migration passed\nmulti completion: global ordering, wrong tags/generations, abort drain/reuse and RX generation barrier passed\nmulti SACK: two negotiated sessions report independent gaps and reassemble independently\nmulti minimum 1B TX (4 active): 45/15 cycles, 3 cycles/packet\nmulti minimum 1B TX (1 active): 15/3 cycles, 5 cycles/packet\nmulti 1460B TX: 282/3 cycles, 94 cycles/packet\nmulti minimum RX: 1344/128 cycles, 10.5 cycles/packet, zero drops at 10G wire budget\nmulti minimum 1B RX (4 active): 10.5 cycles/packet, zero drops and all bytes delivered\nmulti minimum 1B RX (1 active): 10.5 cycles/packet, zero drops and all bytes delivered\nmulti 1460B RX: 6152/32 cycles, 192.25 cycles/packet, zero drops at 10G wire budget\nfour-context TCP isolation/ownership/fairness/service checks passed",
+    "ethernet_multi": "Ethernet multi: four TCP contexts with shared ARP/UDP/ICMP, stalled RX isolation, wire checksums and global MAC completion tags passed\nEthernet four-context 1B TCP TX: 2295/255 cycles = 9 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed\nEthernet four-context 1460B TCP TX: 25500/255 cycles = 100 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed",
+    "ethernet_multi_rx": "zero-window reopening and final coalesced read-to-empty ACK passed\nMAC RX pure ACK, 1 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met\nMAC RX pure ACK, 4 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met\nMAC RX 1B data, 1 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met\nMAC RX 1B data, 4 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met\nMAC RX 1460B data, 1 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met\nMAC RX 1460B data, 4 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met\ncomplete Ethernet RX 10G service checks passed (2 KiB RX/context)",
+    "icmp_errors": "ICMP_ERRORS_PASS received=123 replies=29 rx_drops=25 tx_drops=30 suppressed=2 cycles=19431 stalls=702",
+    "tcp_closed": "TCP_CLOSED_PASS flags=256 checksum_options_lengths=pass sequence_wrap=pass broadcast_rst_suppression=pass tick_limit=pass stalled_output=pass packet_admission=pass",
+    "tcp_exception": "TCP_EXCEPTION_PASS unknown_listener=pass independent_ledger=pass busy_reserved_tuple=pass stalled_exception_isolation=pass checksum_validation=pass",
+    "tcp_pmtu": "TCP_PMTU_PASS cycles=5097 data_packets=39 repairs=23 invalid_updates=pass wrap=pass ack_clock=pass reserved_horizon=pass stalled_descriptor=pass minimum_mtu_sack=pass checksums=pass karn_loss_budget=pass fin_pmtu_repair=pass half_close=pass delayed_timeout_origin=pass generation=pass reclamation=pass",
+    "ethernet_errors": "GSIM initialization: poisoned storage, pinned defect and complete byte clear passed\nethernet exception: reset ownership, ICMP quoting, UDP binding/checksum and broadcast suppression passed\nethernet TCP PMTU: quote validation, soft errors, 1500->600, wrapped retained repairs and per-context isolation passed\nethernet UDP PMTU: exact recent quote, local length error, payload drain, boundary and destination isolation passed\nETHERNET_ERRORS_PASS tcp_reset=pass unreachable_udp_ports=pass error_validation=pass tcp_pmtu_repair=pass udp_pmtu_limit=pass broadcast_suppression=pass",
+    "network_errors": "NETWORK_ERRORS_PASS tcp_updates=12 tcp_notices=12 udp_notices=12 drops=6 cycles=9096 stalls=287",
+    "memory_queue": "MEMORY_QUEUE_PASS cycles=500000 forwarding_cases=137494 simultaneous=140437 stalled_heads=221517 depths=2,3,16",
+    "shared_receive": "SHARED_RECEIVE_PASS packets=1200 good=450 rejected=750 stalled_payload_cycles=5192 cycles=22007 immutable_tags=pass",
+    "tcp_pmtu_pipeline": "TCP_PMTU_PIPELINE_PASS partial_ack_offsets=14 full_ack_offsets=10 abort_reopen_offsets=10 passive_rst_offsets=6 loss_priority=pass",
+    "window_scale": "WINDOW_SCALE_PASS requested_scales=16 credit_cases=448 passive_rollback=pass renegotiation_fallback=pass active_same_cycle=pass saturation=pass reopen=pass",
+    "body_window": "BODY_WINDOW_PASS cases=1152 accepted_fin=194 clipped=160 failed_storage=576 scales=16 boundary_equality=pass overlap=pass wrap=pass",
+    "tcp_generation": "PASS tcp_generation cycles=7433 opens=136 rollbacks=64 generation_gaps=200 enabled_cycles=4209 option_cycles=2675 ack_gaps=415 count_gaps=768 cases=active/passive/simultaneous/invalid-open/overlapping-rx/rollback/renegotiate/wrap/backpressure oracle=original-generation-guard-every-cycle",
+    "tcp_control_priority": "TCP_CONTROL_PRIORITY_PASS simultaneous_open_cases=96 reserve_priority_cases=512 wrap=pass premature_ack=pass rst=pass pending_window_open=pass completion=pass half_close=pass",
+    "sack_snapshot": "sack_snapshot PASS cases=2688 cycles=151482 max_settle=77",
+    "handshake_body": "HANDSHAKE_BODY_PASS cases=1536 active/passive=pass storage=pass clip/equality=pass fin=pass wrap=pass unscaled_window=pass"
+  },
+  "physical_timing_verified": false,
+  "complete_protocol_stack": false
+}

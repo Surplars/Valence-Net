@@ -1,0 +1,8 @@
+zero-window reopening and final coalesced read-to-empty ACK passed
+MAC RX pure ACK, 1 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met
+MAC RX pure ACK, 4 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met
+MAC RX 1B data, 1 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met
+MAC RX 1B data, 4 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met
+MAC RX 1460B data, 1 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met
+MAC RX 1460B data, 4 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met
+complete Ethernet RX 10G service checks passed (64 KiB RX/context)

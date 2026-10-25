@@ -81,7 +81,7 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     })
     val connection = Module(new TcpManagedConnection(ticksPerSecond, timeWaitTicks, challengeTicks, maxRetries, trustedReservations = true, receiveReorder = receiveReorder, sackSupport = sackSupport))
     val inactive = connection.io.state === TcpState.closed.U || connection.io.state === TcpState.listen.U
-    val receiveEvents = Module(new Queue(new TcpConnectionRx, 1))
+    val receiveEvents = Module(new MemoryQueue(new TcpConnectionRx, 1))
     val offered = RegInit(false.B)
     val offeredData = RegInit(false.B)
     val data = withReset(reset.asBool || (inactive && !offeredData)) {
@@ -91,12 +91,12 @@ class TcpConnectionTransmit(val banks: Int = 8, val beatsPerBank: Int = 128,
     // Reason metadata is sampled at retained-read acceptance, before the
     // requester may change, and follows the same abort/drain lifetime.
     val dataTimeouts = withReset(reset.asBool || (inactive && !offeredData)) {
-        Module(new Queue(Bool(), 4))
+        Module(new MemoryQueue(Bool(), 4))
     }
     val preparingTimeout = RegInit(false.B)
     val control = Module(new Ipv4TcpTransmit(2))
-    val controlDescriptors = Module(new Queue(new TcpControlPacket, 4))
-    val ledger = Module(new Queue(new TcpWireDescriptor, completionDepth))
+    val controlDescriptors = Module(new MemoryQueue(new TcpControlPacket, 4))
+    val ledger = Module(new MemoryQueue(new TcpWireDescriptor, completionDepth))
     val arbiter = Module(new PacketArbiter)
     val nextTag = RegInit(0.U(32.W))
     val failed = RegInit(false.B)

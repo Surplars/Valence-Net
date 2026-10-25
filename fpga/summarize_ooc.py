@@ -7,6 +7,13 @@ import hashlib
 import json
 import re
 
+def read_tool_log(path):
+    data = path.read_bytes()
+    # Windows PowerShell redirects native console output as UTF-16LE.
+    # Preserve the actual messages instead of silently missing NUL-separated errors.
+    encoding = "utf-16" if data.startswith((bytes([255, 254]), bytes([254, 255]))) else "utf-8-sig"
+    return data.decode(encoding, errors="replace")
+
 parser = argparse.ArgumentParser()
 parser.add_argument("run", type=Path)
 parser.add_argument("--partial", action="store_true", help="inspect completed modules while the batch remains active")
@@ -38,13 +45,13 @@ report = {
 # Coverage/route metrics do not silently erase tool-log constraint warnings.
 log_path = root / "vivado.log"
 if log_path.exists():
-    messages = re.findall(r"^CRITICAL WARNING: (.+)$", log_path.read_text(errors="replace"), re.MULTILINE)
+    messages = re.findall(r"^CRITICAL WARNING: (.+)$", read_tool_log(log_path), re.MULTILINE)
     report["tool_log_critical_warnings"] = [{"message": message, "occurrences": messages.count(message)}
                                            for message in dict.fromkeys(messages)]
-    errors = re.findall(r"ERROR: ([^\r\n]+)", log_path.read_text(errors="replace"))
+    errors = re.findall(r"ERROR: ([^\r\n]+)", read_tool_log(log_path))
     report["tool_log_errors"] = list(dict.fromkeys(errors))
     console_path = root / "console.log"
-    console_errors = re.findall(r"ERROR: ([^\r\n]+)", console_path.read_text(errors="replace")) if console_path.exists() else []
+    console_errors = re.findall(r"ERROR: ([^\r\n]+)", read_tool_log(console_path)) if console_path.exists() else []
     report["native_console_errors"] = list(dict.fromkeys(console_errors))
     report["tool_log_review_required"] = bool(messages or errors or console_errors)
 keys = ["setup_wns_ns", "setup_tns_ns", "setup_failing_endpoints", "setup_endpoints",

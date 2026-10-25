@@ -1,0 +1,9 @@
+import mill.*, scalalib.*
+
+object netstack extends SbtModule {
+    override def moduleDir = os.Path(sys.env("MILL_WORKSPACE_ROOT"))
+    override def scalaVersion = "2.13.17"
+    override def mvnDeps = Seq(mvn"org.chipsalliance::chisel:7.3.0")
+    override def scalacPluginMvnDeps = Seq(mvn"org.chipsalliance:::chisel-plugin:7.3.0")
+    override def scalacOptions = Seq("-language:reflectiveCalls", "-deprecation", "-feature")
+}

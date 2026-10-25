@@ -39,7 +39,7 @@ class Ipv4UdpTransmit(val beatsPerPacket: Int = 1024) extends Module {
     val bad = RegInit(false.B)
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
     val checksum = Module(new InternetChecksum(16))
-    val metadata = Module(new Queue(new UdpSendMetadata, 2))
+    val metadata = Module(new MemoryQueue(new UdpSendMetadata, 2))
     val prepend = Module(new PacketPrepend(28))
     io.command.ready := !active && !waiting
     when(io.command.fire) {

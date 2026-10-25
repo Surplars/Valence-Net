@@ -24,7 +24,7 @@ class Ipv4IcmpEcho(val beatsPerPacket: Int = 128) extends Module {
     val ip = Module(new Ipv4Receive(beatsPerPacket))
     val checksum = Module(new InternetChecksum(16))
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
-    val metadata = Module(new Queue(new IcmpEchoMetadata, 2))
+    val metadata = Module(new MemoryQueue(new IcmpEchoMetadata, 2))
     val prepend = Module(new PacketPrepend(20))
     ip.io.in <> io.in; ip.io.localIp := io.localIp; ip.io.acceptBroadcast := false.B
     checksum.io.seed := 0.U

@@ -46,8 +46,25 @@ is static while active. There is no CSR/software configuration adapter yet.
   option. SACK remains enabled in the production default.
 - UDP PMTU cache/history have lower-level parameters, defaulting to four/eight
   entries; they are not exposed at the Ethernet top.
-- There is no top-level BRAM/URAM selection parameter. Current memory style
-  follows inferred RTL access patterns and Vivado mapping.
+- Memory preferences are selected during RTL export, independently of capacity:
+  `mill -i netstack.runMain netstack.Emit OUTPUT_DIRECTORY [hybrid|bram|auto]`.
+  Default `hybrid` maps synchronous queues at least eight entries deep and
+  96 bits wide to BRAM and retained 128-bit
+  payload memories of at least 512 words to URAM. `bram` requests BRAM for
+  both; `auto` leaves placement to synthesis. Choose `bram` or `auto` for
+  devices without URAM, then reverify and close timing for that device.
+  Frozen preparation accepts the same choice:
+  `python3 fpga/prepare_registered_ooc.py --memory-profile bram` after
+  emitting `build` with `bram`. The preparer re-emits the requested profile,
+  rejects mismatched exports and freezes the selected attributes.
+  These attributes change primitive preferences, not logical capacity/latency.
+  Other memories retain their existing inference. The selected profile is
+  written to each export directory and frozen into Vivado provenance.
+- The multi-context receive parser is shared. Independent two-packet committed
+  staging per context preserves bounded isolation from a stalled TCB. Admission
+  tracks up to four packets per active context across the shared/staging
+  pipeline; a listener reserves only one until validation resolves. This
+  admission credit is not the application's byte-ring capacity.
 
 `bench/configuration_probe.py` elaborates full production-storage tops with
 1/3/8 contexts. Elaboration proves that configuration produces RTL, not that

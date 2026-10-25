@@ -1,0 +1,16 @@
+mill netstack.runMain netstack.MultiConfigurationProbe
+build.mill-68] compile compiling 1 Scala source to out/mill-build/compile.dest/classes ...
+build.mill-68] done compiling
+72] mill.javalib.JvmWorkerModule/internalWorker Compiling compiler interface...
+73] netstack.compile compiling 57 Scala sources to out/netstack/compile.dest/classes ...
+73] done compiling
+79] netstack.runMain
+CONFIG_ELABORATE connections=1
+CONFIG_PASS connections=1
+CONFIG_ELABORATE connections=2
+CONFIG_PASS connections=2
+CONFIG_ELABORATE connections=3
+CONFIG_PASS connections=3
+CONFIG_ELABORATE connections=8
+CONFIG_PASS connections=8
+79/79, SUCCESS] mill netstack.runMain netstack.MultiConfigurationProbe 52s

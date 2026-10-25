@@ -1,0 +1,77 @@
+{
+  "scope": "Four contexts, production 8 TX banks, 64 KiB RX/context, ARP16, completion16; test-only tick/TIME-WAIT remain short; no board signoff",
+  "source_verification_sha256": "71eceda966921605a92c04e23dbeb831908109bf55d8820427d461437bd8a646",
+  "generator_sha256": "7ce7da47b3984be3161d7746cb41b4b508d1778095b89d8251dd95800479ddb5",
+  "sha256": {
+    "source-verification.json": "71eceda966921605a92c04e23dbeb831908109bf55d8820427d461437bd8a646",
+    "rx-probe.cpp": "6a0504912401bc54e7f62f6c7ef4902112ab14afb465651948fd39919d1d982c",
+    "tx-probe.cpp": "59f88d0ff76fafc1c2d4fdbce93345d43f263fcaa27018d30f9f995c30e170cb",
+    "src/main/scala/netstack/MultiTcpEndpointHarness.scala": "89619bcafdd0bd885c5b3fad539ebe023d55b1a6ca3acd576adb37117e147e2c",
+    "src/main/scala/netstack/EmitMultiProductionRx.scala": "630d0fc4e80dfffbc2bc47761eea7b7cc5605da4dba5b37d8e1ba5036006708a",
+    "generated/MultiEthernetTcpHarness.fir": "995d60fd4f1836d80b39628ced07a96f58d3fc4a17d77839b3cc5634e6943e55",
+    "rx-result.log": "b5012255cc95aebbdb1ee8563aa58451d37e54f684efe54ccacf585785bd9e9f",
+    "tx-result.log": "d37aebb6eb7992b56b364773789cdcc54e0bbcfeda5f4b6878fd987d22724bb3"
+  },
+  "commands": [
+    [
+      "mill",
+      "-i",
+      "netstack.runMain",
+      "netstack.EmitMultiProductionRx",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated/MultiEthernetTcpHarness.fir"
+    ],
+    [
+      "/home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim",
+      "--threads=1",
+      "--dir=/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated/MultiEthernetTcpHarness.fir"
+    ],
+    [
+      "clang++-19",
+      "-std=c++20",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-I/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated",
+      "-c",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated/MultiEthernetTcpHarness0.cpp",
+      "-o",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/model.o"
+    ],
+    [
+      "clang++-19",
+      "-std=c++20",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-I/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated",
+      "-I/home/openion/Valence-Net/sim",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/model.o",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/rx-probe.cpp",
+      "-ldl",
+      "-o",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/rx-probe"
+    ],
+    [
+      "clang++-19",
+      "-std=c++20",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-I/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/generated",
+      "-I/home/openion/Valence-Net/sim",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/model.o",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/tx-probe.cpp",
+      "-ldl",
+      "-o",
+      "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z/tx-probe"
+    ]
+  ],
+  "exit_codes": {
+    "rx": 0,
+    "tx": 0
+  }
+}

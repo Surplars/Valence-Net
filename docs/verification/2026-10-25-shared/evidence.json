@@ -1,0 +1,77 @@
+{
+  "functional_manifest_sha256": "71eceda966921605a92c04e23dbeb831908109bf55d8820427d461437bd8a646",
+  "functional_targets": 46,
+  "source_files": 111,
+  "complete_protocol_stack": false,
+  "initial_CAD_focused_tests": [
+    "memory_queue",
+    "shared_receive",
+    "tcp_multi",
+    "ethernet_multi_rx",
+    "tcp_exception"
+  ],
+  "full_regression_source_hashes_equal_frozen_CAD": true,
+  "baseline_44_result_strings_unchanged": true,
+  "configuration_counts": [
+    1,
+    2,
+    3,
+    8
+  ],
+  "configuration_elaborated_only": true,
+  "memory_profiles_logically_identical": [
+    "hybrid",
+    "bram",
+    "auto"
+  ],
+  "production_geometry": {
+    "contexts": 4,
+    "tx_banks_per_context": 8,
+    "tx_bytes_per_bank": 2048,
+    "rx_bytes_per_context": 65536,
+    "arp_entries": 16,
+    "completion_per_context": 16
+  },
+  "production_rx_tx_passed": true,
+  "production_probe": "/home/openion/Valence-Net/build/multi-production-rx-20261025T082923Z",
+  "production_model_sha256": {
+    "MultiEthernetTcpHarness.h": "a912042ea40bafe44f4e5309775dbf7e27f168da28adf44df8cbc1f336c212f5",
+    "MultiEthernetTcpHarness0.cpp": "f2e53c72e7e831ed7be6eac955de48d8e1f6b5640f58d907886456f8cebef8ba",
+    "MultiEthernetTcpHarness.fir": "995d60fd4f1836d80b39628ced07a96f58d3fc4a17d77839b3cc5634e6943e55"
+  },
+  "files": {
+    "configuration-elaboration.log": "ed63322a19541b7039219f812fef0ec3d04e931abecab8cda52a5a2dbaaf6a53",
+    "configuration-provenance.json": "eff9b0aab0ab9041c254c133aa19b81f563196688bbebf64435eef8977d0427e",
+    "console-auditor-results.json": "6e50284915a65fdc27840fb14cb8ee7545948341e9b49540e82e87527b14e345",
+    "console-auditor-test.log": "c2bd51b8ebfc257f75dc030f0564eca7731a3f62e2abc452120032a7b647f349",
+    "console-auditor-test.py": "7f0a61adc3fdaaa0f01ea88ce48fea2b755d82bcca817b6aa8149198997da638",
+    "functional-manifest.json": "71eceda966921605a92c04e23dbeb831908109bf55d8820427d461437bd8a646",
+    "functional-regression.log": "6b029e48bec602b4ed2d5c91c5a85b8f4883d27d25a5ad6291fcda5139c84833",
+    "initial-cad-provenance.json": "d6cf60a08fe9edbca0b76e137e9a26978f7bf2817dbaf3e4e9e9894307c8ac6c",
+    "memory-profile-elaboration.log": "52ec368fbd4befb7add17681ac7ffdcf71d5f34f5659c465c87621e2820ccdb5",
+    "memory-profile-provenance.json": "e4869b3062982d4a3393e6f174d630039c33802ddf7030851336b1d79f8b44de",
+    "production-emitter.scala": "630d0fc4e80dfffbc2bc47761eea7b7cc5605da4dba5b37d8e1ba5036006708a",
+    "production-harness.scala": "89619bcafdd0bd885c5b3fad539ebe023d55b1a6ca3acd576adb37117e147e2c",
+    "production-probe-provenance.json": "d8c6a78d645f8fe52313622d2a73ffad57f6ce97582ad364c8360a491cca73c7",
+    "production-rx-probe.cpp": "6a0504912401bc54e7f62f6c7ef4902112ab14afb465651948fd39919d1d982c",
+    "production-rx-result.log": "b5012255cc95aebbdb1ee8563aa58451d37e54f684efe54ccacf585785bd9e9f",
+    "production-tx-probe.cpp": "59f88d0ff76fafc1c2d4fdbce93345d43f263fcaa27018d30f9f995c30e170cb",
+    "production-tx-result.log": "d37aebb6eb7992b56b364773789cdcc54e0bbcfeda5f4b6878fd987d22724bb3",
+    "profile-auto-preparation.log": "35a0b1e14fc47ea462fd6d87ea7a560330ce85eab1fe01afd980769c6907eff7",
+    "profile-auto-provenance.json": "a7b27ff3f118b498c5bc199ce2a094ccca20055c245b561e738c825ac230935e",
+    "profile-bram-preparation.log": "1a16d701798db0dd448992784f1430873d0b68b9dd38738ea2e9854e0c01d960",
+    "profile-bram-provenance.json": "0b6fddd7c1795b61652928e38a081f484ca7d5839669e284e536c929338ecf92",
+    "profile-hybrid-preparation.log": "90f1afb71e31116586c4e10ad408eb2c58c392bc1fa48c43d2d4551d9f409fc7",
+    "profile-hybrid-provenance.json": "dcd4aff5fb2042bebfd5b425a64e32b342a4458ee4da8a77042160fb0260d496",
+    "profile-preparation-results.json": "0a1dd6eadede51c98a0427a92234f87f5b74df3de6d8528cb626bff5c4a11fc3",
+    "profile-preparation-test.log": "a6e3cfe906cddd42c7f60d005ae37c724083f806c39e270846f8aa764a2e4354",
+    "profile-preparation-test.py": "6373cce5e8ca00fd57b924b9bb39741d0d2dc01a813cc1c753004bcda616e56b"
+  },
+  "registered_preparation_profiles_checked": [
+    "hybrid",
+    "bram",
+    "auto"
+  ],
+  "default_profile_preparation_rtl_matches_active_CAD": true,
+  "console_auditor_encoding_fixtures_passed": true
+}

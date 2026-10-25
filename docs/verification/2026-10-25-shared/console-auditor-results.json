@@ -1,0 +1,12 @@
+{
+  "baseline_clean_console_accepted": true,
+  "injected_errors": {
+    "utf-8": "rejected qualification despite clean numeric timing",
+    "utf-8-sig": "rejected qualification despite clean numeric timing",
+    "utf-16": "rejected qualification despite clean numeric timing",
+    "utf-16-be": "rejected qualification despite clean numeric timing"
+  },
+  "auditor_sha256": "f396ad7e26e10cfe5021ca9db406d5084c1a8219c934fd9be40b35b3ceeebbff",
+  "test_sha256": "7f0a61adc3fdaaa0f01ea88ce48fea2b755d82bcca817b6aa8149198997da638",
+  "scope": "Auditor fixtures using a historical completed route; not new hardware timing evidence"
+}

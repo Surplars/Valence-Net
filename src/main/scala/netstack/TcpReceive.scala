@@ -159,21 +159,24 @@ class TcpValidate extends Module {
   * consume/drain this stream after every metadata event, even when rejecting a
   * sequence number. Wire validation alone does not authorize acknowledging data.
   */
-class TcpReceive(val beatsPerPacket: Int = 1024) extends Module {
+class TcpReceive(val beatsPerPacket: Int = 1024, val tagged: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val in = Flipped(Decoupled(new PacketBeat(16)))
         val sourceIp = Input(UInt(32.W)); val destinationIp = Input(UInt(32.W)); val ipPayloadLength = Input(UInt(16.W))
         val metadata = Decoupled(new TcpSegment)
         val payload = Decoupled(new PacketBeat(16))
         val dropped = Output(Bool())
+        val inContext = if (tagged) Some(Input(UInt(64.W))) else None
+        val metadataContext = if (tagged) Some(Output(UInt(64.W))) else None
+        val droppedContext = if (tagged) Some(Output(UInt(64.W))) else None
     })
     val validator = Module(new TcpValidate)
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
-    val metadata = Module(new Queue(new TcpSegment, 2))
+    val metadata = Module(new MemoryQueue(new TcpSegment, 2))
     val slice = Module(new PacketSlice)
     validator.io.sourceIp := io.sourceIp; validator.io.destinationIp := io.destinationIp
     validator.io.ipPayloadLength := io.ipPayloadLength
-    buffer.io.inContext := 0.U
+    buffer.io.inContext := (if (tagged) io.inContext.get else 0.U)
     io.in.ready := validator.io.in.ready && buffer.io.in.ready
     validator.io.in.valid := io.in.valid && buffer.io.in.ready
     buffer.io.in.valid := io.in.valid && validator.io.in.ready
@@ -194,6 +197,10 @@ class TcpReceive(val beatsPerPacket: Int = 1024) extends Module {
     slice.io.in <> buffer.io.out
     io.payload <> slice.io.out
     io.dropped := buffer.io.dropped
+    if (tagged) {
+        io.metadataContext.get := buffer.io.outContext
+        io.droppedContext.get := buffer.io.droppedContext
+    }
 }
 
 class TcpReceiveHarness extends Module {

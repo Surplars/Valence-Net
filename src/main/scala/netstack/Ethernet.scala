@@ -89,7 +89,7 @@ class EthernetIpv4Receive(val beatsPerPacket: Int = 1024) extends Module {
         val linkBroadcast = Output(Bool())
     })
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
-    val metadata = Module(new Queue(new Bundle {
+    val metadata = Module(new MemoryQueue(new Bundle {
         val length = UInt(16.W); val broadcast = Bool()
     }, 2))
     val linkBroadcast = Reg(Bool())

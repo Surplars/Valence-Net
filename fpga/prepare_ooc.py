@@ -23,6 +23,8 @@ TARGETS = {
 }
 parser = argparse.ArgumentParser()
 parser.add_argument("targets", nargs="*", help="optional subset of OOC module names")
+parser.add_argument("--memory-profile", choices=["hybrid", "bram", "auto"], default="hybrid",
+                    help="profile used by fresh RTL emission; first export build with the same profile")
 parser.add_argument("--reemit-check", action="store_true", help="re-emit RTL and byte-compare selected exports before freezing")
 args = parser.parse_args()
 selected = args.targets or list(TARGETS)
@@ -44,7 +46,7 @@ if args.reemit_check:
     check = ROOT / "build/reemit" / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     check.mkdir(parents=True, exist_ok=False)
     with (check / "emit.log").open("w") as log:
-        result = subprocess.run(["mill", "-i", "netstack.runMain", "netstack.Emit", str(check)],
+        result = subprocess.run(["mill", "-i", "netstack.runMain", "netstack.Emit", str(check), args.memory_profile],
                                 cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     if result.returncode:
         raise RuntimeError("Fresh RTL emission failed; inspect " + str(check / "emit.log"))
@@ -58,7 +60,8 @@ if args.reemit_check:
         fresh = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                  for p in (check / folder).iterdir() if p.suffix in {".sv", ".v"}}
         if not fresh or any(previous.get(name) != value for name, value in fresh.items()):
-            raise RuntimeError("Export differs from fresh Chisel emission: " + folder)
+            raise RuntimeError("Export differs from fresh Chisel emission: " + folder +
+                               "; emit build with the requested --memory-profile first")
         compared[folder] = fresh
         stale_exports[folder] = sorted(previous.keys() - fresh.keys())
     # A previous emission can leave no-longer-instantiated module files.
@@ -70,6 +73,7 @@ run = ROOT / "build/vivado" / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S
 run.mkdir(parents=True, exist_ok=False)
 (run / "targets.txt").write_text("\n".join(TARGETS) + "\n")
 rtl_hashes = {}
+memory_mapping = {}
 for top, folder in TARGETS.items():
     destination = run / "input" / top
     destination.mkdir(parents=True)
@@ -78,6 +82,22 @@ for top, folder in TARGETS.items():
             continue
         shutil.copy2(source, destination / source.name)
         rtl_hashes[str((destination / source.name).relative_to(run))] = hashlib.sha256(source.read_bytes()).hexdigest()
+    profile_file = export_root / folder / "memory-profile.txt"
+    if profile_file.exists():
+        profile = profile_file.read_text().strip()
+        if profile not in {"hybrid", "bram", "auto"}:
+            raise RuntimeError("Unknown emitted memory profile")
+        if profile != args.memory_profile:
+            raise RuntimeError("Exported memory profile differs from --memory-profile: " + profile)
+        shutil.copy2(profile_file, destination / profile_file.name)
+        memory_mapping[top] = {
+            "profile": profile,
+            "profile_sha256": hashlib.sha256(profile_file.read_bytes()).hexdigest(),
+            "attribute_files": {p.name: {
+                "block": p.read_text().count('ram_style = "block"'),
+                "ultra": p.read_text().count('ram_style = "ultra"'),
+            } for p in sorted(destination.glob("*.sv")) if "ram_style" in p.read_text()},
+        }
     if not (destination / (top + ".sv")).is_file():
         raise RuntimeError("Missing exported default-geometry top: " + top)
 shutil.copy2(ROOT / "fpga/ooc.tcl", run / "ooc.tcl")
@@ -85,6 +105,8 @@ shutil.copy2(ROOT / "fpga/ooc.tcl", run / "ooc.tcl")
     "source_verification": manifest,
     "fresh_emission_check": reemission,
     "rtl_sha256": rtl_hashes,
+    "memory_mapping": memory_mapping,
+    "reemission_memory_profile": args.memory_profile if args.reemit_check else None,
     "script_sha256": hashlib.sha256((run / "ooc.tcl").read_bytes()).hexdigest(),
     "targets": TARGETS,
     "part": "xczu15eg-ffvb1156-2-i",

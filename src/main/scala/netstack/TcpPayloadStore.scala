@@ -46,7 +46,7 @@ class TcpPayloadStore(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
         val releaseMiss = Output(Bool())
         val freeBanks = Output(UInt(log2Ceil(banks + 1).W))
     })
-    val memory = SyncReadMem(banks * beatsPerBank, UInt(128.W))
+    val memory = SyncReadMem(banks * beatsPerBank, UInt(128.W)).suggestName("retainedPayload")
     // 0 free, 1 writing/awaiting ownership transfer, 2 retained, 3 pinned release.
     val state = RegInit(VecInit(Seq.fill(banks)(0.U(2.W))))
     val generation = RegInit(VecInit(Seq.fill(banks)(0.U((32 - bankBits).W))))
@@ -123,7 +123,7 @@ class TcpPayloadStore(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
     val responsePending = RegInit(false.B)
     val response = Reg(new TcpStoreResult)
     val slice = Module(new PacketSlice)
-    val output = Module(new Queue(new PacketBeat(16), 2))
+    val output = Module(new MemoryQueue(new PacketBeat(16), 2))
     val pending = RegInit(false.B)
     val pendingLast = Reg(Bool())
     val room = (output.io.count +& pending.asUInt) < 2.U || output.io.deq.fire

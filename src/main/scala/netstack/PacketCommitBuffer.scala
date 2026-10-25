@@ -19,6 +19,7 @@ class PacketCommitBuffer(val bytes: Int = 16, val beatsPerPacket: Int = 1024) ex
         val inContext = Input(UInt(64.W))
         val out = Decoupled(new PacketBeat(bytes))
         val outContext = Output(UInt(64.W))
+        val droppedContext = Output(UInt(64.W))
         val dropped = Output(Bool())
     })
     val indexBits = log2Ceil(beatsPerPacket)
@@ -35,6 +36,7 @@ class PacketCommitBuffer(val bytes: Int = 16, val beatsPerPacket: Int = 1024) ex
     io.in.ready := !awaiting && (receiving || !occupied(writeBank))
     io.verdict.ready := awaiting
     io.dropped := io.verdict.fire && (!io.verdict.bits || poisoned)
+    io.droppedContext := contexts(writeBank)
     val overflow = writeCount === beatsPerPacket.U
     when(io.in.fire) {
         when(!receiving) { contexts(writeBank) := io.inContext }
@@ -66,7 +68,7 @@ class PacketCommitBuffer(val bytes: Int = 16, val beatsPerPacket: Int = 1024) ex
     io.outContext := contexts(readBank)
     val readIndex = RegInit(0.U(indexBits.W))
     val issuedLast = RegInit(false.B)
-    val output = Module(new Queue(new PacketBeat(bytes), 2))
+    val output = Module(new MemoryQueue(new PacketBeat(bytes), 2))
     io.out <> output.io.deq
     val pending = RegInit(false.B)
     // Account for the read already in flight as well as queued words.

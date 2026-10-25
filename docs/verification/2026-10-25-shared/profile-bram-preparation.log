@@ -1,0 +1,5 @@
+mill netstack.runMain netstack.Emit build bram
+79] netstack.runMain
+79/79, SUCCESS] mill netstack.runMain netstack.Emit build bram 17s
+/home/openion/Valence-Net/build/vivado/20261025T090930Z
+//wsl.localhost/Ubuntu-24.04/home/openion/Valence-Net/build/vivado/20261025T090930Z

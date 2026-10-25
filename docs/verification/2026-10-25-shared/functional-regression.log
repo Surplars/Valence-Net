@@ -1,0 +1,262 @@
++ mill -i netstack.runMain netstack.Emit /home/openion/Valence-Net/build
+mill netstack.runMain netstack.Emit /home/openion/Valence-Net/build
+79] netstack.runMain
+79/79, SUCCESS] mill netstack.runMain netstack.Emit /home/openion/Valence-Net/build 17s
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/ChecksumHarness.fir
++ verified model object cache ChecksumHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/fd71f4043276572f59d855826dc330a2a91ea2c2c5ef18aae4327a40f2c54328-0.o /home/openion/Valence-Net/sim/checksum.cpp -ldl -o /home/openion/Valence-Net/build/checksum-test
++ /home/openion/Valence-Net/build/checksum-test
+CHECKSUM_PASS packets=6400 beats=3162746 cycles=3957178 stalled_results=4986 keep_masks=65536
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/UdpHarness.fir
++ verified model object cache UdpHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/a385625079066f185c1aa6cd467a342d5f16fe4271b23fdb7fd07bf210fdd990-0.o /home/openion/Valence-Net/sim/udp.cpp -ldl -o /home/openion/Valence-Net/build/udp-test
++ /home/openion/Valence-Net/build/udp-test
+UDP_VALIDATE_PASS packets=2600 accepted=600 rejected=2000 cycles=774519 verdict_stalls=10180
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/BufferHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/BufferHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/7fd90f325e6d23aa102dc0d94cb2c48d1a21bb07375acd689781a04d18861c22-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/7fd90f325e6d23aa102dc0d94cb2c48d1a21bb07375acd689781a04d18861c22-0.o /home/openion/Valence-Net/sim/buffer.cpp -ldl -o /home/openion/Valence-Net/build/buffer-test
++ /home/openion/Valence-Net/build/buffer-test
+PACKET_BUFFER_PASS packets=4000 dropped=2279 output_beats=14410 concurrent_rx_tx=7368 stall_cycles=19266 cycles=88782
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/ReceiveHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/ReceiveHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/b242ad4f9bd7b4303a0ffb5c86e77b35786350e4acdf5a0cd4ede431279d8a2b-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/b242ad4f9bd7b4303a0ffb5c86e77b35786350e4acdf5a0cd4ede431279d8a2b-0.o /home/openion/Valence-Net/sim/receive.cpp -ldl -o /home/openion/Valence-Net/build/receive-test
++ /home/openion/Valence-Net/build/receive-test
+UDP_RECEIVE_PASS packets=1800 delivered=600 dropped=1200 cycles=28231 stalled_outputs=6791
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/SliceHarness.fir
++ verified model object cache SliceHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/6d64249e23352b3f5c3489013cffee52f35b557eb5a297d05015f4b30edf66d8-0.o /home/openion/Valence-Net/sim/slice.cpp -ldl -o /home/openion/Valence-Net/build/slice-test
++ /home/openion/Valence-Net/build/slice-test
+PACKET_SLICE_PASS packets=2500 truncated=330 cycles=289916 stalls=151501
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/IpReceiveHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/IpReceiveHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/598a2c5dfcc4061939e10d792a86ed75e1310224acfd8c6be3b51115f10e8f68-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/598a2c5dfcc4061939e10d792a86ed75e1310224acfd8c6be3b51115f10e8f68-0.o /home/openion/Valence-Net/sim/ip_receive.cpp -ldl -o /home/openion/Valence-Net/build/ip_receive-test
++ /home/openion/Valence-Net/build/ip_receive-test
+IPV4_UDP_RECEIVE_PASS packets=2400 delivered=600 ip_drops=1500 udp_drops=200 other_protocol=100 cycles=51050 stalls=4990
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TransmitHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TransmitHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/3be8fdd9220bf565805955543bcb6d120999397ff0037c821d2f0e8dda39f707-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/3be8fdd9220bf565805955543bcb6d120999397ff0037c821d2f0e8dda39f707-0.o /home/openion/Valence-Net/sim/transmit.cpp -ldl -o /home/openion/Valence-Net/build/transmit-test
++ /home/openion/Valence-Net/build/transmit-test
+IPV4_UDP_TRANSMIT_PASS packets=1800 emitted=750 dropped=1050 cycles=49868 stalls=6999
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/ArpHarness.fir
++ verified model object cache ArpHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/11f48224e295851829ddeba1b61818ae72798dd2268233d29211541e676862df-0.o /home/openion/Valence-Net/sim/arp.cpp -ldl -o /home/openion/Valence-Net/build/arp-test
++ /home/openion/Valence-Net/build/arp-test
+ARP_ENDPOINT_PASS learned_peers=120 malformed=52 retries=3 expiry=pass flush=pass eviction=pass wrong_replies=pass tx_frames=135 resolutions=131 cycles=8265
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/EthernetHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/EthernetHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/b57b433b3383c640d50280f5a8296c4b63b52b57812b747c74f8d75c5874ed92-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/b57b433b3383c640d50280f5a8296c4b63b52b57812b747c74f8d75c5874ed92-0.o /home/openion/Valence-Net/sim/ethernet.cpp -ldl -o /home/openion/Valence-Net/build/ethernet-test
++ /home/openion/Valence-Net/build/ethernet-test
+ETHERNET_SERVICE payload=0 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000
+ETHERNET_SERVICE payload=1 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000
+ETHERNET_SERVICE payload=17 packets=256 tx_cycles_per_packet=9.000 rx_cycles_per_packet=7.000 tx_service_gbps_at_156_25mhz=11.667 rx_service_gbps_at_156_25mhz=15.000
+ETHERNET_SERVICE payload=512 packets=256 tx_cycles_per_packet=40.000 rx_cycles_per_packet=38.000 tx_service_gbps_at_156_25mhz=18.062 rx_service_gbps_at_156_25mhz=19.013
+ETHERNET_SERVICE payload=896 packets=256 tx_cycles_per_packet=64.000 rx_cycles_per_packet=62.000 tx_service_gbps_at_156_25mhz=18.789 rx_service_gbps_at_156_25mhz=19.395
+ETHERNET_UDP_ENDPOINT_PASS tx_datagrams=1467 rx_datagrams=1460 arp_probes=6 arp_replies=21 tx_drops=4 rx_drops=6 cycles=42924 cold_lookup=retained arbitration=stable gateway=pass padding=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpReceiveHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpReceiveHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/eda04b92f9c11b0e1d3bc1d5cb0631778093181a322fc432d261c85f5ad21035-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/eda04b92f9c11b0e1d3bc1d5cb0631778093181a322fc432d261c85f5ad21035-0.o /home/openion/Valence-Net/sim/tcp_receive.cpp -ldl -o /home/openion/Valence-Net/build/tcp_receive-test
++ /home/openion/Valence-Net/build/tcp_receive-test
+TCP_RECEIVE_PASS segments=2400 delivered=1000 dropped=1400 cycles=58185 mss_ws_ts_sack=pass malformed_options=pass zero_checksum=pass reserved_bits=ignored
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpTransmitHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpTransmitHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/475fdcf8d1cfa5b873fa7e6ada0b85ea4fde354757b52246ec28f918fd9805c6-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/475fdcf8d1cfa5b873fa7e6ada0b85ea4fde354757b52246ec28f918fd9805c6-0.o /home/openion/Valence-Net/sim/tcp_transmit.cpp -ldl -o /home/openion/Valence-Net/build/tcp_transmit-test
++ /home/openion/Valence-Net/build/tcp_transmit-test
+IPV4_TCP_TRANSMIT_PASS packets=2600 emitted=1400 dropped=1200 cycles=83025 stalls=21357 header_lengths=20..60 zero_checksum=pass reset=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpTimerHarness.fir
++ verified model object cache TcpTimerHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/e787ab206974d9df61cc6ece42fcb67afcdf95da4b4ff2ab0e79a24225a05163-0.o /home/openion/Valence-Net/sim/tcp_timer.cpp -ldl -o /home/openion/Valence-Net/build/tcp_timer-test
++ /home/openion/Valence-Net/build/tcp_timer-test
+TCP_RETRANSMISSION_TIMER_PASS cycles=84069 samples=1027 timeouts=134 rejected_acks=6701 karn_exclusions=410 wrap=pass backoff=pass syn_fallback=pass deadline_priority=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpPipelinedTimerHarness.fir
++ verified model object cache TcpPipelinedTimerHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/ba984a5064cb7c69722d8c461097b6d84a07de0d7b02a6d84274e51c58ccc5ea-0.o /home/openion/Valence-Net/sim/tcp_timer_pipeline.cpp -ldl -o /home/openion/Valence-Net/build/tcp_timer_pipeline-test
++ /home/openion/Valence-Net/build/tcp_timer_pipeline-test
+TCP_PIPELINED_TIMER_PASS cycles=84069 samples=1027 timeouts=134 rejected_acks=6701 karn_exclusions=410 wrap=pass backoff=pass syn_fallback=pass deadline_priority=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpStoreHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpStoreHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/25c17e65bd018fe073681e61622bff4726bc86c151d28b795e02dbb86e1632bd-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/25c17e65bd018fe073681e61622bff4726bc86c151d28b795e02dbb86e1632bd-0.o /home/openion/Valence-Net/sim/tcp_store.cpp -ldl -o /home/openion/Valence-Net/build/tcp_store-test
++ /home/openion/Valence-Net/build/tcp_store-test
+TCP_PAYLOAD_STORE_PASS writes=1409 rejected_writes=200 replays=4801 rejected_reads=1005 releases=1201 stale_releases=601 concurrent_read_write_cycles=1311 cycles=105961 resets=10 pinned_release=pass arbitrary_slice=pass generation=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpControlHarness.fir
++ verified model object cache TcpControlHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o /home/openion/Valence-Net/sim/tcp_control.cpp -ldl -o /home/openion/Valence-Net/build/tcp_control-test
++ /home/openion/Valence-Net/build/tcp_control-test
+OPEN configuration capture and pending-SYN abort barrier passed
+TCP_CONNECTION_CONTROL_PASS cycles=67642 segments=8087 reservations=1286 control_packets=8095 dispositions=8087 ack_events=6747 notices=750 states=11 handshake=pass half_close=pass time_wait=pass simultaneous_open=pass durable_ack=pass stale_generation=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpManagedHarness.fir
++ verified model object cache TcpManagedHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/977d9bd301eb0450b86ef71780875a95e11ed964428d71909601a74f9879c30b-0.o /home/openion/Valence-Net/sim/tcp_managed.cpp -ldl -o /home/openion/Valence-Net/build/tcp_managed-test
++ /home/openion/Valence-Net/build/tcp_managed-test
+TCP_MANAGED_CONNECTION_PASS cycles=1059 segments=12 controls=19 data_replays=2 timeouts=1 syn_fin_retry=pass partial_ack=pass wire_timer=pass ack_stall=pass retry_bound=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpDataHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpDataHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/7eaf55bd3eb9beae7523495b8f53867ccb57c3f3e759c4f94070d749f6c7ac30-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/7eaf55bd3eb9beae7523495b8f53867ccb57c3f3e759c4f94070d749f6c7ac30-0.o /home/openion/Valence-Net/sim/tcp_data.cpp -ldl -o /home/openion/Valence-Net/build/tcp_data-test
++ /home/openion/Valence-Net/build/tcp_data-test
+TCP_DATA_SERVICE payload=1 cycles_per_packet=7 hypothetical_gbps_at_156_25MHz=15
+TCP_DATA_SERVICE payload=64 cycles_per_packet=10 hypothetical_gbps_at_156_25MHz=17.75
+TCP_DATA_SERVICE payload=1460 cycles_per_packet=98 hypothetical_gbps_at_156_25MHz=19.6173
+TCP_DATA_PASS cycles=218180 writes=2256 rejected=200 reservations=3580 packets=3881 replays=302 misses=904 prepare_overlap=3745 simultaneous_io=68189 ack_during_retry=1328 resets=42 wire_bytes=pass partial_ack=pass wrap=pass backpressure=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpConnectionTxHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpConnectionTxHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/1451bb8ae9a0adeaecdc97d46f978e962f621b864a70e17b65268603dff3a8dd-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/1451bb8ae9a0adeaecdc97d46f978e962f621b864a70e17b65268603dff3a8dd-0.o /home/openion/Valence-Net/sim/tcp_connection_tx.cpp -ldl -o /home/openion/Valence-Net/build/tcp_connection_tx-test
++ /home/openion/Valence-Net/build/tcp_connection_tx-test
+TCP_CONNECTION_TX_PASS cycles=26455 opens=27 writes=102 data_packets=385 retransmissions=25 controls=57 completions=442 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpRingHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpRingHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/d35b4aea89eb6364c7ea591bf88e5cfcb8b662a3396521bf43bc73f65404837f-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/d35b4aea89eb6364c7ea591bf88e5cfcb8b662a3396521bf43bc73f65404837f-0.o /home/openion/Valence-Net/sim/tcp_ring.cpp -ldl -o /home/openion/Valence-Net/build/tcp_ring-test
++ /home/openion/Valence-Net/build/tcp_ring-test
+TCP_RECEIVE_RING_PASS cycles=300603 reservations=7672 bytes=2788617 concurrent=121097 full_stalls=55300 resets=20 byte_packing=pass wrap=pass reserved_credit=pass backpressure=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpEndpointHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpEndpointHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/7284848e910f8e173e1bc4fcdb4c0a5928ec6069f5af1e5358d674cb8bcb684b-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/7284848e910f8e173e1bc4fcdb4c0a5928ec6069f5af1e5358d674cb8bcb684b-0.o /home/openion/Valence-Net/sim/tcp_endpoint.cpp -ldl -o /home/openion/Valence-Net/build/tcp_endpoint-test
++ /home/openion/Valence-Net/build/tcp_endpoint-test
+TCP_IPV4_ENDPOINT_PASS cycles=86956 opens=30 writes=102 data_packets=468 retransmissions=25 controls=281 received_bytes=3509 rx_drops=2 completions=749 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpCongestedEndpointHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpCongestedEndpointHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288-0.o /home/openion/Valence-Net/sim/tcp_reassembly.cpp -ldl -o /home/openion/Valence-Net/build/tcp_reassembly-test
++ /home/openion/Valence-Net/build/tcp_reassembly-test
+TCP_REASSEMBLY_PASS cases=46 cycles=61474 bytes=14742 observed_cache_drops=3 wrap=pass overlap=pass exhaustion=pass window_clip=pass ordered_fin=pass invalid_admission=pass abort_reuse=pass old_ack_isolation=pass randomized_backpressure=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/EthernetTcpHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/EthernetTcpHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/ae0fb0b3d02ee2250debc6407e6f709219e9d4a46876d08aa1e50904297540c1-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/ae0fb0b3d02ee2250debc6407e6f709219e9d4a46876d08aa1e50904297540c1-0.o /home/openion/Valence-Net/sim/ethernet_tcp.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_tcp-test
++ /home/openion/Valence-Net/build/ethernet_tcp-test
+ETHERNET_TCP_ENDPOINT_PASS cycles=99012 opens=31 writes=102 data_packets=456 retransmissions=25 controls=281 arp_requests=5 received_bytes=3509 rx_drops=2 completions=738 rejected_completions=4 wire_checksums=pass partial_ack=pass ledger_backpressure=pass abort_stability=pass route_failure=pass reuse=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpCongestionHarness.fir
++ verified model object cache TcpCongestionHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/f5fe6e8ae973c2b5983b379d26ad4c4edece6452c22cafc1590d15ba4a62d68b-0.o /home/openion/Valence-Net/sim/tcp_congestion.cpp -ldl -o /home/openion/Valence-Net/build/tcp_congestion-test
++ /home/openion/Valence-Net/build/tcp_congestion-test
+TCP_CONGESTION_PASS cycles=40031 fast_retransmits=1121 loss_events=353 request_stalls=632 slow_start=pass byte_counting=pass fast_recovery=pass rto=pass idle_restart=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288-0.o /home/openion/Valence-Net/sim/tcp_congested_endpoint.cpp -ldl -o /home/openion/Valence-Net/build/tcp_congested_endpoint-test
++ /home/openion/Valence-Net/build/tcp_congested_endpoint-test
+TCP_CONGESTED_ENDPOINT_PASS cycles=3890 data_packets=14 retransmissions=2 actual_window=pass slow_start=pass duplicate_ack_replay=pass rto_loss=pass idle_restart=pass persist=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/ae0fb0b3d02ee2250debc6407e6f709219e9d4a46876d08aa1e50904297540c1-0.o /home/openion/Valence-Net/sim/ethernet_mixed.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_mixed-test
++ /home/openion/Valence-Net/build/ethernet_mixed-test
+ETHERNET_MIXED_PASS cycles=9987 udp_tx=82 udp_rx=60 echo_replies=60 tcp_packets=1 received_tcp_bytes=132 shared_routing=pass arbitration=pass checksum=pass empty_payload=pass backpressure=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/EthernetServiceHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/EthernetServiceHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/330198820946b0f8ad35d890b7c1831c815ffc557c6f5f21910e0a9ec49255e6-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/330198820946b0f8ad35d890b7c1831c815ffc557c6f5f21910e0a9ec49255e6-0.o /home/openion/Valence-Net/sim/ethernet_service.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_service-test
++ /home/openion/Valence-Net/build/ethernet_service-test
+FULL_ENDPOINT_SERVICE path=UDP_TX payload=0 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000
+FULL_ENDPOINT_SERVICE path=UDP_RX payload=0 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000
+FULL_ENDPOINT_SERVICE path=UDP_TX payload=1 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000
+FULL_ENDPOINT_SERVICE path=UDP_RX payload=1 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000
+FULL_ENDPOINT_SERVICE path=UDP_TX payload=17 cycles_per_packet=10.0000 wire_equivalent_gbps_at_156_25MHz=10.5000
+FULL_ENDPOINT_SERVICE path=UDP_RX payload=17 cycles_per_packet=7.0000 wire_equivalent_gbps_at_156_25MHz=15.0000
+FULL_ENDPOINT_SERVICE path=UDP_TX payload=512 cycles_per_packet=41.0000 wire_equivalent_gbps_at_156_25MHz=17.6220
+FULL_ENDPOINT_SERVICE path=UDP_RX payload=512 cycles_per_packet=38.0000 wire_equivalent_gbps_at_156_25MHz=19.0132
+FULL_ENDPOINT_SERVICE path=UDP_TX payload=1400 cycles_per_packet=97.0000 wire_equivalent_gbps_at_156_25MHz=18.8918
+FULL_ENDPOINT_SERVICE path=UDP_RX payload=1400 cycles_per_packet=94.0000 wire_equivalent_gbps_at_156_25MHz=19.4947
+FULL_ENDPOINT_SERVICE path=TCP_TX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667
+FULL_ENDPOINT_SERVICE path=TCP_TX payload=64 cycles_per_packet=13.0000 wire_equivalent_gbps_at_156_25MHz=13.6538
+FULL_ENDPOINT_SERVICE path=TCP_TX payload=1460 cycles_per_packet=100.0000 wire_equivalent_gbps_at_156_25MHz=19.2250
+FULL_ENDPOINT_SERVICE path=TCP_RX payload=1 cycles_per_packet=9.0000 wire_equivalent_gbps_at_156_25MHz=11.6667
+FULL_ENDPOINT_SERVICE_PASS line_rate_target_gbps=10 raw_internal_gbps=20 clock_target_mhz=156.25 physical_timing_verified=false
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpHeaderSnapshotHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpHeaderSnapshotHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/10bbda1dab3cf519e9004556689d20d699bf53f517b5fa13856e179ac00cf8ab-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/10bbda1dab3cf519e9004556689d20d699bf53f517b5fa13856e179ac00cf8ab-0.o /home/openion/Valence-Net/sim/tcp_header_snapshot.cpp -ldl -o /home/openion/Valence-Net/build/tcp_header_snapshot-test
++ /home/openion/Valence-Net/build/tcp_header_snapshot-test
+PASS tcp_header_snapshot: exact reserve/replay handshake option changes, both directions, MTU, checksums and retained bytes
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/b88c874b4c44089c9660cd8d654e1fc0ebd5bbc78e74f0e3de5d166d7cf0a288-0.o /home/openion/Valence-Net/sim/tcp_sack.cpp -ldl -o /home/openion/Valence-Net/build/tcp_sack-test
++ /home/openion/Valence-Net/build/tcp_sack-test
+PASS tcp_sack: negotiation/fallback, durable merged latest-first blocks, duplicate recency, FIN, wrap, multiple holes, malicious blocks, retention/reneging/RTO, generations and MTU
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/MultiTcpEndpointHarness.fir
++ verified model object cache MultiTcpEndpointHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/ecdb7efaff93b612142140a23687be345e7bbc507242f9092b28db8e9580cb41-0.o /home/openion/Valence-Net/sim/tcp_multi.cpp -ldl -o /home/openion/Valence-Net/build/tcp_multi-test
++ /home/openion/Valence-Net/build/tcp_multi-test
+multi independent: four active tuples, reordered RX, per-context windows/storage/RTO and bad packets passed
+multi listeners: shared port, bad/duplicate SYN, RST return and duplicate active OPEN passed
+passive SYNACK/RST ownership barrier and post-drain tuple migration passed
+multi completion: global ordering, wrong tags/generations, abort drain/reuse and RX generation barrier passed
+multi SACK: two negotiated sessions report independent gaps and reassemble independently
+multi minimum 1B TX (4 active): 45/15 cycles, 3 cycles/packet
+multi minimum 1B TX (1 active): 15/3 cycles, 5 cycles/packet
+multi 1460B TX: 282/3 cycles, 94 cycles/packet
+multi minimum RX: 1344/128 cycles, 10.5 cycles/packet, zero drops at 10G wire budget
+multi minimum 1B RX (4 active): 10.5 cycles/packet, zero drops and all bytes delivered
+multi minimum 1B RX (1 active): 10.5 cycles/packet, zero drops and all bytes delivered
+multi 1460B RX: 6152/32 cycles, 192.25 cycles/packet, zero drops at 10G wire budget
+four-context TCP isolation/ownership/fairness/service checks passed
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/MultiEthernetTcpHarness.fir
++ verified model object cache MultiEthernetTcpHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/78baab44d71835827301c7cdd1ec1c8665d4953cdaa9b72d0b7e7a9846fc9b1a-0.o /home/openion/Valence-Net/sim/ethernet_multi.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_multi-test
++ /home/openion/Valence-Net/build/ethernet_multi-test
+Ethernet multi: four TCP contexts with shared ARP/UDP/ICMP, stalled RX isolation, wire checksums and global MAC completion tags passed
+Ethernet four-context 1B TCP TX: 2295/255 cycles = 9 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed
+Ethernet four-context 1460B TCP TX: 25500/255 cycles = 100 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/78baab44d71835827301c7cdd1ec1c8665d4953cdaa9b72d0b7e7a9846fc9b1a-0.o /home/openion/Valence-Net/sim/ethernet_multi_rx.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_multi_rx-test
++ /home/openion/Valence-Net/build/ethernet_multi_rx-test
+zero-window reopening and final coalesced read-to-empty ACK passed
+MAC RX pure ACK, 1 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met
+MAC RX pure ACK, 4 active: 2688/256 = 10.5 cycles/frame; zero drops; 0 application bytes verified; 10G deadlines all met
+MAC RX 1B data, 1 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met
+MAC RX 1B data, 4 active: 43008/4096 = 10.5 cycles/frame; zero drops; 4096 application bytes verified; 10G deadlines all met
+MAC RX 1460B data, 1 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met
+MAC RX 1460B data, 4 active: 49216/256 = 192.25 cycles/frame; zero drops; 373760 application bytes verified; 10G deadlines all met
+complete Ethernet RX 10G service checks passed (2 KiB RX/context)
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/IcmpErrorsHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/IcmpErrorsHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/efe9e532638f40a79c850434aef7a9838e9937079927bdcce33ac5bc67ea5cb7-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/efe9e532638f40a79c850434aef7a9838e9937079927bdcce33ac5bc67ea5cb7-0.o /home/openion/Valence-Net/sim/icmp_errors.cpp -ldl -o /home/openion/Valence-Net/build/icmp_errors-test
++ /home/openion/Valence-Net/build/icmp_errors-test
+ICMP_ERRORS_PASS received=123 replies=29 rx_drops=25 tx_drops=30 suppressed=2 cycles=19431 stalls=702
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpClosedHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpClosedHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/c62a24e26167b0a173139e2535f817da84a60d6621891ab9a703f82e48179954-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/c62a24e26167b0a173139e2535f817da84a60d6621891ab9a703f82e48179954-0.o /home/openion/Valence-Net/sim/tcp_closed.cpp -ldl -o /home/openion/Valence-Net/build/tcp_closed-test
++ /home/openion/Valence-Net/build/tcp_closed-test
+TCP_CLOSED_PASS flags=256 checksum_options_lengths=pass sequence_wrap=pass broadcast_rst_suppression=pass tick_limit=pass stalled_output=pass packet_admission=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/ecdb7efaff93b612142140a23687be345e7bbc507242f9092b28db8e9580cb41-0.o /home/openion/Valence-Net/sim/tcp_exception.cpp -ldl -o /home/openion/Valence-Net/build/tcp_exception-test
++ /home/openion/Valence-Net/build/tcp_exception-test
+TCP_EXCEPTION_PASS unknown_listener=pass independent_ledger=pass busy_reserved_tuple=pass stalled_exception_isolation=pass checksum_validation=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpPmtuHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/TcpPmtuHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/2e429983f78a5e8b4771d04de3143c8dea0bf2121dda16fea084e8b9f6d0eda5-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/2e429983f78a5e8b4771d04de3143c8dea0bf2121dda16fea084e8b9f6d0eda5-0.o /home/openion/Valence-Net/sim/tcp_pmtu.cpp -ldl -o /home/openion/Valence-Net/build/tcp_pmtu-test
++ /home/openion/Valence-Net/build/tcp_pmtu-test
+TCP_PMTU_PASS cycles=5097 data_packets=39 repairs=23 invalid_updates=pass wrap=pass ack_clock=pass reserved_horizon=pass stalled_descriptor=pass minimum_mtu_sack=pass checksums=pass karn_loss_budget=pass fin_pmtu_repair=pass half_close=pass delayed_timeout_origin=pass generation=pass reclamation=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/MultiEthernetPortHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/MultiEthernetPortHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/588e5047aa6be7caba191cad605e7c33cb6dd6ebaa9712a86994a2dbbb44bba5-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/588e5047aa6be7caba191cad605e7c33cb6dd6ebaa9712a86994a2dbbb44bba5-0.o /home/openion/Valence-Net/sim/ethernet_errors.cpp -ldl -o /home/openion/Valence-Net/build/ethernet_errors-test
++ /home/openion/Valence-Net/build/ethernet_errors-test
+GSIM initialization: poisoned storage, pinned defect and complete byte clear passed
+ethernet exception: reset ownership, ICMP quoting, UDP binding/checksum and broadcast suppression passed
+ethernet TCP PMTU: quote validation, soft errors, 1500->600, wrapped retained repairs and per-context isolation passed
+ethernet UDP PMTU: exact recent quote, local length error, payload drain, boundary and destination isolation passed
+ETHERNET_ERRORS_PASS tcp_reset=pass unreachable_udp_ports=pass error_validation=pass tcp_pmtu_repair=pass udp_pmtu_limit=pass broadcast_suppression=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/NetworkErrorsHarness.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build -c /home/openion/Valence-Net/build/NetworkErrorsHarness0.cpp -o /home/openion/Valence-Net/build/model-cache/d38cb28dd900e7b927a57edb56b069dd810db715b0bd34f0243c5e0375b12592-0.tmp.o
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/d38cb28dd900e7b927a57edb56b069dd810db715b0bd34f0243c5e0375b12592-0.o /home/openion/Valence-Net/sim/network_errors.cpp -ldl -o /home/openion/Valence-Net/build/network_errors-test
++ /home/openion/Valence-Net/build/network_errors-test
+NETWORK_ERRORS_PASS tcp_updates=12 tcp_notices=12 udp_notices=12 drops=6 cycles=9096 stalls=287
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/MemoryQueueHarness.fir
++ verified model object cache MemoryQueueHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/e7124cca336fbd9e68c197e128d29483d33844f2e72b3d1abc4ecffdddedd169-0.o /home/openion/Valence-Net/sim/memory_queue.cpp -ldl -o /home/openion/Valence-Net/build/memory_queue-test
++ /home/openion/Valence-Net/build/memory_queue-test
+MEMORY_QUEUE_PASS cycles=500000 forwarding_cases=137494 simultaneous=140437 stalled_heads=221517 depths=2,3,16
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/SharedTcpReceiveHarness.fir
++ verified model object cache SharedTcpReceiveHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/f867af6d063e7d32e246b7805b221485610601a423bc5afa1a28744524cc3f42-0.o /home/openion/Valence-Net/sim/shared_receive.cpp -ldl -o /home/openion/Valence-Net/build/shared_receive-test
++ /home/openion/Valence-Net/build/shared_receive-test
+SHARED_RECEIVE_PASS packets=1200 good=450 rejected=750 stalled_payload_cycles=5192 cycles=22007 immutable_tags=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/2e429983f78a5e8b4771d04de3143c8dea0bf2121dda16fea084e8b9f6d0eda5-0.o /home/openion/Valence-Net/sim/tcp_pmtu_pipeline.cpp -ldl -o /home/openion/Valence-Net/build/tcp_pmtu_pipeline-test
++ /home/openion/Valence-Net/build/tcp_pmtu_pipeline-test
+TCP_PMTU_PIPELINE_PASS partial_ack_offsets=14 full_ack_offsets=10 abort_reopen_offsets=10 passive_rst_offsets=6 loss_priority=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o /home/openion/Valence-Net/sim/window_scale.cpp -ldl -o /home/openion/Valence-Net/build/window_scale-test
++ /home/openion/Valence-Net/build/window_scale-test
+WINDOW_SCALE_PASS requested_scales=16 credit_cases=448 passive_rollback=pass renegotiation_fallback=pass active_same_cycle=pass saturation=pass reopen=pass
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o /home/openion/Valence-Net/sim/body_window.cpp -ldl -o /home/openion/Valence-Net/build/body_window-test
++ /home/openion/Valence-Net/build/body_window-test
+BODY_WINDOW_PASS cases=1152 accepted_fin=194 clipped=160 failed_storage=576 scales=16 boundary_equality=pass overlap=pass wrap=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpGenerationHarness.fir
++ verified model object cache TcpGenerationHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/258ac9e7091f853d3ed9796d6e9d2c569e2cb9b77eacd9b74b2d173a000df1be-0.o /home/openion/Valence-Net/sim/tcp_generation.cpp -ldl -o /home/openion/Valence-Net/build/tcp_generation-test
++ /home/openion/Valence-Net/build/tcp_generation-test
+PASS tcp_generation cycles=7433 opens=136 rollbacks=64 generation_gaps=200 enabled_cycles=4209 option_cycles=2675 ack_gaps=415 count_gaps=768 cases=active/passive/simultaneous/invalid-open/overlapping-rx/rollback/renegotiate/wrap/backpressure oracle=original-generation-guard-every-cycle
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o /home/openion/Valence-Net/sim/tcp_control_priority.cpp -ldl -o /home/openion/Valence-Net/build/tcp_control_priority-test
++ /home/openion/Valence-Net/build/tcp_control_priority-test
+TCP_CONTROL_PRIORITY_PASS simultaneous_open_cases=96 reserve_priority_cases=512 wrap=pass premature_ack=pass rst=pass pending_window_open=pass completion=pass half_close=pass
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Net/build /home/openion/Valence-Net/build/TcpSackSnapshotHarness.fir
++ verified model object cache TcpSackSnapshotHarness 0
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/3e2bd2816ee078f96000fd06f181e9681af667e0ade67d28ba20775edc03277b-0.o /home/openion/Valence-Net/sim/sack_snapshot.cpp -ldl -o /home/openion/Valence-Net/build/sack_snapshot-test
++ /home/openion/Valence-Net/build/sack_snapshot-test
+sack_snapshot PASS cases=2688 cycles=151482 max_settle=77
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Net/build /home/openion/Valence-Net/build/model-cache/8d5a859736d2c0feb738b036e59009df3bb9ddb0388bdcbb8540a6bf6308e06a-0.o /home/openion/Valence-Net/sim/handshake_body.cpp -ldl -o /home/openion/Valence-Net/build/handshake_body-test
++ /home/openion/Valence-Net/build/handshake_body-test
+HANDSHAKE_BODY_PASS cases=1536 active/passive=pass storage=pass clip/equality=pass fin=pass wrap=pass unscaled_window=pass

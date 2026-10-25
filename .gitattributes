@@ -1,0 +1,6 @@
+# Evidence hashes refer to original tool bytes, including CRLF/UTF-16 logs.
+# Do not normalize line endings or treat report padding as source whitespace.
+docs/timing/** -text -whitespace
+docs/memory/** -text -whitespace
+docs/verification/** -text -whitespace
+docs/experiments/** -text -whitespace

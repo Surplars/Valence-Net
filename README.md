@@ -6,14 +6,16 @@ integrated endpoint supports **four independent TCP sessions by default**
 datapath (20 Gb/s raw bandwidth)**. Functional verification, cycle service
 capacity and physical timing are recorded separately.
 
-The current area revision passes **44 functional targets** with unchanged default
-capacity. Fully routed core use falls from **184,655 to 180,442 LUTs (2.282%)**.
-Its exact 104-file source set matches **156.25 MHz OOC on ZU15EG-2**, with setup
-**0.000 ns**, hold **+0.005 ns**, zero failing endpoints and complete routing.
-The original 0.100/0.050 ns setup/hold uncertainties remain in force; the setup
-margin beyond those requirements is tight. See [area evidence](docs/AREA-OPTIMIZATION.md),
-[current routed report](docs/timing/2026-10-24-074147/post_route_timing.rpt) and
-[elaboration parameters](docs/PARAMETERS.md).
+The current shared-receive revision passes **46 functional targets** with unchanged
+default capacity. The fully routed core falls from **180,442 to 164,239 LUTs
+(8.980%)**, uses 16 URAM blocks and meets **156.25 MHz OOC on ZU15EG-2**.
+Setup/hold failing endpoints and TNS/THS are zero; both displayed margins are
+**0.000 ns** after the original 0.100/0.050 ns uncertainties, so integration
+margin remains thin. The exact 111-file source set also passes production-capacity
+single/four-context 10G RX and four-context TX checks. See
+[shared receive / RAM evidence](docs/SHARED-RECEIVE-AREA.md),
+[routed qualification](docs/timing/2026-10-25-082252/source-qualification.json)
+and [elaboration parameters](docs/PARAMETERS.md).
 
 The earlier exception/PMTU revision passes **42 functional targets**, including
 complete-Ethernet single/four-context RX offered at 10G and sustained
@@ -53,7 +55,9 @@ when invoking tools from Windows. Windows Vivado uses frozen snapshots under
 - SACK-permitted negotiation, up to four receiver SACK blocks from committed
   reorder storage, and bounded selective hole retransmission. Only cumulative
   ACKs reclaim payload. RTO discards advisory SACK state for reneging recovery.
-- Shared tuple dispatch, same-port passive listeners, fair packet-level TCP TX
+- Shared tuple dispatch and complete IPv4/TCP receive validation with immutable
+  slot/generation tags, independent committed per-context staging, same-port
+  passive listeners, fair packet-level TCP TX
   arbitration and a global physical-completion ledger that maps results back
   to each connection's generation and local tag.
 - RFC 6298 RTT/RTO estimation, Karn exclusion, exponential backoff, SYN fallback
@@ -223,7 +227,7 @@ byte checked. Final receive-window updates and zero-window reopening are checked
 These measurements use cached ARP and consumers that keep up, with reduced
 harness storage; routed timing uses full production storage.
 
-The current 44-target regression also rechecks the compatible single-session top.
+The current 46-target regression also rechecks the compatible single-session top.
 `ethernet_service` checks complete Ethernet/IP/transport bytes, uses eight
 TX banks, autonomous Reno, cached ARP, prompt modeled physical completions/
 peer ACKs and ready consumers. It measures 256 packets per case, excluding
@@ -245,15 +249,23 @@ adding one service clock per datagram versus the historical baseline. The
 smallest case still meets the 10G service budget at the target clock. These are
 scheduling measurements; matching routed clock closure is recorded below.
 
-The current production-capacity probe
+The current `bench/multi_production_rx_probe.py` repeats the independent
+multi-context RX/TX oracles with eight TX banks, 64 KiB RX/context, ARP16 and
+16 completion entries/context. It verifies zero-window reopening, all exact
+single/four-context 10G RX deadlines and every payload byte. Four-context TX
+retains 9/100 clocks per one-byte/1460-byte frame and reclaims every bank.
+[Source, model and result hashes](docs/verification/2026-10-25-shared/evidence.json)
+match the current 111-file source set.
+
+The previous single-session production-capacity probe
 (`build/production-rx-probe-20261024T061221Z`) checks the compatible single-session
 Ethernet top. `python3 bench/production_rx_probe.py` uses an isolated source copy
 and enlarges only the service harness RX ring to the production 64 KiB capacity.
 TCP RX at 1460 bytes measures **98 cycles per packet / 19.617 Gb/s wire-equivalent**.
 The probe retains the harness's reduced ARP/completion/timer geometry, records
 its own source/model/result hashes, and leaves authoritative sources and the
-full-regression manifest untouched. Its frozen source hashes match the current
-44-target source. Earlier production probes remain historical evidence.
+full-regression manifest untouched. Its frozen source hashes match the preceding
+44-target source. It remains historical evidence.
 
 A companion `bench/production_reassembly_probe.py PROBE_DIRECTORY` reuses
 the verified 64 KiB model and checks 24 shuffled waves of eight retained
@@ -289,6 +301,7 @@ python3 sim/run.py ethernet_tcp ethernet_mixed ethernet_service
 python3 sim/run.py tcp_header_snapshot tcp_sack tcp_multi ethernet_multi ethernet_multi_rx
 python3 sim/run.py icmp_errors tcp_closed tcp_exception tcp_pmtu ethernet_errors network_errors
 python3 sim/run.py tcp_pmtu_pipeline window_scale body_window tcp_generation tcp_control_priority
+python3 sim/run.py memory_queue shared_receive
 ```
 
 The runner emits FIRRTL/SystemVerilog, generates GSIM models, compiles C++20
@@ -323,18 +336,32 @@ simulator-only workaround and does not add RTL RAM resets or relax sanitizers.
 Target part: **xczu15eg-ffvb1156-2-i**. Clock: **6.4 ns**. Setup/hold
 uncertainty: **0.1 / 0.05 ns**. No false-path or multicycle exceptions are used.
 
-The current area source passes in **20261024T074147Z**, using local physical
+The current `20261025T082252Z` run passes after local routed physical
+optimization. All **222,523 routable nets** are complete; setup and hold each
+cover **252,550 endpoints**, with zero failures and zero TNS/THS. Setup/hold
+display **0.000/0.000 ns**, with pulse-width slack **+2.500 ns**. All twelve
+coverage checks are zero, with no blackboxes or DRC/methodology/tool errors.
+The uncertainties remain 0.100/0.050 ns; no timing exceptions were added.
+
+The routed core uses **164,239 LUTs, 86,415 FFs, 109 RAMB36, 19 RAMB18 and
+16 URAM**, with no DSP. Against the previous area revision this saves
+**16,203 LUTs / 8.980%** and 3,946 FFs. Both setup and hold have very thin
+additional margin. The fixture does not qualify SoC/board timing.
+[Original reports, hashes and warning review](docs/timing/2026-10-25-082252/artifact-hashes.json)
+retain the actual tool advisories.
+
+The preceding area revision passes in **20261024T074147Z**, using local physical
 refinement of the saved fully routed 061030 checkpoint. All **241,104 routable
 nets** are complete; setup/hold each cover **267,119 endpoints** with zero
 failures and zero TNS/THS. Setup is **0.000 ns**, hold **+0.005 ns**, pulse width
 **+2.658 ns**. Coverage and routing/blackbox/DRC/methodology error checks pass.
 This is OOC evidence; SoC/board timing requires a new run.
 
-The routed core uses **180,442 LUTs, 90,361 FFs, 136 RAMB36 and 20 RAMB18**,
+That preceding routed core uses **180,442 LUTs, 90,361 FFs, 136 RAMB36 and 20 RAMB18**,
 with no URAM/DSP. Against the earlier fully routed exception/PMTU core this
 saves **4,213 LUTs / 2.282%**, while adding 296 FFs and 320 LUTRAM LUTs.
 Original reports, source provenance and warning review are preserved under
-[the current report directory](docs/timing/2026-10-24-074147/artifact-hashes.json).
+[that report directory](docs/timing/2026-10-24-074147/artifact-hashes.json).
 
 The earlier exception/PMTU source closes timing in **20261024T042645Z**, a local refinement
 of the fully routed **20261024T030357Z** checkpoint. Signoff remains 6.4 ns with
@@ -376,6 +403,9 @@ register boundaries; its observation signature is not a board interface.
 python3 fpga/prepare_registered_ooc.py
 # Explicit legacy single-connection timing fixture:
 python3 fpga/prepare_registered_ooc.py --core EthernetTcpUdpEndpoint
+# Optional memory profile (requires matching build export):
+# mill -i netstack.runMain netstack.Emit build bram
+# python3 fpga/prepare_registered_ooc.py --memory-profile bram
 # Or a focused synthesis snapshot:
 python3 fpga/prepare_ooc.py TcpManagedConnection
 ```
@@ -395,6 +425,11 @@ does not establish integrated SoC, CDC, MAC/PHY or board timing. Current run
 history and incomplete stages are recorded in `docs/DEVELOPMENT.md`.
 
 ## Scope boundaries
+
+See the [protocol feature/limit matrix](docs/PROTOCOL-STATUS.md). The stack is
+not a complete general-purpose IP stack; its verification manifest retains
+`complete_protocol_stack: false`.
+
 
 This revision supports 1–8 parallel TCP contexts and one local IPv4
 configuration. IPv4 IHL=5 and unfragmented traffic are supported. Receive gaps

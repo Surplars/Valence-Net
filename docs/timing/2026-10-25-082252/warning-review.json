@@ -1,0 +1,47 @@
+{
+  "tool_log_critical_warnings": [
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'to' option of 'report_timing' is very large: 111002. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    },
+    {
+      "message": "[Vivado 12-4439] The number of objects collected by the 'from' option of 'report_timing' is very large: 111002. This may lead to serious performance issues and out-of-memory conditions in handling the results.",
+      "occurrences": 2
+    }
+  ],
+  "drc_rules": [
+    {
+      "rule": "RTSTAT-10",
+      "severity": "Warning",
+      "count": 1
+    }
+  ],
+  "methodology_rules": [
+    {
+      "rule": "SYNTH-6",
+      "severity": "Warning",
+      "count": 144
+    },
+    {
+      "rule": "SYNTH-16",
+      "severity": "Warning",
+      "count": 128
+    },
+    {
+      "rule": "CLKC-3",
+      "severity": "Advisory",
+      "count": 1
+    }
+  ],
+  "tool_errors": [],
+  "reviewed": true,
+  "notes": [
+    "Vivado 12-4439 concerns large register queries; both register reports and the final checkpoint completed.",
+    "RTSTAT-10 is the fixture signature without external routable load; all routable nets are complete.",
+    "The fixture uses a physical BUFGCE fixed at BUFGCE_X0Y0. Board input clock timing is outside this OOC scope.",
+    "SYNTH-6/16 retain RAM output-register/collision advisories. Queue forwarding and retained-bank disjoint addressing have separate netlist tests.",
+    "URAM inference first reports independent template port clocks, then resolves the common clock at hierarchy binding; final utilization confirms URAM cells.",
+    "Shallow/small-memory inference advisories are retained; CLKC-3 concerns the fixed clock-buffer site.",
+    "This is OOC evidence, not SoC/MAC/PHY or board signoff."
+  ]
+}

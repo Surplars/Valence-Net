@@ -45,7 +45,7 @@ class Ipv4IcmpErrorReceive(val beatsPerPacket: Int = 128) extends Module {
     })
     val ip = Module(new Ipv4Receive(beatsPerPacket))
     val checksum = Module(new InternetChecksum(16))
-    val events = Module(new Queue(new IcmpErrorEvent, 2))
+    val events = Module(new MemoryQueue(new IcmpErrorEvent, 2))
     ip.io.in <> io.in; ip.io.localIp := io.localIp; ip.io.acceptBroadcast := false.B
     checksum.io.in <> ip.io.out; checksum.io.seed := 0.U
     checksum.io.out.ready := true.B
@@ -131,7 +131,7 @@ class Ipv4IcmpErrorTransmit(val ticksPerSecond: Int = 1000) extends Module {
     val validator = Module(new Ipv4Validate)
     validator.io.in <> io.in; validator.io.localIp := io.localIp; validator.io.acceptBroadcast := false.B
     validator.io.out.ready := true.B
-    val requests = Module(new Queue(new IcmpErrorReply, 2))
+    val requests = Module(new MemoryQueue(new IcmpErrorReply, 2))
     val prefix = Reg(Vec(28, UInt(8.W)))
     val receiving = RegInit(false.B)
     val offset = RegInit(0.U(17.W))

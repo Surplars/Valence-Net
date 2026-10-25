@@ -16,6 +16,21 @@ proc worst_slack {kind args} {
     if {[llength $path] == 0} {return NA}
     return [get_property SLACK $path]
 }
+proc route_is_clean {filename} {
+    report_route_status -file $filename
+    set channel [open $filename r]
+    set contents [read $channel]
+    close $channel
+    foreach {variable label} {
+        routable {routable nets}
+        routed {fully routed nets}
+        errors {nets with routing errors}
+    } {
+        set pattern [format {# of %s\.+\s*:\s*(\d+)} $label]
+        if {![regexp $pattern $contents -> $variable]} {error "Missing route count: $label"}
+    }
+    return [expr {$routable > 0 && $routable == $routed && $errors == 0}]
+}
 set tops {TcpDataTransmit TcpManagedConnection TcpReceive EthernetUdpEndpoint}
 if {[file exists [file join $run targets.txt]]} {
     set targets_file [open [file join $run targets.txt] r]
@@ -100,7 +115,13 @@ foreach top $tops {
         puts $progress "$top post-route physical refinement"
         close $progress
         phys_opt_design -directive AggressiveExplore
-        route_design -directive Explore
+        report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -file local_refinement_timing.rpt
+        write_checkpoint -force local_refinement.dcp
+        # A local physical optimization may already leave every net routed.
+        # Preserve that result instead of ripping it up in a global reroute.
+        if {![route_is_clean local_refinement_route_status.rpt]} {
+            route_design -directive Explore
+        }
     }
     report_route_status -file post_route_status.rpt
     report_utilization -hierarchical -file post_route_utilization.rpt

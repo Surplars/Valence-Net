@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 
 /** Validate the complete IPv4 packet, then expose only its payload. */
-class Ipv4Receive(val beatsPerPacket: Int = 1024) extends Module {
+class Ipv4Receive(val beatsPerPacket: Int = 1024, val tagged: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val in = Flipped(Decoupled(new PacketBeat(16)))
         val localIp = Input(UInt(32.W))
@@ -15,14 +15,17 @@ class Ipv4Receive(val beatsPerPacket: Int = 1024) extends Module {
         val protocol = Output(UInt(8.W))
         val payloadLength = Output(UInt(16.W))
         val dropped = Output(Bool())
+        val inContext = if (tagged) Some(Input(UInt(64.W))) else None
+        val outContext = if (tagged) Some(Output(UInt(64.W))) else None
+        val droppedContext = if (tagged) Some(Output(UInt(64.W))) else None
     })
     val validator = Module(new Ipv4Validate)
     val buffer = Module(new PacketCommitBuffer(16, beatsPerPacket))
-    val metadata = Module(new Queue(new Ipv4Verdict, 2))
+    val metadata = Module(new MemoryQueue(new Ipv4Verdict, 2))
     val slice = Module(new PacketSlice)
     validator.io.localIp := io.localIp
     validator.io.acceptBroadcast := io.acceptBroadcast
-    buffer.io.inContext := 0.U
+    buffer.io.inContext := (if (tagged) io.inContext.get else 0.U)
     io.in.ready := validator.io.in.ready && buffer.io.in.ready
     validator.io.in.valid := io.in.valid && buffer.io.in.ready
     buffer.io.in.valid := io.in.valid && validator.io.in.ready
@@ -47,6 +50,13 @@ class Ipv4Receive(val beatsPerPacket: Int = 1024) extends Module {
     io.protocol := slice.io.context(23, 16)
     io.payloadLength := slice.io.context(15, 0)
     io.dropped := buffer.io.dropped
+    if (tagged) {
+        // The read bank is the metadata's bank at config transfer. Keep its
+        // tag through slicing even after RAM output has advanced to the next bank.
+        val context = RegEnable(buffer.io.outContext, slice.io.config.fire)
+        io.outContext.get := context
+        io.droppedContext.get := buffer.io.droppedContext
+    }
 }
 
 /** IPv4-to-UDP payload receive path. Ethernet framing/ARP precede this block. */

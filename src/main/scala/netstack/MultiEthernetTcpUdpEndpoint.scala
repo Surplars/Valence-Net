@@ -41,7 +41,7 @@ class MultiEthernetTcpUdpEndpoint(val connectionCount: Int = 4, val packetBeats:
         val outstanding = Output(UInt(log2Ceil(globalDepth + 1).W))
         val rxBusyDropped = Output(Bool())
         val invalidCompletion = Output(Bool()); val fault = Output(Bool()); val conflict = Output(Bool())
-        val rxDrops = Output(UInt(log2Ceil(2 * connectionCount + 10).W)); val txDrops = Output(UInt(2.W))
+        val rxDrops = Output(UInt(log2Ceil(2 * connectionCount + 14).W)); val txDrops = Output(UInt(2.W))
     })
     val ethernet = Module(new EthernetDispatch)
     val ethRx = Module(new EthernetIpv4Receive(packetBeats))

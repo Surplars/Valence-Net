@@ -1,4 +1,4 @@
-# Valence-Net development evidence (2026-10-23 / 2026-10-24)
+# Valence-Net development evidence (2026-10-23 through 2026-10-25)
 
 The target is 10 Gb/s Ethernet. The internal interface carries 128 bits at
 156.25 MHz (20 Gb/s raw bandwidth); this is not a claim of 20G wire rate for
@@ -7,10 +7,43 @@ recorded separately.
 
 Source, Git, caches and simulation stay in native WSL at
 /home/openion/Valence-Net. Windows Vivado uses frozen snapshots under
-E:\VM\Share\Valence-rtl. The checkout base is
+E:\VM\Share\Valence-rtl. The original checkout base is
 0273d8dfb0219889560efdc9aa5066c4b55c69ef.
 
-## Current area revision
+## Current shared-receive area revision
+
+Starting at `57c6984`, the default four-context core now shares complete
+IPv4/TCP receive validation and stateless-response validation. Immutable
+slot/generation tags and independent committed per-context staging preserve
+bounded isolation and abort/reopen ownership. Deep wide queues use a
+collision-forwarded synchronous RAM path; shallow queues retain ordinary
+inference. Retained TX and reorder payload memories use URAM.
+
+The exact 111-file source set passes all 46 targets. Every pre-existing
+44-target result string is unchanged. Full-production-storage multi-context
+TX/RX probes also pass: eight TX banks, 64 KiB RX/context, ARP16 and
+16 completion entries/context. Single/four-context 10G RX deadlines, byte
+checks, zero-window reopening and four-context TX service are retained.
+1/2/3/8-context configurations elaborate without warnings.
+
+Run `20261025T082252Z` passes routed OOC at 156.25 MHz on ZU15EG-2:
+setup/hold 0.000/0.000 ns, TNS/THS zero, zero failing endpoints and all
+222,523 routable nets complete. The core uses 164,239 LUTs, 86,415 FFs,
+109 RAMB36, 19 RAMB18 and 16 URAM: 16,203 fewer LUTs / 8.980% below the
+preceding routed area revision. Original 0.100/0.050 ns uncertainties stay
+in force; the displayed additional margins are thin.
+
+The initial CAD snapshot contains five focused targets; the complete
+46-target manifest added later has an identical source-hash map. Three
+memory profiles pass fresh-export preparation, and the default RTL remains
+byte-identical to the actual CAD input. The auditor detects UTF-8/UTF-16
+console errors. Original reports, warning review and source qualification
+are under [the new timing record](timing/2026-10-25-082252/artifact-hashes.json).
+See [implementation and tradeoffs](SHARED-RECEIVE-AREA.md),
+[parameters](PARAMETERS.md) and [protocol scope](PROTOCOL-STATUS.md).
+SoC adaptation and physical-peer throughput qualification remain separate.
+
+## Previous area revision
 
 See [area implementation and comparison](AREA-OPTIMIZATION.md),
 [configuration parameters](PARAMETERS.md) and the

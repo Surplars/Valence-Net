@@ -36,8 +36,8 @@ class MultiTcpApplicationPort(val txBanks: Int, val completionDepth: Int) extend
 
 /** Bounded parallel connection contexts with one 128-bit IP input/output.
   *
-  * The dispatcher buffers only three header beats. Each selected endpoint still
-  * checks the complete IPv4/TCP packet before changing protocol state. A SYN
+  * The dispatcher captures three header beats. One shared IPv4/TCP validator
+  * checks complete packets before routing to independent committed RX banks. A SYN
   * temporarily reserves a listener; a rejected packet releases that reservation.
   * Different listeners may share a local port and have optional peer filters.
   *
@@ -73,13 +73,13 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
         val completionAccepted = Output(Bool()); val invalidCompletion = Output(Bool())
         val outstanding = Output(UInt(log2Ceil(globalDepth + 1).W))
         val rxDropped = Output(Bool()); val rxBusyDropped = Output(Bool())
-        val rxDrops = Output(UInt(log2Ceil(2 * connectionCount + 2).W))
+        val rxDrops = Output(UInt(log2Ceil(2 * connectionCount + 6).W))
         val fault = Output(Bool())
     })
     val cores = Seq.fill(connectionCount)(Module(new TcpIpv4Endpoint(txBanks, txBeats,
         rxWords, packetBeats, ticksPerSecond, timeWaitTicks, challengeTicks,
         maxRetries, completionDepth, autonomousCongestion,
-        deferOpenClear = true, pipelineCompletions = true, closedResponses = false)))
+        deferOpenClear = true, pipelineCompletions = true, closedResponses = false, sharedReceive = true)))
     val config = Reg(Vec(connectionCount, new TcpConnectionOpen))
     val claimed = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))
     val releaseListener = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))
@@ -101,11 +101,14 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val route = RegInit(0.U(connectionBits.W))
     val routeBusy = RegInit(false.B)
     val routeClosed = RegInit(false.B)
-    val closed = Module(new TcpClosedResponder(packetBeats, challengeTicks))
+    val shared = Module(new SharedTcpReceive(packetBeats))
+    shared.io.localIp := io.localIp
+    val receiveTag = Reg(UInt(64.W))
+    val closed = Module(new TcpResetTransmit(challengeTicks))
     closed.io.localIp := io.localIp; closed.io.netmask := io.netmask; closed.io.tick := io.tick
     io.exceptionOut <> closed.io.out
     io.exceptionDestinationIp := closed.io.destinationIp
-    val ingress = Module(new Queue(new PacketBeat(16), 8))
+    val ingress = Module(new MemoryQueue(new PacketBeat(16), 8))
     ingress.io.enq.valid := io.rx.valid && receiveState =/= classify && !inputDone
     ingress.io.enq.bits := io.rx.bits
     io.rx.ready := ingress.io.enq.ready && receiveState =/= classify && !inputDone
@@ -152,41 +155,96 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val found = foundExact || (!tupleOwned.asUInt.orR && syn && listen.asUInt.orR)
     val chosen = PriorityEncoder(candidates).pad(connectionBits)
     def indexed[T <: Data](vector: Vec[T], index: UInt): T = if (connectionCount == 1) vector(0) else vector(index)
-    val rxReady = VecInit(cores.map(_.io.rx.ready))
+    val generations = VecInit(cores.map(_.io.generation))
     val states = VecInit(cores.map(_.io.state))
     // LISTEN admits one packet until its checksum/option validation resolves.
-    val capacity = indexed(inFlight, chosen) < 2.U &&
-        !(indexed(states, chosen) === TcpState.listen.U && indexed(inFlight, chosen) =/= 0.U) && indexed(rxReady, chosen)
-    val accept = receiveState === classify && supported && found && capacity
+    val capacity = indexed(inFlight, chosen) < 4.U &&
+        !(indexed(states, chosen) === TcpState.listen.U && indexed(inFlight, chosen) =/= 0.U)
+    val classificationReady = !supported || !found || !capacity || shared.io.in.ready
+    val accept = receiveState === classify && supported && found && capacity && shared.io.in.ready
     inboundIp := sourceIp; inboundPort := sourcePort
     for (i <- 0 until connectionCount) {
         admission(i) := accept && chosen === i.U
         admitListener(i) := admission(i) && !foundExact
-        cores(i).io.rx.valid := receiveState === forward && routeValid && route === i.U && ingress.io.deq.valid
-        cores(i).io.rx.bits := ingress.io.deq.bits
+        cores(i).io.rx.valid := false.B
+        cores(i).io.rx.bits := 0.U.asTypeOf(new PacketBeat(16))
     }
-    when(receiveState === classify) {
+    val resetCandidate = supported && !found && !tupleOwned.asUInt.orR &&
+        (!knownListener.asUInt.orR || flags(4))
+    when(receiveState === classify && classificationReady) {
         receiveState := forward; route := chosen
-        routeValid := supported && found && capacity
+        routeValid := accept
         routeBusy := supported && found && !capacity
-        // An owned tuple stays protected across abort, validation and completion
-        // drain. A temporarily unavailable LISTEN slot must not reject its SYN.
-        // LISTEN ignores non-SYN/non-ACK packets; an ACK may receive a reset.
-        routeClosed := supported && !found && !tupleOwned.asUInt.orR &&
-            (!knownListener.asUInt.orR || flags(4))
+        routeClosed := resetCandidate && shared.io.in.ready
+        // owned, exception, generation, slot (eight bits), zero-extended to 64.
+        receiveTag := Cat(accept, resetCandidate && shared.io.in.ready,
+            indexed(generations, chosen), chosen.pad(8))
     }
-    closed.io.in.valid := receiveState === forward && routeClosed && ingress.io.deq.valid
-    closed.io.in.bits := ingress.io.deq.bits
-    // closed.in is always ready and may drop an entire packet while busy.
-    // Exception output congestion cannot add shared input backpressure.
-    ingress.io.deq.ready := receiveState === forward && (!routeValid || indexed(rxReady, route))
+    shared.io.in.valid := receiveState === forward && (routeValid || routeClosed) && ingress.io.deq.valid
+    shared.io.in.bits := ingress.io.deq.bits; shared.io.inContext := receiveTag
+    ingress.io.deq.ready := receiveState === forward &&
+        (!(routeValid || routeClosed) || shared.io.in.ready)
     val receiveDone = ingress.io.deq.fire && ingress.io.deq.bits.last
-    io.rxDropped := receiveDone && !routeValid
-    io.rxBusyDropped := io.rxDropped && routeBusy
+    val rawDrop = receiveDone && !routeValid
     when(receiveDone) {
         receiveState := collect; headerCount := 0.U; inputDone := false.B
         routeValid := false.B; routeBusy := false.B; routeClosed := false.B
     }
+
+    def owned(context: UInt): Bool = context(41)
+    def slot(context: UInt): UInt = context(connectionBits - 1, 0)
+    def epoch(context: UInt): UInt = context(39, 8)
+    val tag = shared.io.metadataContext
+    val owner = slot(tag)
+    val metadataReady = VecInit(cores.map(_.io.validated.get.metadata.ready))
+    val epochMatches = epoch(tag) === indexed(generations, owner)
+    val deliver = owned(tag) && epochMatches && indexed(metadataReady, owner)
+    // Never park the common validator behind a stalled context. Offer metadata
+    // only for the atomic transfer; rejected payload is drained to its own last.
+    shared.io.metadata.ready := true.B
+    val payloadOwner = Reg(UInt(connectionBits.W))
+    val payloadDeliver = RegInit(false.B)
+    when(shared.io.metadata.fire) { payloadOwner := owner; payloadDeliver := deliver }
+    val payloadReady = VecInit(cores.map(_.io.validated.get.payload.ready))
+    shared.io.payload.ready := !payloadDeliver || indexed(payloadReady, payloadOwner)
+    for (i <- 0 until connectionCount) {
+        val input = cores(i).io.validated.get
+        input.metadata.valid := shared.io.metadata.valid && deliver && owner === i.U
+        input.metadata.bits := shared.io.metadata.bits
+        input.generation := epoch(tag)
+        input.payload.valid := shared.io.payload.valid && payloadDeliver && payloadOwner === i.U
+        input.payload.bits := shared.io.payload.bits
+    }
+    val metadataDropped = shared.io.metadata.fire && owned(tag) && !deliver
+    val validationDrops = Wire(Vec(connectionCount, UInt(3.W)))
+    for (i <- 0 until connectionCount) {
+        validationDrops(i) := PopCount(VecInit(shared.io.drops.map(d =>
+            d.valid && owned(d.bits) && slot(d.bits) === i.U) :+
+            (metadataDropped && owner === i.U)))
+    }
+    io.rxDropped := rawDrop || metadataDropped
+    io.rxBusyDropped := (rawDrop && routeBusy) || metadataDropped
+
+    // Recheck ownership after shared validation, including a simultaneous OPEN.
+    // An unowned packet cannot reset a tuple claimed while its checksum ran.
+    val segment = shared.io.metadata.bits
+    val responseOwned = (0 until connectionCount).map { i =>
+        val tuple = config(i).localPort === segment.destinationPort &&
+            peerIp(i) === segment.sourceIp && peerPort(i) === segment.sourcePort
+        val listener = cores(i).io.state === TcpState.listen.U &&
+            config(i).localPort === segment.destinationPort &&
+            (config(i).remoteIp === 0.U || config(i).remoteIp === segment.sourceIp) &&
+            (config(i).remotePort === 0.U || config(i).remotePort === segment.sourcePort)
+        val opening = io.connections(i).open.fire &&
+            io.connections(i).open.bits.localPort === segment.destinationPort &&
+            (io.connections(i).open.bits.passive ||
+                (io.connections(i).open.bits.remoteIp === segment.sourceIp &&
+                 io.connections(i).open.bits.remotePort === segment.sourcePort))
+        (claimed(i) && tuple) || (listener && !segment.flags(4)) ||
+            (opening && (!io.connections(i).open.bits.passive || !segment.flags(4)))
+    }.reduce(_ || _)
+    closed.io.in.valid := shared.io.metadata.fire && tag(40) && !responseOwned
+    closed.io.in.bits := segment
 
     val countFaults = Wire(Vec(connectionCount, Bool()))
     // A grant describes the preceding cycle's unchanged OPEN request. Any
@@ -256,7 +314,7 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
         app.reorderCount := core.io.reorderCount; app.reorderDropped := core.io.reorderDropped
         app.completionAccepted := core.io.completionAccepted
 
-        val retired = core.io.rxConsumed.asUInt +& core.io.rxDrops
+        val retired = core.io.rxConsumed.asUInt +& validationDrops(i) +& core.io.rxDrops
         val available = inFlight(i) +& admission(i).asUInt
         countFaults(i) := retired > available
         when(admission(i) || retired =/= 0.U) { inFlight(i) := available - retired }
@@ -273,7 +331,7 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
             when(core.io.open.ready && inFlight(i) === 0.U) { claimed(i) := false.B }
             releaseListener(i) := false.B
         }
-        when(core.io.rxDrops =/= 0.U && core.io.state === TcpState.listen.U &&
+        when((validationDrops(i) =/= 0.U || core.io.rxDrops =/= 0.U) && core.io.state === TcpState.listen.U &&
             retired === available && core.io.ownershipDrained) { claimed(i) := false.B }
         when(admitListener(i)) {
             claimed(i) := true.B; peerIp(i) := inboundIp; peerPort(i) := inboundPort
@@ -290,7 +348,7 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
         val connection = UInt(connectionBits.W)
         val globalTag = UInt(32.W); val localTag = UInt(32.W); val generation = UInt(32.W)
     }
-    val ledger = Module(new Queue(new CompletionOwner, globalDepth))
+    val ledger = Module(new MemoryQueue(new CompletionOwner, globalDepth))
     val nextTag = RegInit(0.U(32.W))
     val nextConnection = RegInit(0.U(connectionBits.W))
     val locked = RegInit(false.B); val selected = RegInit(0.U(connectionBits.W))
@@ -298,7 +356,7 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     // Carry the complete descriptor with every beat: the producer may finish
     // this packet and advance its local tag before the shared arbiter drains it.
     val transmit = cores.map { core =>
-        val queue = Module(new Queue(new Bundle {
+        val queue = Module(new MemoryQueue(new Bundle {
             val beat = new PacketBeat(16)
             val packet = new TcpWireDescriptor
         }, 2))
@@ -315,25 +373,25 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     }
     val candidate = PriorityMux(order.map(index => indexed(requests, index) -> index))
     val anyRequest = requests.asUInt.orR
-    val owner = Mux(locked, selected, candidate)
+    val txOwner = Mux(locked, selected, candidate)
     val grant = (locked || anyRequest) && (locked || ledger.io.enq.ready)
     val streams = VecInit(transmit.map(_.io.deq.bits.beat))
     val descriptors = VecInit(transmit.map(_.io.deq.bits.packet))
-    io.out.valid := grant && indexed(requests, owner)
-    io.out.bits := indexed(streams, owner)
-    io.packet := indexed(descriptors, owner); io.packet.tag := nextTag
-    io.packetConnection := owner
-    for (i <- 0 until connectionCount) { transmit(i).io.deq.ready := io.out.ready && grant && owner === i.U }
-    when(io.out.valid && !locked) { locked := true.B; selected := owner }
+    io.out.valid := grant && indexed(requests, txOwner)
+    io.out.bits := indexed(streams, txOwner)
+    io.packet := indexed(descriptors, txOwner); io.packet.tag := nextTag
+    io.packetConnection := txOwner
+    for (i <- 0 until connectionCount) { transmit(i).io.deq.ready := io.out.ready && grant && txOwner === i.U }
+    when(io.out.valid && !locked) { locked := true.B; selected := txOwner }
     val submitted = io.out.fire && io.out.bits.last
     when(submitted) {
         locked := false.B; nextTag := nextTag + 1.U
-        nextConnection := Mux(owner === (connectionCount - 1).U, 0.U, owner + 1.U)
+        nextConnection := Mux(txOwner === (connectionCount - 1).U, 0.U, txOwner + 1.U)
     }
     ledger.io.enq.valid := submitted
-    ledger.io.enq.bits.connection := owner; ledger.io.enq.bits.globalTag := nextTag
-    ledger.io.enq.bits.localTag := indexed(descriptors, owner).tag
-    ledger.io.enq.bits.generation := indexed(descriptors, owner).completion.generation
+    ledger.io.enq.bits.connection := txOwner; ledger.io.enq.bits.globalTag := nextTag
+    ledger.io.enq.bits.localTag := indexed(descriptors, txOwner).tag
+    ledger.io.enq.bits.generation := indexed(descriptors, txOwner).completion.generation
     val head = ledger.io.deq.bits
     val matches = ledger.io.deq.valid && io.completed.bits.tag === head.globalTag &&
         io.completed.bits.generation === head.generation
@@ -349,7 +407,8 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     io.completionAccepted := ledger.io.deq.fire
     io.invalidCompletion := io.completed.valid && !io.completionAccepted
     io.outstanding := ledger.io.count
-    io.rxDrops := cores.map(_.io.rxDrops).reduce(_ +& _) +& io.rxDropped
+    io.rxDrops := cores.map(_.io.rxDrops).reduce(_ +& _) +&
+        PopCount(VecInit(shared.io.drops.map(d => d.valid && owned(d.bits)) ++ Seq(rawDrop, metadataDropped)))
     io.fault := cores.map(_.io.fault).reduce(_ || _) || countFaults.asUInt.orR ||
         (ledger.io.enq.valid && !ledger.io.enq.ready) ||
         (io.completed.valid && matches && !ownerAccepted)

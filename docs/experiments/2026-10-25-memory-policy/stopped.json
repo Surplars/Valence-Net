@@ -1,0 +1,8 @@
+{
+  "reason": "Completed synthesis: 173903 core LUTs, only 3.932 percent below 181021. Stop this owned candidate to revise shallow FIFO RAM policy before routing qualification.",
+  "source_run": "20261025T080158Z",
+  "completed": false,
+  "synthesis_completed": true,
+  "route_qualified": false,
+  "time_utc": "2026-10-25T08:16:04.3166631Z"
+}

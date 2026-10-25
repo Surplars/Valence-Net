@@ -75,7 +75,7 @@ class TcpTransmitQueue(val banks: Int = 8, val beatsPerBank: Int = 128) extends 
     val scheduled = RegInit(VecInit(Seq.fill(banks)(0.U(16.W))))
     val bases = Reg(Vec(banks, UInt(32.W)))
     val contexts = Reg(Vec(banks, UInt(64.W)))
-    val order = Module(new Queue(UInt(bits.W), banks))
+    val order = Module(new MemoryQueue(UInt(bits.W), banks))
     val writing = RegInit(false.B)
     when(io.allocate.fire) { writing := true.B }
     when(io.stored.fire) { writing := false.B }
@@ -260,7 +260,7 @@ class TcpDataTransmit(val banks: Int = 8, val beatsPerBank: Int = 128) extends M
     })
     val data = Module(new TcpTransmitQueue(banks, beatsPerBank))
     val serializer = Module(new Ipv4TcpTransmit(beatsPerBank))
-    val descriptors = Module(new Queue(new TcpPayloadSegment, 4))
+    val descriptors = Module(new MemoryQueue(new TcpPayloadSegment, 4))
     val identification = RegInit(0.U(16.W))
     data.io.allocate <> io.allocate; data.io.in <> io.in; io.stored <> data.io.stored
     data.io.enabled := io.enabled; data.io.generation := io.generation

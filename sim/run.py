@@ -56,6 +56,7 @@ def main():
                "tcp_timer": "TcpTimerHarness", "tcp_timer_pipeline": "TcpPipelinedTimerHarness", "tcp_store": "TcpStoreHarness", "tcp_control": "TcpControlHarness", "tcp_managed": "TcpManagedHarness", "tcp_data": "TcpDataHarness", "tcp_connection_tx": "TcpConnectionTxHarness", "tcp_ring": "TcpRingHarness", "tcp_endpoint": "TcpEndpointHarness", "tcp_reassembly": "TcpCongestedEndpointHarness", "ethernet_tcp": "EthernetTcpHarness", "tcp_congestion": "TcpCongestionHarness", "tcp_congested_endpoint": "TcpCongestedEndpointHarness", "ethernet_mixed": "EthernetTcpHarness", "ethernet_service": "EthernetServiceHarness", "tcp_header_snapshot": "TcpHeaderSnapshotHarness", "tcp_sack": "TcpCongestedEndpointHarness", "tcp_multi": "MultiTcpEndpointHarness", "ethernet_multi": "MultiEthernetTcpHarness", "ethernet_multi_rx": "MultiEthernetTcpHarness"}
     targets.update({"icmp_errors": "IcmpErrorsHarness", "tcp_closed": "TcpClosedHarness",
                     "tcp_exception": "MultiTcpEndpointHarness", "tcp_pmtu": "TcpPmtuHarness", "ethernet_errors": "MultiEthernetPortHarness", "network_errors": "NetworkErrorsHarness"})
+    targets.update({"memory_queue": "MemoryQueueHarness", "shared_receive": "SharedTcpReceiveHarness"})
     targets.update({"tcp_pmtu_pipeline": "TcpPmtuHarness"})
     targets.update({"window_scale": "TcpControlHarness", "body_window": "TcpControlHarness",
                     "tcp_generation": "TcpGenerationHarness"})

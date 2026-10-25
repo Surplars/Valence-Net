@@ -92,8 +92,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", choices=["EthernetTcpUdpEndpoint", "MultiEthernetTcpUdpEndpoint"],
                         default=CORE, help="full production core; both use retained register boundaries")
-    CORE = parser.parse_args().core
-    result = subprocess.run([sys.executable, str(ROOT / "fpga/prepare_ooc.py"), "--reemit-check", CORE],
+    parser.add_argument("--memory-profile", choices=["hybrid", "bram", "auto"], default="hybrid")
+    arguments = parser.parse_args()
+    CORE = arguments.core
+    result = subprocess.run([sys.executable, str(ROOT / "fpga/prepare_ooc.py"), "--reemit-check", "--memory-profile", arguments.memory_profile, CORE],
                             cwd=ROOT, capture_output=True, text=True)
     if result.returncode:
         print(result.stdout, end="", file=sys.stderr)

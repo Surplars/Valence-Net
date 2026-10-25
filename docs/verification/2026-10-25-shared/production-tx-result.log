@@ -1,0 +1,3 @@
+Ethernet multi: four TCP contexts with shared ARP/UDP/ICMP, stalled RX isolation, wire checksums and global MAC completion tags passed
+Ethernet four-context 1B TCP TX: 2295/255 cycles = 9 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed
+Ethernet four-context 1460B TCP TX: 25500/255 cycles = 100 cycles/packet, 256 frames, startup/drain excluded, ACK queue peak=1, all banks cumulatively ACKed

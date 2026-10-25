@@ -1,0 +1,19 @@
+{
+  "source_count": 111,
+  "functional_tests": 46,
+  "initial_frozen_functional_tests": 5,
+  "full_regression_added_after_snapshot_freeze": true,
+  "functional_manifest_sha256": "71eceda966921605a92c04e23dbeb831908109bf55d8820427d461437bd8a646",
+  "source_hashes_match_frozen_rtl": true,
+  "windows_rtl_script_checkpoint_hashes_verified": true,
+  "signoff_period_ns": 6.4,
+  "signoff_setup_uncertainty_ns": 0.1,
+  "signoff_hold_uncertainty_ns": 0.05,
+  "auditor_sha256": "f396ad7e26e10cfe5021ca9db406d5084c1a8219c934fd9be40b35b3ceeebbff",
+  "publisher_sha256": "e28a824bb93d90fd58a79997501028d5da7bfef82cd81a5a0a2c24d5c0233465",
+  "all_timing_endpoints_covered": true,
+  "routed_timing_verified": true,
+  "soc_or_board_signoff": false,
+  "production_verification_sha256": "200740aeaa5efde3efdb08bff0408a17c339b2880fa752e40c8253e609e0f4d6",
+  "final_checkpoint_sha256": "96a67a11a066be356de1a03001ee5c96d502c8790430b76120987d0caea61689"
+}
