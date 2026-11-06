@@ -10,6 +10,10 @@ The [N57B integration](docs/N57B-MERGE.md) carries its 256 KiB receive
 ring and optional pressure-window ACK policy onto this shared-receive base.
 The original hardware-tested application is preserved; the upgraded N57M
 application requires its own physical qualification.
+The standalone applications are backed up on [n57b-main](https://github.com/Surplars/Valence-Net/tree/n57b-main)
+(upgraded N57M) and [n57b-tested](https://github.com/Surplars/Valence-Net/tree/n57b-tested)
+(original hardware-tested N57B). Follow the [restore guide](https://github.com/Surplars/Valence-Net/blob/n57b-main/RESTORE.md)
+to rebuild after removing local workspaces.
 
 The c2b3bba shared-receive baseline passes **46 functional targets** with unchanged
 default capacity. The fully routed core falls from **180,442 to 164,239 LUTs

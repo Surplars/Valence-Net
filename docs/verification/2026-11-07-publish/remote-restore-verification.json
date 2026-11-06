@@ -1,0 +1,120 @@
+{
+  "scope": "Remote-only clone, exact dependency/tool source restore and compile smoke",
+  "physical_timing_verified": false,
+  "board_throughput_measured": false,
+  "steps": [
+    {
+      "command": [
+        "git",
+        "clone",
+        "--depth=1",
+        "--single-branch",
+        "--branch",
+        "n57b-main",
+        "git@github.com:Surplars/Valence-Net.git",
+        "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/restore_tx32.py"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/restore_tx32.py"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main",
+      "passed": true
+    },
+    {
+      "command": [
+        "git",
+        "clone",
+        "--depth=1",
+        "--single-branch",
+        "--branch",
+        "n57b-tested",
+        "git@github.com:Surplars/Valence-Net.git",
+        "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/restore_tx32.py"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/restore_tx32.py"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/bootstrap.py",
+        "--ssh",
+        "--tools"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main",
+      "passed": true
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/bootstrap.py",
+        "--ssh",
+        "--tools"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main",
+      "passed": true
+    },
+    {
+      "command": [
+        "mill",
+        "-i",
+        "hw.compile"
+      ],
+      "cwd": "/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main",
+      "passed": true
+    }
+  ],
+  "n57b-main": {
+    "commit": "8def505fcd5bb710cffad896efe1e2b771c21ce1",
+    "restored_model_sha256": {
+      "gmii/IperfGmiiHarness.h": "ad30753e3ca14b3a325fd12f28ff227bb4b8674baec5c282886ae5e6732d6535",
+      "gmii/IperfGmiiHarness0.cpp": "0858b54a7c72844100ad1af9be87376a9406e16ca0caeca3489aa7c6a8a25c62",
+      "gmii/gmii.fir": "da2317baa3937201366bc2d79ab93457edba25a144379c89edd7a9f7b5c446f2"
+    }
+  },
+  "original_source_files_verified": 81,
+  "n57b-tested": {
+    "commit": "b1786d03af5c86727801fa722f15fc6f192ca8cd",
+    "restored_model_sha256": {
+      "gmii/IperfGmiiHarness.h": "ad30753e3ca14b3a325fd12f28ff227bb4b8674baec5c282886ae5e6732d6535",
+      "gmii/IperfGmiiHarness0.cpp": "0858b54a7c72844100ad1af9be87376a9406e16ca0caeca3489aa7c6a8a25c62",
+      "gmii/gmii.fir": "da2317baa3937201366bc2d79ab93457edba25a144379c89edd7a9f7b5c446f2"
+    }
+  },
+  "dependency_commits": {
+    "valence": "bf021b52fe67f3d4c8c33d94a7e928559f55c729",
+    "valence-net": "7f651a6185e3dd13f9981b2ae024d3b6c117f588",
+    "iperf3": "2a387afd416a258b78f0562af42eec3c110aed62",
+    "gsim": "93b8cd23edd3228807c4f2a08c19c3936a463cb2"
+  },
+  "passed": true
+}

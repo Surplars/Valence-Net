@@ -93,3 +93,27 @@ receive implementation. No new Vivado implementation, bitstream programming
 or physical-peer throughput measurement is part of this source merge.
 The stack's 10G simulation checks and this 1G application check are reported
 separately. Protocol limitations remain in [PROTOCOL-STATUS.md](PROTOCOL-STATUS.md).
+
+
+## Remote backups (2026-11-07)
+
+The standalone application and its local 2cd2da4 commit are now published on
+[n57b-main](https://github.com/Surplars/Valence-Net/tree/n57b-main),
+at 8def505fcd5bb710cffad896efe1e2b771c21ce1. The original N57B source is on
+[n57b-tested](https://github.com/Surplars/Valence-Net/tree/n57b-tested),
+at b1786d03af5c86727801fa722f15fc6f192ca8cd. These are standalone application
+branches; main remains the protocol-stack project.
+
+A new checkout fetched only from GitHub restored both branches' historical
+TX32 fixture, verified all 81 original N57B source/configuration/doc files,
+fetched the exact Valence, Valence-Net, iperf3 and GSIM pins, passed repeated
+bootstrap checks, and compiled all 78 N57M Scala sources. No old local source,
+dependency checkout or tools symlink was used. Mill/JVM dependency caches were
+reused; this does not claim an empty machine/offline toolchain installation.
+See [the restore record](verification/2026-11-07-publish/remote-restore-verification.json).
+
+The [application restore guide](https://github.com/Surplars/Valence-Net/blob/n57b-main/RESTORE.md)
+lists build prerequisites and commands. Raw programmed bitstreams, Vivado
+checkpoints and generated executable/build caches are excluded from this Git
+source backup and require separate preservation when their exact bytes matter.
+No hardware logic or new physical qualification was added by the backup work.

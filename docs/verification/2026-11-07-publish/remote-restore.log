@@ -1,0 +1,45 @@
+RUN git clone --depth=1 --single-branch --branch n57b-main git@github.com:Surplars/Valence-Net.git /home/openion/Valence-Net/build/publish-20261107/remote-n57b-main
+Cloning into '/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main'...
+RUN python3 scripts/restore_tx32.py
+/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main/build/tx32-baseline-restored
+RUN python3 scripts/restore_tx32.py
+/home/openion/Valence-Net/build/publish-20261107/remote-n57b-main/build/tx32-baseline-restored
+RUN git clone --depth=1 --single-branch --branch n57b-tested git@github.com:Surplars/Valence-Net.git /home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested
+Cloning into '/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested'...
+RUN python3 scripts/restore_tx32.py
+/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested/build/tx32-baseline-restored
+RUN python3 scripts/restore_tx32.py
+/home/openion/Valence-Net/build/publish-20261107/remote-n57b-tested/build/tx32-baseline-restored
+RUN python3 scripts/bootstrap.py --ssh --tools
+From github.com:Surplars/Valence
+ * branch            bf021b52fe67f3d4c8c33d94a7e928559f55c729 -> FETCH_HEAD
+HEAD is now at bf021b5 Unplace exact TX reset chain before assigning new BELs
+From github.com:Surplars/Valence-Net
+ * branch            7f651a6185e3dd13f9981b2ae024d3b6c117f588 -> FETCH_HEAD
+HEAD is now at 7f651a6 Integrate N57B receive-window tuning on the shared TCP stack
+From github.com:esnet/iperf
+ * branch            2a387afd416a258b78f0562af42eec3c110aed62 -> FETCH_HEAD
+HEAD is now at 2a387af Merge pull request #2087 from kulikjak/solaris-endianness
+From github.com:OpenXiangShan/gsim
+ * branch            93b8cd23edd3228807c4f2a08c19c3936a463cb2 -> FETCH_HEAD
+HEAD is now at 93b8cd2 build: accept Clang 19 and newer (#136)
+valence bf021b52fe67f3d4c8c33d94a7e928559f55c729
+valence-net 7f651a6185e3dd13f9981b2ae024d3b6c117f588
+iperf3 2a387afd416a258b78f0562af42eec3c110aed62
+gsim 93b8cd23edd3228807c4f2a08c19c3936a463cb2
+Tool sources restored; build them as described in RESTORE.md.
+RUN python3 scripts/bootstrap.py --ssh --tools
+valence bf021b52fe67f3d4c8c33d94a7e928559f55c729
+valence-net 7f651a6185e3dd13f9981b2ae024d3b6c117f588
+iperf3 2a387afd416a258b78f0562af42eec3c110aed62
+gsim 93b8cd23edd3228807c4f2a08c19c3936a463cb2
+Tool sources restored; build them as described in RESTORE.md.
+RUN mill -i hw.compile
+mill hw.compile
+build.mill-68] compile compiling 1 Scala source to out/mill-build/compile.dest/classes ...
+build.mill-68] done compiling
+54] mill.javalib.JvmWorkerModule/internalWorker Compiling compiler interface...
+55] hw.compile compiling 78 Scala sources to out/hw/compile.dest/classes ...
+55] done compiling
+55/55, SUCCESS] mill hw.compile 34s
+REMOTE_RESTORE_PASS
