@@ -1,0 +1,6 @@
+out/
+build/
+deps/
+tools/
+__pycache__/
+*.log

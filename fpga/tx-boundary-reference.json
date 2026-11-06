@@ -1,0 +1,19 @@
+{
+  "reference_run": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261024T112731Z",
+  "reference_build": "TX64-RX128K-ACK1",
+  "reference_bit_sha256": "493eb325dac8e59082d51301328ad7c79da062f2e17f1c155b50bc44d9108723",
+  "reference_physical_verification_sha256": "157952ed567ab3394dc755628d4429a957b6614382173b940dc05af4f7af7f3a",
+  "reference_diff_sha256": "69c9805778691dff07cd57e28ca85663d3487363fc7085b40f9a2b2b9bd5cf88",
+  "register_count": 19,
+  "lut_count": 5,
+  "register_layout_sha256": "12e34e0675e53db77c022cd8dc84735e1ad90e16442eca3507b2111fe27e3d8c",
+  "scope": "Use final sealed ACK1 placements, including its reset macro-compatible slice selection; no RTL or timing constraint change.",
+  "new_candidate_paired_symbol_lut_bels": {
+    "u_rgmii/lanes[0].tx_ddr_i_1": "B5LUT",
+    "u_rgmii/lanes[1].tx_ddr_i_1": "B6LUT",
+    "u_rgmii/lanes[2].tx_ddr_i_1": "D5LUT",
+    "u_rgmii/lanes[3].tx_ddr_i_1": "D6LUT",
+    "u_rgmii/tx_clock_ddr_i_1": "E6LUT"
+  },
+  "packing_verification_sha256": "0992d69efaeea32945d06ee0961ae99ec13ec7bcbddd9b6c24491a968e991752"
+}

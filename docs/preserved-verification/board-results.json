@@ -1,0 +1,1240 @@
+{
+  "recorded_utc": "2026-10-25T09:10:16.202525+00:00",
+  "current_board_build": "TX64-RX256K-N57B",
+  "bit_sha256": "4871542713694d7d25553c67d46c0a6a56c961e8f53513583e9942118301f8b0",
+  "volatile_jtag_programmed_by_agent": true,
+  "startup_flash_written": false,
+  "uart_build_verified": true,
+  "serial_capture_closed": true,
+  "upstream_pins": {
+    "valence": {
+      "url": "https://github.com/Surplars/Valence.git",
+      "ref": "recovery/common-idle-source-20261021-r1",
+      "commit": "bf021b52fe67f3d4c8c33d94a7e928559f55c729"
+    },
+    "valence-net": {
+      "url": "https://github.com/Surplars/Valence-Net.git",
+      "ref": "main",
+      "commit": "57c698496c55f3afe6c882f7a8ab9fb041f6b66b"
+    },
+    "iperf3": {
+      "url": "https://github.com/esnet/iperf.git",
+      "commit": "2a387afd416a258b78f0562af42eec3c110aed62"
+    },
+    "gsim": {
+      "commit": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+      "path": "/home/openion/.cache/valence-net/gsim-src-93b8cd23"
+    }
+  },
+  "physical_metrics_ns": {
+    "setup_slack_ns": 0.035,
+    "hold_slack_ns": 0.01,
+    "pulse_width_slack_ns": 0.437
+  },
+  "windows_client_sha256": "bcafba4aff825fa94685b6b3d049f8b1338c69e6dc1d06e6a00ac046191e4999",
+  "firmware_comparison": {
+    "N57B_initial_10s": [
+      {
+        "test": "forward-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "10",
+          "-J"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 741.3064612101423,
+        "receiver_mbps": 740.909084231537,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 75.43609152673054
+      },
+      {
+        "test": "forward-32K-N",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "10",
+          "-J",
+          "-l",
+          "32K",
+          "-N"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 650.8906911216424,
+        "receiver_mbps": 650.5437380191694,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 16.685674230972044
+      },
+      {
+        "test": "reverse-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "10",
+          "-J",
+          "-R"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 905.8429250749249,
+        "receiver_mbps": 906.0695743616154,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 14.666761982315219
+      },
+      {
+        "test": "forward-32K-N-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "10",
+          "-J",
+          "-l",
+          "32K",
+          "-N",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 634.4657609927174,
+        "receiver_mbps": 633.3806330073837,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 11.222389554977887
+      },
+      {
+        "test": "reverse-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "10",
+          "-J",
+          "-R",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 942.8516951353512,
+        "receiver_mbps": 943.3137184148001,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 14.194087274272087
+      }
+    ],
+    "N57A_5s": [
+      {
+        "test": "forward-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 386.25647480118386,
+        "receiver_mbps": 385.84418029517354,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 16.17917278200876
+      },
+      {
+        "test": "forward-32K-N",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-l",
+          "32K",
+          "-N"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 756.893269060637,
+        "receiver_mbps": 756.1996743814846,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 68.8244689025218
+      },
+      {
+        "test": "reverse-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-R"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 887.927121756487,
+        "receiver_mbps": 888.5470255426178,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 12.165197802127674
+      },
+      {
+        "test": "forward-32K-N-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-l",
+          "32K",
+          "-N",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 764.1557003535452,
+        "receiver_mbps": 761.8956828053397,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 59.99570180046803
+      },
+      {
+        "test": "reverse-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-R",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 939.176277401355,
+        "receiver_mbps": 939.6769941837284,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 10.272911030418767
+      }
+    ],
+    "N57B_repeat_5s": [
+      {
+        "test": "forward-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 751.8935769572226,
+        "receiver_mbps": 751.1325274286854,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 71.62921292346414
+      },
+      {
+        "test": "forward-32K-N",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-l",
+          "32K",
+          "-N"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 636.4916352246315,
+        "receiver_mbps": 635.866437001595,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 12.427335437881347
+      },
+      {
+        "test": "reverse-default",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-R"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 879.2718001998003,
+        "receiver_mbps": 879.900570478241,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 65536,
+        "socket_receive_buffer_bytes": 65536,
+        "client_process_cpu_percent": 10.6006072490985
+      },
+      {
+        "test": "forward-32K-N-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-l",
+          "32K",
+          "-N",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 355.62372440853835,
+        "receiver_mbps": 354.05534781742074,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 3.4082388493785643
+      },
+      {
+        "test": "reverse-w1M",
+        "arguments": [
+          "-c",
+          "192.168.137.10",
+          "-t",
+          "5",
+          "-J",
+          "-R",
+          "-w",
+          "1M"
+        ],
+        "exit_code": 0,
+        "sender_mbps": 937.6768370607031,
+        "receiver_mbps": 938.153433925825,
+        "iperf_error": null,
+        "socket_send_buffer_bytes": 1048576,
+        "socket_receive_buffer_bytes": 1048576,
+        "client_process_cpu_percent": 10.292075540643127
+      }
+    ],
+    "scope": "Adjacent B-A-B tests on same host/client with adapter settings restored; connection/source-port and scheduling variation remain, so differences are observations, not uniquely assigned causes."
+  },
+  "nic_advanced_settings_restored": true,
+  "linux_different_path_results": [
+    {
+      "case": "forward-default",
+      "command": [
+        "/home/openion/Valence-Iperf-Rx256K/tools/iperf3-src/src/iperf3",
+        "-c",
+        "192.168.137.10",
+        "-t",
+        "5",
+        "-J",
+        "--connect-timeout",
+        "3000"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "sender_mbps": 665.402355492751,
+      "receiver_mbps": 641.3395292753623,
+      "retransmits": 0,
+      "cpu": {
+        "host_total": 2.3832584427052224,
+        "host_user": 0,
+        "host_system": 2.3832584427052224,
+        "remote_total": 0,
+        "remote_user": 0,
+        "remote_system": 0
+      },
+      "max_cwnd": 273020,
+      "max_snd_wnd": 260680,
+      "rtt_us": [
+        1736,
+        2544,
+        1419,
+        1400,
+        3749
+      ],
+      "path": "Linux client through WSL NAT; different software/network path from native Windows"
+    },
+    {
+      "case": "forward-32K-N",
+      "command": [
+        "/home/openion/Valence-Iperf-Rx256K/tools/iperf3-src/src/iperf3",
+        "-c",
+        "192.168.137.10",
+        "-t",
+        "5",
+        "-J",
+        "--connect-timeout",
+        "3000",
+        "-l",
+        "32K",
+        "-N"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "sender_mbps": 946.6961477702126,
+      "receiver_mbps": 913.6462799690643,
+      "retransmits": 0,
+      "cpu": {
+        "host_total": 2.8159720271836224,
+        "host_user": 0.0797389982071219,
+        "host_system": 2.7362530186977856,
+        "remote_total": 0,
+        "remote_user": 0,
+        "remote_system": 0
+      },
+      "max_cwnd": 274480,
+      "max_snd_wnd": 260680,
+      "rtt_us": [
+        1899,
+        1561,
+        1857,
+        1672,
+        1841
+      ],
+      "path": "Linux client through WSL NAT; different software/network path from native Windows"
+    }
+  ],
+  "native_diagnostic_results": [
+    {
+      "name": "128K-buffer64K",
+      "client": "Native Windows .NET Socket/Winsock diagnostic, not the iperf3 executable",
+      "board_build_label": "TX64-RX256K-N57B",
+      "block_bytes": 131072,
+      "send_buffer_bytes": 65536,
+      "nodelay": false,
+      "local_socket_accepted_bytes": 479854592,
+      "local_seconds": 5.0004892,
+      "local_send_mbps": 767.6922361916111,
+      "client_cpu_percent": 76.55500985783551,
+      "hardware_receive_bytes": 479853460,
+      "hardware_reported_seconds": 5.002,
+      "hardware_receive_mbps": 767.4585525789684,
+      "server_result": {
+        "cpu_util_total": 0,
+        "cpu_util_user": 0,
+        "cpu_util_system": 0,
+        "sender_has_retransmits": -1,
+        "streams": [
+          {
+            "id": 1,
+            "bytes": 479853460,
+            "retransmits": -1,
+            "jitter": 0,
+            "errors": 0,
+            "packets": 0,
+            "start_time": 0,
+            "end_time": 5.002
+          }
+        ]
+      },
+      "tcp_samples": [
+        {
+          "AtSeconds": 5.0004892,
+          "ReturnedBytes": 136,
+          "State": 4,
+          "Mss": 1460,
+          "RttUs": 1626,
+          "MinRttUs": 133,
+          "BytesInFlight": 82892,
+          "Cwnd": 262104,
+          "SndWnd": 260680,
+          "RcvWnd": 65535,
+          "RcvBuf": 65535,
+          "BytesReordered": 0,
+          "BytesRetrans": 0,
+          "FastRetrans": 0,
+          "DupAcksIn": 0,
+          "TimeoutEpisodes": 0,
+          "ConnectionTimeMs": 5002,
+          "BytesOut": 479950025,
+          "BytesIn": 0,
+          "TimestampsEnabled": false,
+          "SndLimTransRwin": 74,
+          "SndLimTimeRwin": 62,
+          "SndLimTransCwnd": 2,
+          "SndLimTimeCwnd": 3,
+          "SndLimTransSnd": 77,
+          "SndLimTimeSnd": 4937,
+          "SndLimBytesRwin": 9567380,
+          "SndLimBytesCwnd": 306600,
+          "SndLimBytesSnd": 469980651
+        }
+      ],
+      "tcp_info_reference": "https://learn.microsoft.com/en-us/windows/win32/api/mstcpip/ns-mstcpip-tcp_info_v1"
+    },
+    {
+      "name": "32K-N-buffer1M",
+      "client": "Native Windows .NET Socket/Winsock diagnostic, not the iperf3 executable",
+      "board_build_label": "TX64-RX256K-N57B",
+      "block_bytes": 32768,
+      "send_buffer_bytes": 1048576,
+      "nodelay": true,
+      "local_socket_accepted_bytes": 409042944,
+      "local_seconds": 5.000103,
+      "local_send_mbps": 654.4552286222904,
+      "client_cpu_percent": 9.062313316345683,
+      "hardware_receive_bytes": 408330244,
+      "hardware_reported_seconds": 5.002,
+      "hardware_receive_mbps": 653.0671635345861,
+      "server_result": {
+        "cpu_util_total": 0,
+        "cpu_util_user": 0,
+        "cpu_util_system": 0,
+        "sender_has_retransmits": -1,
+        "streams": [
+          {
+            "id": 1,
+            "bytes": 408330244,
+            "retransmits": -1,
+            "jitter": 0,
+            "errors": 0,
+            "packets": 0,
+            "start_time": 0,
+            "end_time": 5.002
+          }
+        ]
+      },
+      "tcp_samples": [
+        {
+          "AtSeconds": 5.000103,
+          "ReturnedBytes": 136,
+          "State": 4,
+          "Mss": 1460,
+          "RttUs": 2797,
+          "MinRttUs": 74,
+          "BytesInFlight": 146000,
+          "Cwnd": 262144,
+          "SndWnd": 260680,
+          "RcvWnd": 65535,
+          "RcvBuf": 65535,
+          "BytesReordered": 0,
+          "BytesRetrans": 249660,
+          "FastRetrans": 1,
+          "DupAcksIn": 8,
+          "TimeoutEpisodes": 0,
+          "ConnectionTimeMs": 5001,
+          "BytesOut": 413844688,
+          "BytesIn": 0,
+          "TimestampsEnabled": false,
+          "SndLimTransRwin": 3,
+          "SndLimTimeRwin": 4710,
+          "SndLimTransCwnd": 2,
+          "SndLimTimeCwnd": 288,
+          "SndLimTransSnd": 3,
+          "SndLimTimeSnd": 3,
+          "SndLimBytesRwin": 384045576,
+          "SndLimBytesCwnd": 23951780,
+          "SndLimBytesSnd": 330007
+        }
+      ],
+      "tcp_info_reference": "https://learn.microsoft.com/en-us/windows/win32/api/mstcpip/ns-mstcpip-tcp_info_v1"
+    },
+    {
+      "name": "64K-N-buffer1M",
+      "client": "Native Windows .NET Socket/Winsock diagnostic, not the iperf3 executable",
+      "board_build_label": "TX64-RX256K-N57B",
+      "block_bytes": 65536,
+      "send_buffer_bytes": 1048576,
+      "nodelay": true,
+      "local_socket_accepted_bytes": 418250752,
+      "local_seconds": 5.0009946,
+      "local_send_mbps": 669.0681121711268,
+      "client_cpu_percent": 6.873632696983916,
+      "hardware_receive_bytes": 417627200,
+      "hardware_reported_seconds": 5.005,
+      "hardware_receive_mbps": 667.535984015984,
+      "server_result": {
+        "cpu_util_total": 0,
+        "cpu_util_user": 0,
+        "cpu_util_system": 0,
+        "sender_has_retransmits": -1,
+        "streams": [
+          {
+            "id": 1,
+            "bytes": 417627200,
+            "retransmits": -1,
+            "jitter": 0,
+            "errors": 0,
+            "packets": 0,
+            "start_time": 0,
+            "end_time": 5.005
+          }
+        ]
+      },
+      "tcp_samples": [
+        {
+          "AtSeconds": 5.0009946,
+          "ReturnedBytes": 136,
+          "State": 4,
+          "Mss": 1460,
+          "RttUs": 3307,
+          "MinRttUs": 77,
+          "BytesInFlight": 259880,
+          "Cwnd": 262104,
+          "SndWnd": 260680,
+          "RcvWnd": 65535,
+          "RcvBuf": 65535,
+          "BytesReordered": 0,
+          "BytesRetrans": 0,
+          "FastRetrans": 0,
+          "DupAcksIn": 0,
+          "TimeoutEpisodes": 0,
+          "ConnectionTimeMs": 5002,
+          "BytesOut": 423631327,
+          "BytesIn": 0,
+          "TimestampsEnabled": false,
+          "SndLimTransRwin": 1,
+          "SndLimTimeRwin": 4997,
+          "SndLimTransCwnd": 1,
+          "SndLimTimeCwnd": 4,
+          "SndLimTransSnd": 1,
+          "SndLimTimeSnd": 1,
+          "SndLimBytesRwin": 417211100,
+          "SndLimBytesCwnd": 417560,
+          "SndLimBytesSnd": 39
+        }
+      ],
+      "tcp_info_reference": "https://learn.microsoft.com/en-us/windows/win32/api/mstcpip/ns-mstcpip-tcp_info_v1"
+    }
+  ],
+  "packet_analysis": {
+    "port": 62316,
+    "scale": 3,
+    "packet_blocks": 564763,
+    "interfaces": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0
+      ]
+    ],
+    "data_records": 282376,
+    "ack_records": 282355,
+    "payload_size_histogram": [
+      [
+        1460,
+        282165
+      ],
+      [
+        800,
+        179
+      ],
+      [
+        648,
+        27
+      ],
+      [
+        264,
+        1
+      ],
+      [
+        588,
+        1
+      ],
+      [
+        364,
+        1
+      ],
+      [
+        88,
+        1
+      ],
+      [
+        236,
+        1
+      ]
+    ],
+    "ack_advance_histogram": [
+      [
+        1460,
+        282142
+      ],
+      [
+        800,
+        179
+      ],
+      [
+        648,
+        27
+      ],
+      [
+        37,
+        1
+      ],
+      [
+        264,
+        1
+      ],
+      [
+        588,
+        1
+      ],
+      [
+        364,
+        1
+      ],
+      [
+        88,
+        1
+      ]
+    ],
+    "window_min_max": [
+      260680,
+      262144
+    ],
+    "zero_window_count": 0,
+    "sequence_extent_including_cookie": 412123173,
+    "sequence_gap_count": 0,
+    "sequence_overlap_bytes": 0,
+    "hardware_receive_bytes": 411505980,
+    "sender_bytes": 412123136,
+    "sender_mbps": 658.5210528954385,
+    "receiver_mbps": 656.3093779904306,
+    "capture_extent_matches_hardware_bytes": false,
+    "ack_rtt_from_host_capture_ms_percentiles": {
+      "0": 0.11491775512695312,
+      "10": 1.7571449279785156,
+      "50": 2.524852752685547,
+      "90": 3.4329891204833984,
+      "99": 4.048824310302734,
+      "100": 6.294965744018555
+    },
+    "tx_gap_ms_percentiles": {
+      "0": 0.0,
+      "10": 0.0,
+      "50": 0.0,
+      "90": 0.00095367431640625,
+      "99": 0.4839897155761719,
+      "100": 3.8530826568603516
+    },
+    "ack_gap_ms_percentiles": {
+      "0": 0.0,
+      "10": 0.0,
+      "50": 0.0,
+      "90": 0.0011920928955078125,
+      "99": 0.4191398620605469,
+      "100": 7.284879684448242
+    },
+    "outstanding_at_ack_percentiles": {
+      "0": 0,
+      "10": 151180,
+      "50": 224840,
+      "90": 253380,
+      "99": 258420,
+      "100": 259880
+    },
+    "spare_window_at_ack_percentiles": {
+      "0": 800,
+      "10": 7300,
+      "50": 35840,
+      "90": 109500,
+      "99": 176000,
+      "100": 262104
+    },
+    "send_gaps_over_100us": 6783,
+    "send_gaps_over_100us_total_ms": 4884.4475746154785,
+    "largest_send_gaps": [
+      {
+        "start_from_first_data_s": 0.07439398765563965,
+        "gap_ms": 3.8530826568603516,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 260680,
+        "acks_in_gap": 174,
+        "ack_advance_in_gap": 253380,
+        "first_ack_after_gap_start_ms": 0.0400543212890625,
+        "last_ack_before_next_tx_ms": 0.015020370483398438,
+        "spare_window_after_first_ack": 1460
+      },
+      {
+        "start_from_first_data_s": 0.5924460887908936,
+        "gap_ms": 3.621816635131836,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 16,
+        "ack_advance_in_gap": 23360,
+        "first_ack_after_gap_start_ms": 3.5250186920166016,
+        "last_ack_before_next_tx_ms": 0.09083747863769531,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 4.13973593711853,
+        "gap_ms": 3.287076950073242,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 171,
+        "ack_advance_in_gap": 249660,
+        "first_ack_after_gap_start_ms": 0.3910064697265625,
+        "last_ack_before_next_tx_ms": 0.06699562072753906,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.916766881942749,
+        "gap_ms": 3.075122833251953,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 83,
+        "ack_advance_in_gap": 121180,
+        "first_ack_after_gap_start_ms": 0.2601146697998047,
+        "last_ack_before_next_tx_ms": 1.789093017578125,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 4.791111946105957,
+        "gap_ms": 3.056049346923828,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 156,
+        "ack_advance_in_gap": 227760,
+        "first_ack_after_gap_start_ms": 0.21314620971679688,
+        "last_ack_before_next_tx_ms": 0.8280277252197266,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 4.798278093338013,
+        "gap_ms": 2.9850006103515625,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 128,
+        "ack_advance_in_gap": 186880,
+        "first_ack_after_gap_start_ms": 0.2830028533935547,
+        "last_ack_before_next_tx_ms": 0.6160736083984375,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.2335989475250244,
+        "gap_ms": 2.9709339141845703,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 150,
+        "ack_advance_in_gap": 219000,
+        "first_ack_after_gap_start_ms": 0.11897087097167969,
+        "last_ack_before_next_tx_ms": 0.9369850158691406,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 4.135112047195435,
+        "gap_ms": 2.8569698333740234,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 249660,
+        "acks_in_gap": 122,
+        "ack_advance_in_gap": 178120,
+        "first_ack_after_gap_start_ms": 0.3268718719482422,
+        "last_ack_before_next_tx_ms": 0.9729862213134766,
+        "spare_window_after_first_ack": 12480
+      },
+      {
+        "start_from_first_data_s": 3.933298110961914,
+        "gap_ms": 2.785921096801758,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 177,
+        "ack_advance_in_gap": 258420,
+        "first_ack_after_gap_start_ms": 0.14090538024902344,
+        "last_ack_before_next_tx_ms": 0.1480579376220703,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 4.073678970336914,
+        "gap_ms": 2.7780532836914062,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 173,
+        "ack_advance_in_gap": 252580,
+        "first_ack_after_gap_start_ms": 0.12612342834472656,
+        "last_ack_before_next_tx_ms": 0.025987625122070312,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.18350005149841309,
+        "gap_ms": 2.756834030151367,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 127,
+        "ack_advance_in_gap": 185420,
+        "first_ack_after_gap_start_ms": 0.05888938903808594,
+        "last_ack_before_next_tx_ms": 0.19979476928710938,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 3.566786050796509,
+        "gap_ms": 2.663850784301758,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 85,
+        "ack_advance_in_gap": 124100,
+        "first_ack_after_gap_start_ms": 0.1518726348876953,
+        "last_ack_before_next_tx_ms": 1.428842544555664,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.6221339702606201,
+        "gap_ms": 2.624034881591797,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 175,
+        "ack_advance_in_gap": 255500,
+        "first_ack_after_gap_start_ms": 0.04696846008300781,
+        "last_ack_before_next_tx_ms": 0.08797645568847656,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 3.5115959644317627,
+        "gap_ms": 2.583026885986328,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 32,
+        "ack_advance_in_gap": 46720,
+        "first_ack_after_gap_start_ms": 2.3920536041259766,
+        "last_ack_before_next_tx_ms": 0.17499923706054688,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.008739948272705,
+        "gap_ms": 2.546072006225586,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 91,
+        "ack_advance_in_gap": 132860,
+        "first_ack_after_gap_start_ms": 0.6909370422363281,
+        "last_ack_before_next_tx_ms": 1.1420249938964844,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.7170488834381104,
+        "gap_ms": 2.4840831756591797,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 178,
+        "ack_advance_in_gap": 259880,
+        "first_ack_after_gap_start_ms": 0.22101402282714844,
+        "last_ack_before_next_tx_ms": 0.17905235290527344,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.033674001693725586,
+        "gap_ms": 2.476930618286133,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 178,
+        "ack_advance_in_gap": 259880,
+        "first_ack_after_gap_start_ms": 0.06008148193359375,
+        "last_ack_before_next_tx_ms": 0.37384033203125,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.19060492515563965,
+        "gap_ms": 2.4671554565429688,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 227760,
+        "acks_in_gap": 144,
+        "ack_advance_in_gap": 210240,
+        "first_ack_after_gap_start_ms": 0.2281665802001953,
+        "last_ack_before_next_tx_ms": 0.26607513427734375,
+        "spare_window_after_first_ack": 34380
+      },
+      {
+        "start_from_first_data_s": 1.626439094543457,
+        "gap_ms": 2.446889877319336,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 167,
+        "ack_advance_in_gap": 243820,
+        "first_ack_after_gap_start_ms": 0.2429485321044922,
+        "last_ack_before_next_tx_ms": 0.06890296936035156,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.18808794021606445,
+        "gap_ms": 2.437114715576172,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 204400,
+        "acks_in_gap": 140,
+        "ack_advance_in_gap": 204400,
+        "first_ack_after_gap_start_ms": 0.20003318786621094,
+        "last_ack_before_next_tx_ms": 0.05412101745605469,
+        "spare_window_after_first_ack": 57740
+      },
+      {
+        "start_from_first_data_s": 4.364991903305054,
+        "gap_ms": 2.424001693725586,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 88,
+        "ack_advance_in_gap": 128480,
+        "first_ack_after_gap_start_ms": 0.6840229034423828,
+        "last_ack_before_next_tx_ms": 1.0228157043457031,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.27312207221984863,
+        "gap_ms": 2.421855926513672,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 84,
+        "ack_advance_in_gap": 122640,
+        "first_ack_after_gap_start_ms": 0.10800361633300781,
+        "last_ack_before_next_tx_ms": 0.8988380432128906,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.04134106636047363,
+        "gap_ms": 2.404928207397461,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 128,
+        "ack_advance_in_gap": 186880,
+        "first_ack_after_gap_start_ms": 0.14781951904296875,
+        "last_ack_before_next_tx_ms": 0.3800392150878906,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.602097988128662,
+        "gap_ms": 2.3889541625976562,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 169,
+        "ack_advance_in_gap": 246740,
+        "first_ack_after_gap_start_ms": 0.22101402282714844,
+        "last_ack_before_next_tx_ms": 0.1049041748046875,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.020260095596313477,
+        "gap_ms": 2.3698806762695312,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 32,
+        "ack_advance_in_gap": 46720,
+        "first_ack_after_gap_start_ms": 2.1178722381591797,
+        "last_ack_before_next_tx_ms": 0.2300739288330078,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.9342489242553711,
+        "gap_ms": 2.3200511932373047,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 178,
+        "ack_advance_in_gap": 259880,
+        "first_ack_after_gap_start_ms": 0.080108642578125,
+        "last_ack_before_next_tx_ms": 0.18405914306640625,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.961003065109253,
+        "gap_ms": 2.310037612915039,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 178,
+        "ack_advance_in_gap": 259880,
+        "first_ack_after_gap_start_ms": 0.018835067749023438,
+        "last_ack_before_next_tx_ms": 0.13113021850585938,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 0.028985977172851562,
+        "gap_ms": 2.299070358276367,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 101,
+        "ack_advance_in_gap": 147460,
+        "first_ack_after_gap_start_ms": 0.3209114074707031,
+        "last_ack_before_next_tx_ms": 0.164031982421875,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.6184899806976318,
+        "gap_ms": 2.2819042205810547,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 259880,
+        "acks_in_gap": 164,
+        "ack_advance_in_gap": 239440,
+        "first_ack_after_gap_start_ms": 0.26607513427734375,
+        "last_ack_before_next_tx_ms": 0.1609325408935547,
+        "spare_window_after_first_ack": 2260
+      },
+      {
+        "start_from_first_data_s": 1.759469985961914,
+        "gap_ms": 2.26593017578125,
+        "previous_record_bytes": 1460,
+        "next_record_bytes": 1460,
+        "outstanding_at_start": 260680,
+        "acks_in_gap": 161,
+        "ack_advance_in_gap": 234400,
+        "first_ack_after_gap_start_ms": 0.2911090850830078,
+        "last_ack_before_next_tx_ms": 0.034809112548828125,
+        "spare_window_after_first_ack": 1460
+      }
+    ],
+    "scope": "Windows PktMon NIC capture; timestamps include driver/offload/interrupt behavior and are not an external wire tap; no unconditional FPGA latency inference.",
+    "final_tcp_ack_sequence_offset": 412089357,
+    "all_sender_tcp_payload_acknowledged": false,
+    "acknowledged_payload_bytes_excluding_cookie": 412089320
+  },
+  "uart_final_N57B": {
+    "stat_samples": 270,
+    "diag_samples": 224,
+    "last_stat": {
+      "link": 1,
+      "rxLock": 1,
+      "phase": 1,
+      "reverse": 0,
+      "rxBytes": 0,
+      "txBytes": 0,
+      "appErrors": 6,
+      "phyFault": 0,
+      "netFault": 0
+    },
+    "last_diag": {
+      "rx": 784730,
+      "drop": 139,
+      "fcs": 0,
+      "why": 0,
+      "stall": 0,
+      "max": 0,
+      "sr": 34,
+      "sb": 0,
+      "st": 0,
+      "tx": 1543798,
+      "rej": 0,
+      "ib": 1
+    },
+    "max_application_error_counter": 6,
+    "max_fcs_counter": 0,
+    "scope": "Last boot of this tag in the given UART file; appErrors are retained, not waived or called zero."
+  },
+  "mixed_length_diagnostic": {
+    "passed": false,
+    "scope": "New mixed-length and concurrent control ACK diagnostic after board observations; external GMII only, same sealed GSIM network model",
+    "driver_sha256": "5eb9220c4304a6ebb5941948f1fdf91e179bb05fc592a6088701cdbdc1c82a45",
+    "model_source_sha256": "425d7db81eb7f77f7c00ed389b443557d74a885e7c13b69238ece9111f6db4ce",
+    "cases": [
+      {
+        "mode": "full",
+        "passed": true,
+        "log_sha256": "ee357990a3e5ede63f35dfcc930f27ec32670149ba75fce47e2ed002e4195620"
+      },
+      {
+        "mode": "32K",
+        "passed": true,
+        "log_sha256": "7bda83b4b93b1f95144e591bce9e5137421e55b1adbcc830613c0eae1ac474cf"
+      },
+      {
+        "mode": "64K",
+        "passed": true,
+        "log_sha256": "ca0e9e8fffb7db06d6e4afbea00d8031dac6ceb9375fd17834b38c457662ca34"
+      },
+      {
+        "mode": "60K",
+        "passed": true,
+        "log_sha256": "b4d2e792d7aba65540125ee27e6afbce2f83258c86caf15f7031623c2cee6060"
+      },
+      {
+        "mode": "short64",
+        "passed": false,
+        "log_sha256": "96bdaea412ea24fa0efd9700c0549623d19c0bb303fae6b8c3dbe5322bf0161e"
+      },
+      {
+        "mode": "short1",
+        "passed": true,
+        "log_sha256": "0bf4a124895f15a00dd928025a17f148bf73aaaab584052c75ffb78eb3a88551"
+      },
+      {
+        "mode": "captured",
+        "passed": true,
+        "log_sha256": "d5b980f42d56d52ca554fad9781233b94b970642f3cfeff3eaeea13f3a73f67e"
+      },
+      {
+        "mode": "control-acks",
+        "passed": true,
+        "log_sha256": "93738f5fc475cd77c845946769ff9203a8f200e966c999b587095b4dddfb913a"
+      }
+    ]
+  },
+  "short_tail_retransmission_recovery": {
+    "passed": true,
+    "scope": "External sender retransmission after one no-drop stress failure; does not erase the original minimum-frame admission limitation",
+    "original_busy_drop_count": 1,
+    "original_missing_bytes": 16,
+    "retransmitted_bytes": 16,
+    "final_expected_receive_bytes": 262144,
+    "driver_sha256": "c40912e075f684f177fffc057b4270110d1c7ba0567f00fec2d51be064bbd466",
+    "log_sha256": "c0317d3cab9c29fd4d3da016f0c7173172a659cbd6344037b74d1c7fd083a398"
+  },
+  "programming_events": [
+    {
+      "build_tag": "TX64-RX256K-N57B",
+      "log_path": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T071436Z/jtag-program-20261025T160755/jtag.log",
+      "log_sha256": "99caceef84e9daaac84396d2bdeb5df02142d10ea61e07a80e605d4411d09d7a"
+    },
+    {
+      "build_tag": "TX64-RX128K-N57A",
+      "log_path": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T033919Z/jtag-program-20261025T165040/jtag.log",
+      "log_sha256": "fbd18ec21f1994cbebc6812b7ce8fc45e14751a473b6a52a0a3e86c13144112b"
+    },
+    {
+      "build_tag": "TX64-RX256K-N57B",
+      "log_path": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T071436Z/jtag-program-20261025T165543/jtag.log",
+      "log_sha256": "016ac732063251d68bf5dc0c3b6a18a11f914557fb94770918ecfa5d2fc1689d"
+    }
+  ],
+  "known_limits": [
+    "Windows -N throughput remains variable and lower in RX256K tests; no claim of universal performance improvement or solved Windows forward line rate.",
+    "Receiver-limited classification alone does not uniquely diagnose insufficient storage; larger actual storage did not solve all parameter combinations.",
+    "Short64 no-drop stress lost one 16-byte tail to TCP busy admission; retransmitting that tail recovered the full 262144 bytes.",
+    "Final N57B application error counter is recorded as observed and still needs classification; it is not a MAC FCS counter.",
+    "Packet capture sequence extent covers sender bytes but cumulative ACK tail and application test-window byte counts differ; no assertion of fully loss-free TCP or counter overcount.",
+    "WSL/NAT numbers use a different TCP/network path; model throughput is not board throughput."
+  ],
+  "sealed_manifests_note": "physical-verification.json and delivery.json retain pre-programming snapshot flags. This dated board record supersedes their unmeasured status for actual board evidence, without rewriting sealed hashes."
+}

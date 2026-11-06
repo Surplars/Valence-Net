@@ -1,0 +1,63 @@
+{
+  "status": "hardware_tested_with_parameter_regression",
+  "build_tag": "TX64-RX256K-N57B",
+  "baseline_project": "/home/openion/Valence-Iperf-Net57c6984",
+  "net_commit": "57c698496c55f3afe6c882f7a8ab9fb041f6b66b",
+  "changed_parameters": {
+    "rx_words": [
+      8192,
+      16384
+    ],
+    "rx_bytes": [
+      131072,
+      262144
+    ],
+    "window_scale": [
+      2,
+      3
+    ]
+  },
+  "unchanged_tx_banks": 64,
+  "unchanged_tx_congestion_cap": 131072,
+  "board_programmed_by_agent": true,
+  "board_iperf_measured": true,
+  "run": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T071436Z",
+  "build_session": 35542,
+  "board_test_session": 6249,
+  "rx_bridge_test_session": 10842,
+  "model_modules_matched": 212,
+  "application_cases_passed": 7,
+  "negative_cases_passed": 11,
+  "transport_cases_passed": 13,
+  "full_gmii_cases_passed": 3,
+  "windows_client_cases_passed": 2,
+  "uart_passed": true,
+  "rxqueue_passed": true,
+  "window_ab_passed": true,
+  "rx_diagnostic_oracle_byte_identical_reused": true,
+  "toolchain": {
+    "mill": "1.1.7",
+    "scala": "2.13.17",
+    "chisel": "7.3.0",
+    "gsim": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+    "sanitizers": [
+      "address",
+      "undefined"
+    ]
+  },
+  "functional_sealed": true,
+  "rx_bridge_passed": true,
+  "board_boundary_passed": true,
+  "bit_sha256": "4871542713694d7d25553c67d46c0a6a56c961e8f53513583e9942118301f8b0",
+  "physical_sealed": true,
+  "setup_slack_ns": 0.035,
+  "hold_slack_ns": 0.01,
+  "pulse_width_slack_ns": 0.437,
+  "remaining": [
+    "Windows forward line rate and -N regression remain unresolved",
+    "Classify application error counter and short-segment admission limit"
+  ],
+  "current_board_build": "TX64-RX256K-N57B",
+  "board_report": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T071436Z/BOARD-RESULTS.md",
+  "board_evidence": "/mnt/e/VM/Share/Valence-rtl/valence-iperf-20261025T071436Z/measurements/20261025T090500Z-agent-board-tests"
+}

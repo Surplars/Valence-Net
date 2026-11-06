@@ -1,0 +1,20 @@
+import mill.*, scalalib.*
+object hw extends SbtModule {
+    override def moduleDir = os.Path(sys.env("MILL_WORKSPACE_ROOT"))
+    override def scalaVersion = "2.13.17"
+    override def mvnDeps = Seq(mvn"org.chipsalliance::chisel:7.3.0")
+    override def scalacPluginMvnDeps = Seq(mvn"org.chipsalliance:::chisel-plugin:7.3.0")
+    override def scalacOptions = Seq("-language:reflectiveCalls", "-deprecation", "-feature")
+    override def sources = Task.Input {
+        val root = moduleDir
+        val mac = root / "deps/valence/src/main/scala/ip/ethernet"
+        val bus = root / "deps/valence/src/main/scala/ip/bus"
+        Seq(PathRef(root / "src/main/scala")) ++
+        os.walk(root / "deps/valence-net/src/main/scala").filter(p => os.isFile(p) && p.ext == "scala" &&
+            !Set("TcpReceiveQueue.scala", "TcpReceiveRing.scala").contains(p.last)).sortBy(_.toString).map(p => PathRef(p)) ++
+        Seq("EthernetPort", "EthernetCrc32", "GmiiFrameTx", "QueuedGmiiFrameTx", "GmiiFrameRx",
+            "MdioClause22", "Rtl8211fPhyManager", "TriSpeedRgmii", "EthernetClockCrossing")
+            .map(n => PathRef(mac / (n + ".scala"))) ++
+        Seq("RegisterPort", "ClockDomainCrossing", "CdcDataChannels").map(n => PathRef(bus / (n + ".scala")))
+    }
+}
