@@ -18,7 +18,11 @@ def sha(path):
 def main():
     out = ROOT / "build/transport-comparison"
     out.mkdir(exist_ok=True)
-    archive = pathlib.Path((ROOT / "build/tx32-baseline.txt").read_text().strip())
+    pointer = ROOT / "build/tx32-baseline.txt"
+    archive = pathlib.Path(pointer.read_text().strip()) if pointer.exists() else None
+    if archive is None or not (archive / "gmii/IperfGmiiHarness0.cpp").is_file():
+        subprocess.run(["python3", str(ROOT / "scripts/restore_tx32.py")], check=True)
+        archive = pathlib.Path(pointer.read_text().strip())
     models = {32: archive / "gmii", 64: ROOT / "build/gmii"}
     driver = ROOT / "sim/gmii_burst.cpp"
     flags = ["clang++-19", "-std=c++20", "-O1", "-g", "-fsanitize=address,undefined",

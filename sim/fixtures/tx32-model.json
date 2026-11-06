@@ -1,0 +1,11 @@
+{
+  "scope": "Historical TX32 comparison model, not N57M RTL or a timing/board artifact",
+  "gsim_commit": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+  "source_evidence": "https://github.com/Surplars/Valence-Net/blob/7f651a6185e3dd13f9981b2ae024d3b6c117f588/docs/verification/2026-11-06-n57b/transport-verification.json",
+  "archive_sha256": "c1bcfc94bcb0d6b23e11f2c25ab23aab123b7d1cb5c275f12cfc9891c88f6bf7",
+  "files_sha256": {
+    "gmii/gmii.fir": "da2317baa3937201366bc2d79ab93457edba25a144379c89edd7a9f7b5c446f2",
+    "gmii/IperfGmiiHarness.h": "ad30753e3ca14b3a325fd12f28ff227bb4b8674baec5c282886ae5e6732d6535",
+    "gmii/IperfGmiiHarness0.cpp": "0858b54a7c72844100ad1af9be87376a9406e16ca0caeca3489aa7c6a8a25c62"
+  }
+}

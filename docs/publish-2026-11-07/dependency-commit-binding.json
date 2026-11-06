@@ -1,0 +1,83 @@
+{
+  "net_commit": "7f651a6185e3dd13f9981b2ae024d3b6c117f588",
+  "old_dependencies_sha256": "5551c3b43b693ccfa791921bd77bb57b521b3ff2add84e9079c819e3b9590736",
+  "new_dependencies_sha256": "9c201d16795afea291cb1b4c88c1928831952d121d125cdb7d9a02be468a87b4",
+  "net_source_sha256": {
+    "src/main/scala/netstack/ArpEngine.scala": "db014d8dcdc18900a042ffae232b154fea35c0c9ad65f86d1bbef555f175a4b8",
+    "src/main/scala/netstack/ArpWire.scala": "637358d3635a2e88dd7ab5967f8c37efb5575804b5aeb0ca32c71586160148cd",
+    "src/main/scala/netstack/Emit.scala": "ae59111981d40addf0460f51e8d298fc4ad0a1004ace47e1305164996623e8d7",
+    "src/main/scala/netstack/Ethernet.scala": "c9515cc9df1f01b0b159d46e455c13cd19a97bbf9ef2641904fa163437d55985",
+    "src/main/scala/netstack/EthernetTcpHarness.scala": "c53945a02ad5200e26207ae4ebf21d5231655d7c8247595db5c2e03cf5ed3e51",
+    "src/main/scala/netstack/EthernetTcpUdpEndpoint.scala": "452674a090f150229f5011f934fe77e3b71c8d471858cbb10475fb93565683a9",
+    "src/main/scala/netstack/EthernetUdpEndpoint.scala": "ef782b9568d716233d5b28c3b07a923a9faa9d43af4ca6287ea8bd8d5289228e",
+    "src/main/scala/netstack/IcmpErrorsHarness.scala": "38fb4ce5ba9f6446d14de683a9c493a2746670a115a8b288d513cdad339982c1",
+    "src/main/scala/netstack/InternetChecksum.scala": "0629c1b18479ba6eae9c7b6a85455524b40c33c2f62d9b5aaf7f30b735a167e6",
+    "src/main/scala/netstack/Ipv4IcmpEcho.scala": "05c309c720f857dd3a9413fbbf585b8b21172724f9d73c42ea7f348dab36f6c5",
+    "src/main/scala/netstack/Ipv4IcmpErrors.scala": "c04f1ddc7d5fc3c72ada99179a1a8505ad87e80569dc564f20b89defc84f85d7",
+    "src/main/scala/netstack/Ipv4Receive.scala": "b394d209cd279dbb0de5fae38a3f451911a09b636bcdd0714bd656fc9e834485",
+    "src/main/scala/netstack/Ipv4TcpTransmit.scala": "05708d6ac14375676e99d7826f3ab1a9259df149ddd9e1664cb9eab0e3590ff8",
+    "src/main/scala/netstack/Ipv4UdpPathTransmit.scala": "8040682e7856f02341aecc8616c6dbef1476b724aa60fe6a7da944ca029001e8",
+    "src/main/scala/netstack/Ipv4UdpPortDispatch.scala": "16288614d05c5dca3b9b995d8f737ea9997651972f11d237a80abae077c94017",
+    "src/main/scala/netstack/Ipv4UdpTransmit.scala": "d54f1f79029c610db5ce7d21e687dc06de0503ebdf9ec0cd4b2d094c67ffcbcd",
+    "src/main/scala/netstack/Ipv4Validate.scala": "65274712683c57ad9e42f7e5e8189d027fb4abf09698c5751b5f25a8727a1ecb",
+    "src/main/scala/netstack/MemoryExport.scala": "e37c61a56c5d1f41c5cb03271b911d945dd79697ec87b2bc4877e550bfa62a85",
+    "src/main/scala/netstack/MemoryQueue.scala": "e4195357684331c83b4ebdc6ed09e61b6393dfdba32d4270b29b4721300c2ebf",
+    "src/main/scala/netstack/MultiEthernetTcpUdpEndpoint.scala": "aa4d6634abcc9bcb429d9ccb478da7285450129a879f284af1391187d1caad6d",
+    "src/main/scala/netstack/MultiTcpEndpointHarness.scala": "472be7eba574ced0171cdb7f4cf56ebed38e28610a029cabf369f39878f94100",
+    "src/main/scala/netstack/MultiTcpIpv4Endpoint.scala": "9c81245d141c8b7711ac9ca0654706ac71133dda66b03d6e2a4310cf6f458b42",
+    "src/main/scala/netstack/NetworkErrorsHarness.scala": "cfba66de677c018d56bcee1a7b98bd648b2f931f3704410d943b0ba161bb1570",
+    "src/main/scala/netstack/PacketCommitBuffer.scala": "268be6f5ba8f6b8ffd116008a2f6f85d5478b85df886de7ee4625265eeec52cc",
+    "src/main/scala/netstack/PacketPrepend.scala": "7fc3cd08c97e5e6a693a6ba6add510b8c63d3833ab9680ee53e1f520e5927a6b",
+    "src/main/scala/netstack/PacketSlice.scala": "e8df90da97791174748fd021cd793ccec5519df3f788150284e9ebae81015f16",
+    "src/main/scala/netstack/SharedTcpReceive.scala": "d252d505943794602f1baf37851558a923b7a266360e03563551fc682f8738c4",
+    "src/main/scala/netstack/SharedTcpReceiveHarness.scala": "911091151600103d89810af3c2cc3380064d8d611bc128bd393a4df6a5fdd039",
+    "src/main/scala/netstack/TcpClosedResponder.scala": "e03be09a78ad94a66679325df7aa20bc464060fd3a3ce04e14f607d7d46096f8",
+    "src/main/scala/netstack/TcpCongestionControl.scala": "21e402d8aa303fd58e4d5d2367bc321b304336baab6382dd8d59d138fc8b600a",
+    "src/main/scala/netstack/TcpConnectionControl.scala": "21d214adec808efa96a03c0b2b4ae8697a6486438b19c32613c49ef7aec75d11",
+    "src/main/scala/netstack/TcpConnectionTransmit.scala": "24aece45a0669d84a4c1a9b63cef6af72f8321f041a89ed82f0aca2d1f4b2d19",
+    "src/main/scala/netstack/TcpConnectionTxHarness.scala": "1197cc4439e7fd69e1d1fb3133b1693aa001b8dc9470f26230f30a501ab8ad84",
+    "src/main/scala/netstack/TcpControlHarness.scala": "edb8646138ec1f3460bd583628fadca302db7626e0c627e38f17cb99dc43e027",
+    "src/main/scala/netstack/TcpDataHarness.scala": "bc5f17b364fc4a6863e5e58d059938c02d0c1c46d4a5bc98015649abeb47c8e4",
+    "src/main/scala/netstack/TcpEndpointHarness.scala": "94ce587431a0e6409dd80ade3e9ef26451d38872bfa99852415f5b8ae0940df0",
+    "src/main/scala/netstack/TcpGenerationHarness.scala": "1b0298b44251c904622a2598670c3cd8e60760f9730ff90df0d9a0e47dd689c6",
+    "src/main/scala/netstack/TcpHeaderSnapshotHarness.scala": "da1c0eb5a23d8c9249ce43363c3e62737f1bd3a6eac56dadb0d67db07203f83f",
+    "src/main/scala/netstack/TcpIcmpFeedback.scala": "79515734212cdf29647874082c427d93c2e6e322b81553bdfc9441316c384aa0",
+    "src/main/scala/netstack/TcpIpv4Endpoint.scala": "ee815ba19a1c334c32450da6102470bd6510d2c0d720b9dd2c0dd9d9d6cca21b",
+    "src/main/scala/netstack/TcpManagedConnection.scala": "7c0d33bd70fc51634cc48c44bc90a2bb3a116919ea04abbcca524c65a6a51041",
+    "src/main/scala/netstack/TcpManagedHarness.scala": "b254714d81a2e22761aa9bbc64e4692a91e8521050ed6f43d82bf317ec97ab83",
+    "src/main/scala/netstack/TcpPayloadStore.scala": "2062ad3b9232879b050696831a76b100da555d86310d93f266260a1685973341",
+    "src/main/scala/netstack/TcpPmtuHarness.scala": "d9aefc9db47fcc790c4a20334eec6cf0d8f8646dfb93a4639a121a5b560de3d1",
+    "src/main/scala/netstack/TcpReceive.scala": "b5b38898764f34af5aaaa144fe9e5f042e77c63793b2df5802687e55c93717e4",
+    "src/main/scala/netstack/TcpReceiveQueue.scala": "27ab599d70e731080405abde148860627369f8aa78ea2d935fc06c109630b364",
+    "src/main/scala/netstack/TcpReceiveRing.scala": "b5d752810f8a7735912176e1df591616763cdfb8eb38c12f6699f4f69d4c1af8",
+    "src/main/scala/netstack/TcpReceiveWindowHarness.scala": "d4a08f9959493a1693efaa192b0e6cadd5f248a9341f14f2ef66af354172d5ba",
+    "src/main/scala/netstack/TcpReorderBuffer.scala": "ba09789d9f5fb4e61831ac24fa4474b5d9fc5fe01a38a0963f10cca2fcc7ad98",
+    "src/main/scala/netstack/TcpRetransmissionTimer.scala": "9404186e77e103fd535046b18d4f9f29cca10d92e214fa9deabdf7ac2ee154a8",
+    "src/main/scala/netstack/TcpSack.scala": "e424d385db21756d3744284bb5c0d1947180308537dbab8d409b314c6f6ed349",
+    "src/main/scala/netstack/TcpSackSnapshotHarness.scala": "1f988b6a52d19cac94be79bd6edcaa8a214f6f55a85353ac0607b0a06281c50b",
+    "src/main/scala/netstack/TcpTransmitQueue.scala": "a396826d24bebc5934e7e0a464512c00cd3c591038975f2c06200eb344722e3c",
+    "src/main/scala/netstack/TcpValidatedReceiveBuffer.scala": "46fa26ac130d8474107275f517d839cdf7a57c280788f148605a961bab6986e3",
+    "src/main/scala/netstack/UdpReceive.scala": "42c0f50e1a22518ee274686621182158940ea36d4e25a8a347b7e0469b141518",
+    "src/main/scala/netstack/UdpValidate.scala": "e494a271d4a2f2b84e1b0ee3802d45c69bccd735063746cb61dea89a18e0c95e",
+    "src/main/scala/netstack/VariablePacketPrepend.scala": "2333f12d447310aa4f28f49c597c01de312fbeb0436ccac6842689f72abd4471",
+    "build.mill": "0f4ebd997d5d0897c0dffb30f2fdebea1f3e21133e9c6e36b90f6d696d31d81e"
+  },
+  "models": {
+    "gmii": {
+      "original_model_provenance_sha256": "45cfb87d237bbfab6cda762ca7fe4d62e3ad1044ff6a8ac989d7e0bef02b2927",
+      "changed_recorded_inputs": [
+        "dependencies.json"
+      ],
+      "reason": "Replace verified working-tree dependency overlay with an identical committed source tree; dependency pin metadata only",
+      "all_effective_net_source_hashes_match_committed_tree": true
+    },
+    "rxqueue": {
+      "original_model_provenance_sha256": "8732bda21375f4be74fdae808fc0957e5ead6487174111241e194c69b9236cbc",
+      "changed_recorded_inputs": [
+        "dependencies.json"
+      ],
+      "reason": "Replace verified working-tree dependency overlay with an identical committed source tree; dependency pin metadata only",
+      "all_effective_net_source_hashes_match_committed_tree": true
+    }
+  }
+}

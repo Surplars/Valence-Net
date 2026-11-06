@@ -1,0 +1,31 @@
+[
+  {
+    "command": [
+      "python3",
+      "sim/build.py",
+      "gmii"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "python3",
+      "sim/build.py",
+      "rxqueue"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "build/rxqueue/test"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "python3",
+      "sim/test_transport.py"
+    ],
+    "exit_code": 0
+  }
+]
