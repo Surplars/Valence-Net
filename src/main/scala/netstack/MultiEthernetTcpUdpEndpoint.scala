@@ -17,7 +17,7 @@ class MultiEthernetTcpUdpEndpoint(val connectionCount: Int = 4, val packetBeats:
     val txBeats: Int = 128, val rxWords: Int = 4096, val arpEntries: Int = 16,
     val ticksPerSecond: Int = 1000, val timeWaitTicks: Int = 120000,
     val completionDepth: Int = 16, val autonomousCongestion: Boolean = true,
-    val udpPorts: Seq[Int] = Seq.empty) extends Module {
+    val udpPorts: Seq[Int] = Seq.empty, val pressureWindowUpdates: Boolean = false) extends Module {
     val connectionBits = math.max(1, log2Ceil(connectionCount))
     val globalDepth = connectionCount * completionDepth
     val io = IO(new Bundle {
@@ -52,7 +52,8 @@ class MultiEthernetTcpUdpEndpoint(val connectionCount: Int = 4, val packetBeats:
     val unreachable = Module(new Ipv4IcmpErrorTransmit(ticksPerSecond))
     val exceptionArbiter = Module(new PacketArbiter)
     val controlArbiter = Module(new PacketArbiter)
-    val tcp = Module(new MultiTcpIpv4Endpoint(connectionCount, txBanks, txBeats, rxWords, packetBeats, ticksPerSecond, timeWaitTicks, completionDepth = completionDepth, autonomousCongestion = autonomousCongestion))
+    val tcp = Module(new MultiTcpIpv4Endpoint(connectionCount, txBanks, txBeats, rxWords, packetBeats, ticksPerSecond, timeWaitTicks, completionDepth = completionDepth, autonomousCongestion = autonomousCongestion,
+        pressureWindowUpdates = pressureWindowUpdates))
     val arp = Module(new ArpEndpoint(arpEntries, ticksPerSecond, ticksPerSecond * 60))
     val ipArbiter = Module(new PacketArbiter)
     val networkArbiter = Module(new PacketArbiter)

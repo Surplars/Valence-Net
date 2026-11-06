@@ -1,0 +1,66 @@
+--- N57B/build.mill
++++ N57M/build.mill
+@@ -10,8 +10,7 @@
+         val mac = root / "deps/valence/src/main/scala/ip/ethernet"
+         val bus = root / "deps/valence/src/main/scala/ip/bus"
+         Seq(PathRef(root / "src/main/scala")) ++
+-        os.walk(root / "deps/valence-net/src/main/scala").filter(p => os.isFile(p) && p.ext == "scala" &&
+-            !Set("TcpReceiveQueue.scala", "TcpReceiveRing.scala").contains(p.last)).sortBy(_.toString).map(p => PathRef(p)) ++
++        os.walk(root / "deps/valence-net/src/main/scala").filter(p => os.isFile(p) && p.ext == "scala").sortBy(_.toString).map(p => PathRef(p)) ++
+         Seq("EthernetPort", "EthernetCrc32", "GmiiFrameTx", "QueuedGmiiFrameTx", "GmiiFrameRx",
+             "MdioClause22", "Rtl8211fPhyManager", "TriSpeedRgmii", "EthernetClockCrossing")
+             .map(n => PathRef(mac / (n + ".scala"))) ++
+--- N57B/src/main/scala/iperf/IperfStack.scala
++++ N57M/src/main/scala/iperf/IperfStack.scala
+@@ -22,7 +22,7 @@
+         // Per-cycle event multiplicities: RX drops, RX busy, TX drops, physical TX, rejected TX.
+         val debugEvents = Output(Vec(5, UInt(8.W)))
+     })
+-    val net = Module(new MultiEthernetTcpUdpEndpoint(connectionCount = 2, txBanks = txBanks, rxWords = 16384))
++    val net = Module(new MultiEthernetTcpUdpEndpoint(connectionCount = 2, txBanks = txBanks, rxWords = 16384, pressureWindowUpdates = true))
+     val app = Module(new Iperf3Application(txBanks = txBanks))
+     val rx = Module(new MacPack)
+     val tx = Module(new MacTransmit)
+--- N57B/src/main/scala/iperf/ReceiveWindowHarness.scala
++++ N57M/src/main/scala/iperf/ReceiveWindowHarness.scala
+@@ -21,7 +21,7 @@
+         val update = Output(Bool()); val next = Output(UInt(32.W))
+         val sackLength = Output(UInt(6.W)); val sackLeft = Output(UInt(32.W)); val sackRight = Output(UInt(32.W))
+     })
+-    val queue = Module(new TcpReceiveQueue(16384))
++    val queue = Module(new TcpReceiveQueue(16384, pressureWindowUpdates = true))
+     val next = RegInit(0.U(32.W))
+     val generation = RegInit(1.U(32.W))
+     val pending = RegInit(false.B)
+--- N57B/src/main/scala/iperf/Emit.scala
++++ N57M/src/main/scala/iperf/Emit.scala
+@@ -15,6 +15,5 @@
+         case _ => throw new IllegalArgumentException(args(0))
+     }
+     Files.writeString(out.resolve(args(0) + ".fir"), ChiselStage.emitCHIRRTL(generate))
+-    ChiselStage.emitSystemVerilogFile(generate, Array("--target-dir", out.resolve("rtl").toString),
+-        Array("-disable-all-randomization", "-strip-debug-info"))
++    netstack.MemoryExport.emit(generate, Array("--target-dir", out.resolve("rtl").toString))
+ }
+--- N57B/fpga/iperf_uart_log.sv
++++ N57M/fpga/iperf_uart_log.sv
+@@ -149,7 +149,7 @@
+      8'd96:header_char=8'h4e;
+      8'd97:header_char=8'h35;
+      8'd98:header_char=8'h37;
+-     8'd99:header_char=8'h42;
++     8'd99:header_char=8'h4d;
+      8'd100:header_char=8'h0d;
+      8'd101:header_char=8'h0a;
+      default:header_char=8'h20;
+--- N57B/sim/uart_log_tb.sv
++++ N57M/sim/uart_log_tb.sv
+@@ -88,7 +88,7 @@
+   end
+  endtask
+  string value;
+- string header="VALENCE IPERF3 IP=192.168.137.10/24 GW=192.168.137.1 TCP=5201 UART=460800 8N1 BUILD=TX64-RX256K-N57B\015\012";
++ string header="VALENCE IPERF3 IP=192.168.137.10/24 GW=192.168.137.1 TCP=5201 UART=460800 8N1 BUILD=TX64-RX256K-N57M\015\012";
+  string first="STAT link=0 rxLock=0 phase=00 reverse=0 rxBytes=0123456789abcdef txBytes=fedcba9876543210 appErrors=00000000 phyFault=00 netFault=0\015\012";
+  string latest="STAT link=1 rxLock=1 phase=1c reverse=1 rxBytes=89abcdef01234567 txBytes=76543210fedcba98 appErrors=1234abcd phyFault=03 netFault=1\015\012";
+  initial begin

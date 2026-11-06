@@ -6,7 +6,12 @@ integrated endpoint supports **four independent TCP sessions by default**
 datapath (20 Gb/s raw bandwidth)**. Functional verification, cycle service
 capacity and physical timing are recorded separately.
 
-The current shared-receive revision passes **46 functional targets** with unchanged
+The [N57B integration](docs/N57B-MERGE.md) carries its 256 KiB receive
+ring and optional pressure-window ACK policy onto this shared-receive base.
+The original hardware-tested application is preserved; the upgraded N57M
+application requires its own physical qualification.
+
+The c2b3bba shared-receive baseline passes **46 functional targets** with unchanged
 default capacity. The fully routed core falls from **180,442 to 164,239 LUTs
 (8.980%)**, uses 16 URAM blocks and meets **156.25 MHz OOC on ZU15EG-2**.
 Setup/hold failing endpoints and TNS/THS are zero; both displayed margins are

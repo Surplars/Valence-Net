@@ -17,7 +17,7 @@ class EthernetTcpUdpEndpoint(val packetBeats: Int = 128, val txBanks: Int = 8,
     val txBeats: Int = 128, val rxWords: Int = 4096, val arpEntries: Int = 16,
     val ticksPerSecond: Int = 1000, val timeWaitTicks: Int = 120000,
     val completionDepth: Int = 16, val autonomousCongestion: Boolean = true,
-    val udpPorts: Seq[Int] = Seq.empty) extends Module {
+    val udpPorts: Seq[Int] = Seq.empty, val pressureWindowUpdates: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val localIp = Input(UInt(32.W)); val localMac = Input(UInt(48.W))
         val netmask = Input(UInt(32.W)); val gateway = Input(UInt(32.W)); val mtu = Input(UInt(16.W))
@@ -60,7 +60,8 @@ class EthernetTcpUdpEndpoint(val packetBeats: Int = 128, val txBanks: Int = 8,
     val unreachable = Module(new Ipv4IcmpErrorTransmit(ticksPerSecond))
     val exceptionArbiter = Module(new PacketArbiter)
     val controlArbiter = Module(new PacketArbiter)
-    val tcp = Module(new TcpIpv4Endpoint(txBanks, txBeats, rxWords, packetBeats, ticksPerSecond, timeWaitTicks, completionDepth = completionDepth, autonomousCongestion = autonomousCongestion))
+    val tcp = Module(new TcpIpv4Endpoint(txBanks, txBeats, rxWords, packetBeats, ticksPerSecond, timeWaitTicks, completionDepth = completionDepth, autonomousCongestion = autonomousCongestion,
+        pressureWindowUpdates = pressureWindowUpdates))
     val arp = Module(new ArpEndpoint(arpEntries, ticksPerSecond, ticksPerSecond * 60))
     val ipArbiter = Module(new PacketArbiter)
     val networkArbiter = Module(new PacketArbiter)

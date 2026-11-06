@@ -7,7 +7,7 @@ import chisel3.util._
   * Wire metadata has passed full packet validation. Replay re-enters only the
   * receive half of the TCB, never its ACK, RTT or congestion-control processing.
   */
-class TcpReceiveQueue(val words: Int = 4096) extends Module {
+class TcpReceiveQueue(val words: Int = 4096, val pressureWindowUpdates: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val metadata = Flipped(Decoupled(new TcpSegment))
         val payload = Flipped(Decoupled(new PacketBeat(16)))
@@ -113,7 +113,7 @@ class TcpReceiveQueue(val words: Int = 4096) extends Module {
     io.out.bits := ring.io.out.bits
     ring.io.out.ready := io.out.ready && io.deliver && !io.clear
     io.window := ring.io.free
-    val released = RegInit(0.U(17.W))
+    val released = RegInit(0.U(log2Ceil(words * 16 + 1).W))
     val newCredit = released +& PopCount(io.out.bits.keep)
     val allRead = PopCount(io.out.bits.keep) === (words * 16).U - ring.io.free
     // Coalesce read-to-empty updates across a short burst. Immediate allRead
@@ -135,7 +135,21 @@ class TcpReceiveQueue(val words: Int = 4096) extends Module {
     }
     when(update) { released := 0.U; drainedPending := false.B }
     when(io.clear) { released := 0.U; drainedPending := false.B; quiet := 0.U }
-    io.updateWindow := RegNext(update, false.B) || reorder.io.sackUpdated
+    val windowNotify = if (pressureWindowUpdates) {
+        // Optional N57B policy: a fast reader leaves the receive window large,
+        // so data ACKs suffice. Once free space reaches half capacity, retain
+        // explicit window updates through the final drain. Zero-window reopen
+        // and SACK notifications must not be suppressed.
+        val pressure = RegInit(false.B)
+        val lowWindow = ring.io.free <= (words * 8).U
+        val notify = update && (pressure || lowWindow) && !io.clear
+        when(lowWindow) { pressure := true.B }
+        when(notify && ((io.out.fire && allRead) ||
+            (drainedUpdate && ring.io.free === (words * 16).U))) { pressure := false.B }
+        when(io.clear) { pressure := false.B }
+        notify
+    } else update
+    io.updateWindow := RegNext(windowNotify, false.B) || reorder.io.sackUpdated
     io.sack := reorder.io.sack
     io.empty := ring.io.empty && state === idle && reorder.io.empty
     io.busy := state =/= idle

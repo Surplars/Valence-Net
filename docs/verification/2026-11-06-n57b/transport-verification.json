@@ -1,0 +1,165 @@
+{
+  "passed": true,
+  "scope": "Full MAC/TCP/iperf3 GSIM; external GMII stimuli and read-only observations",
+  "clock_hz": 125000000,
+  "measurement_cycles": 500000,
+  "ack_latency_us": [
+    256,
+    512,
+    640
+  ],
+  "model_mbps": {
+    "32": {
+      "32000": 949.0,
+      "64000": 721.24,
+      "80000": 572.32
+    },
+    "64": {
+      "32000": 949.0,
+      "64000": 949.0,
+      "80000": 949.0
+    }
+  },
+  "ack_counts_512_frames": {
+    "32": 1026,
+    "64": 513
+  },
+  "tx_banks": 64,
+  "retained_bytes_at_mss1460": 93440,
+  "rx_capacity_bytes": 262144,
+  "congestion_cap_bytes": 131072,
+  "cases": [
+    {
+      "mode": "window",
+      "banks": 32,
+      "delay_cycles": 32000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-32-32000.log",
+      "log_sha256": "bf15d304a0768d1df3d60ebac899cc2d2ccc1fd75a70d82205c564e9b629b9ee"
+    },
+    {
+      "mode": "window",
+      "banks": 64,
+      "delay_cycles": 32000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-64-32000.log",
+      "log_sha256": "224bad0e37fbcbb347c34074ce6b49e253b367afb1e0cf4b4139c7c4a0458788"
+    },
+    {
+      "mode": "window",
+      "banks": 32,
+      "delay_cycles": 64000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-32-64000.log",
+      "log_sha256": "abb5b9e1430673d4cbbfc95e2c5071513a865d01e3d1d651241ce222c4886fbd"
+    },
+    {
+      "mode": "window",
+      "banks": 64,
+      "delay_cycles": 64000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-64-64000.log",
+      "log_sha256": "b1d92f29bc92cdc941dcdfda6b0588f14d7956c8430d6416f51aca7168532251"
+    },
+    {
+      "mode": "window",
+      "banks": 32,
+      "delay_cycles": 80000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-32-80000.log",
+      "log_sha256": "2241cfdab8f22401b994c0b0f4d5e8e3804afc12ed40bbc6b06c8147019b5252"
+    },
+    {
+      "mode": "window",
+      "banks": 64,
+      "delay_cycles": 80000,
+      "expected_errors": null,
+      "passed": true,
+      "log": "window-64-80000.log",
+      "log_sha256": "e4d7a43dfc0c858ae1d803eab76b430e37e6cf17b8c4764fef0c2d30323992a3"
+    },
+    {
+      "mode": "forward",
+      "banks": 32,
+      "delay_cycles": null,
+      "expected_errors": null,
+      "passed": true,
+      "log": "forward-32.log",
+      "log_sha256": "42ebf8ddf7ec830b3f3d94ef9c32ab830ed2d1ec443ace320fc72933f10e9250"
+    },
+    {
+      "mode": "forward",
+      "banks": 64,
+      "delay_cycles": null,
+      "expected_errors": null,
+      "passed": true,
+      "log": "forward-64.log",
+      "log_sha256": "d74077ea6758165c6b9fdbd5ff1349c16cd5d619728155a3a0342d7e7c9190a9"
+    },
+    {
+      "mode": "reverse",
+      "banks": 64,
+      "delay_cycles": null,
+      "expected_errors": null,
+      "passed": true,
+      "log": "reverse-64.log",
+      "log_sha256": "2d16c2c044014fbf0b7311af1869cbb33b567a7b15f8c9aa4944004050c24d70"
+    },
+    {
+      "mode": "late-reset",
+      "banks": 32,
+      "delay_cycles": null,
+      "expected_errors": 1,
+      "passed": true,
+      "log": "late-reset-32.log",
+      "log_sha256": "fb52784d3532118c1b6a0f6f83876ccd25a878f6ef71b59298cae54911f62560"
+    },
+    {
+      "mode": "late-reset",
+      "banks": 64,
+      "delay_cycles": null,
+      "expected_errors": 0,
+      "passed": true,
+      "log": "late-reset-64.log",
+      "log_sha256": "517ff8d363dc6f2b40e029a7df273eb24df4518561b39e178dfd732f28ce12da"
+    },
+    {
+      "mode": "active-reset",
+      "banks": 64,
+      "delay_cycles": null,
+      "expected_errors": 1,
+      "passed": true,
+      "log": "active-reset-64.log",
+      "log_sha256": "c892d002dce986e8ac84576764795aaefa99db10d42dc6b9210938212b2d3a85"
+    },
+    {
+      "mode": "control-reset",
+      "banks": 64,
+      "delay_cycles": null,
+      "expected_errors": 1,
+      "passed": true,
+      "log": "control-reset-64.log",
+      "log_sha256": "02246da9a9d4bc7d3dee258571a1fc257f99ebe57617edc785b909ec04e31a14"
+    }
+  ],
+  "driver_sha256": "f1f046b102581c740e8bf8231e15f182ef5e40cb55dafbaa4dd66dced2bf615f",
+  "script_sha256": "fbe7aa34c5cb73433de66cc6e2a7f724f3779df56a295b4f3cd83c4f6b9262d5",
+  "model_sha256": {
+    "32": {
+      "gmii.fir": "da2317baa3937201366bc2d79ab93457edba25a144379c89edd7a9f7b5c446f2",
+      "IperfGmiiHarness.h": "ad30753e3ca14b3a325fd12f28ff227bb4b8674baec5c282886ae5e6732d6535",
+      "IperfGmiiHarness0.cpp": "0858b54a7c72844100ad1af9be87376a9406e16ca0caeca3489aa7c6a8a25c62"
+    },
+    "64": {
+      "gmii.fir": "dfe354d89037785d610cd53bf24d208af9d4abbfa3dedb109493c129444ad1a8",
+      "IperfGmiiHarness.h": "61737360445388e4f8fdb714ac8f16288f24f5d4157c841443a5c43e703f1e21",
+      "IperfGmiiHarness0.cpp": "108d2ee6fc4ef1177a9179e6ca77a75f253c1f41bca63e2b5cdf77674f82ae10"
+    }
+  },
+  "board_throughput_measured": false
+}

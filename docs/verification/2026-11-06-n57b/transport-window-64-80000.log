@@ -1,0 +1,2 @@
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=64 ack_latency_cycles=80000 ack_latency_us=640 cycles_measured=500000 wire_payload_bytes=474500 model_mbps=949 cycles=1290420 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000

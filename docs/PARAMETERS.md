@@ -12,19 +12,25 @@ functional/performance checks and physical timing closure.
 | packetBeats | 128 | Packet-buffer capacity in 16-byte beats; power of two, at least 2 |
 | txBanks | 8 | Retained TX payload banks per context; power of two, 2 through 256 |
 | txBeats | 128 | 16-byte beats per TX bank; power of two, 2 through 2048 |
-| rxWords | 4096 | 16-byte words per context's receive ring; power of two, 4 through 4096 |
+| rxWords | 4096 | 16-byte words per context's receive ring; power of two, 4 through 16384 |
 | arpEntries | 16 | ARP table entries; power of two, at least 2 |
 | ticksPerSecond | 1000 | External tick frequency, 1 through 1,000,000; supply a matching tick input |
 | timeWaitTicks | 120000 | TIME-WAIT duration in external ticks; at least 2 |
 | completionDepth | 16 | Per-context ordered physical completion capacity; at least 2 |
 | autonomousCongestion | true | Enable built-in congestion control; the application's congestionWindow remains an upper cap |
 | udpPorts | empty | Static UDP destination-port allowlist; empty accepts all ports |
+| pressureWindowUpdates | false | N57B streaming-reader policy: suppress drain-only window notifications while more than half the ring remains free; retain zero-window reopening and SACK |
 
 A default TCP context has 16 KiB of retained TX payload storage
 (`8 * 128 * 16`) and a 64 KiB receive ring (`4096 * 16`). Four contexts
 therefore have 64 KiB TX and 256 KiB RX capacity, excluding reorder retention,
 packet staging, descriptors and memory packing overhead. RAM primitive use
 cannot be inferred from these byte totals alone.
+
+The [N57B integration](N57B-MERGE.md) uses two contexts, 64 TX banks,
+16,384 RX words (256 KiB/context), window scale 3 and
+`pressureWindowUpdates = true`. Larger rings do not automatically select
+a window scale; configure and negotiate the matching OPEN option.
 
 Local IP/MAC, netmask, gateway, MTU and session OPEN configuration are hardware
 inputs. They do not change the number of instantiated contexts or the memory

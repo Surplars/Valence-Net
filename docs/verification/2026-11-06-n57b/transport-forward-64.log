@@ -1,0 +1,2 @@
+START reverse=0 cycle=4008 busyDrops=0 macDrops=0
+PASS_FORWARD_LINE_RATE banks=64 packets=512 payload_bytes=747520 ack_packets=513 advertised_window_max=262104 scale=3 cycles=807528 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000

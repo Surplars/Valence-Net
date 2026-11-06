@@ -14,7 +14,7 @@ import chisel3.util._
   * data together. The consumer must treat connection abort as cancellation.
   */
 class TcpReceiveRing(val words: Int = 4096) extends Module {
-    require(isPow2(words) && words >= 4 && words <= 4096)
+    require(isPow2(words) && words >= 4 && words <= 16384)
     val capacity = words * 16
     val pointerBits = log2Ceil(capacity)
     val io = IO(new Bundle {

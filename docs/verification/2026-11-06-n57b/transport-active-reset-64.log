@@ -1,0 +1,2 @@
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_CLOSE_PROBE mode=active-reset banks=64 errors=1 final_phase=1 cycles=23507 busy_drops=0 other_drops=2 mac_drops=0 max_inflight=1 tick_period=125000

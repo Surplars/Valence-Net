@@ -1,0 +1,38 @@
+{
+  "target": "rxqueue",
+  "gsim_revision": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+  "gsim_source": "/home/openion/.cache/valence-net/gsim-src-93b8cd23",
+  "source_sha256": {
+    "src/main/scala/iperf/AppHarness.scala": "553279a194e1f5371cebdabe544b2e27513cdb58ce9abf9a85d4c70cc8b0b7dc",
+    "src/main/scala/iperf/Emit.scala": "359d8f5e1cf5522bfa132292a64faaa7b6e99e8f94b3201b8435f04fa485a50d",
+    "src/main/scala/iperf/Iperf3Application.scala": "418a9ee69533365805430ea415f71c8f3c09daa68a00b79db5ce66ac5d0746fb",
+    "src/main/scala/iperf/IperfParameters.scala": "f2bdd488cca5617043879622631145ecc2d84ceb0951982357b28bf06d651da4",
+    "src/main/scala/iperf/IperfStack.scala": "a1382f73f8b9e6c952889dec74a06dcd2245aa23be31f313b7954aed0a545303",
+    "src/main/scala/iperf/MacTransmit.scala": "e68e8fafaf02ec4c4f000d4c28202b316952904b3ee50534a0a9b09d2d6d4fee",
+    "src/main/scala/iperf/ReceiveWindowHarness.scala": "282dfee4f6ab7cc4ae045a1ba850dfbaa09bf966e0822c6f72ec766475a2c4f6",
+    "src/main/scala/iperf/RxDiagnosticSnapshot.scala": "605921b2748ae4c93c5b92baa841f326ebdc54af565a785e829360984dadbb82",
+    "src/main/scala/iperf/StreamAdapters.scala": "42819f9667fb50b15dff51aee0bae7a16d2c964c90cfcdbfa2bdb7e97e0ab1e2",
+    "build.mill": "a294dcd805302ed2bdfa61a17af5df3337157dfec328d92ce728fb98e2921a31",
+    "dependencies.json": "5551c3b43b693ccfa791921bd77bb57b521b3ff2add84e9079c819e3b9590736"
+  },
+  "model_sha256": {
+    "rxqueue.fir": "4b2985d475c0e4660c73de5f516cddbcd4dd90571e2ac614feb14c80223ff660",
+    "test": "d52ba25e6709b93af2cec776e037fa177988f52f6414ed28cf48b29f1560ee65",
+    "ReceiveWindowHarness.h": "87d675e9101e17377a9f3a5fc36ffc04c0ab10553e0d860171f60e6145c99296",
+    "ReceiveWindowHarness0.cpp": "ffa48c80169c126422d9a863d1668cfe973cdca47088cb684d56251b1adb4f43",
+    "rtl/MemoryQueue.sv": "b016b52d34f84f42bf517f5e59f5f96c32d56bf9557da2dad9f8073fd60d31af",
+    "rtl/PacketSlice.sv": "04f5445e5bfc6063d4f28fe94552252ced450efd367ad2b690e46a7337a68311",
+    "rtl/Queue2_PacketBeat.sv": "925cf32867b6b8a0032c0e9a578c56ce6da5721816cc0a1fba548b64d2008953",
+    "rtl/ReceiveWindowHarness.sv": "7489a331a63842b9efae35174270e830ec5aff1984423aa1a306e41393e93425",
+    "rtl/TcpPayloadStore.sv": "cad50a504424c99ba1c25774ed8f7389be2930b064a77cb9b836265a87020048",
+    "rtl/TcpReceiveQueue.sv": "b55d08f688d1004dc6420ee2e03f25bdf9dada8553ad7a1a8b30ab2ccf7ef1ac",
+    "rtl/TcpReceiveRing.sv": "983252497917d436e134d9b70751037dc2cd4855fc7ec84c5b8b23e37411771a",
+    "rtl/TcpReorderBuffer.sv": "dd3aeca5eaa3194d014a54f7e715cb84904d36f91f8fea37acc8218bea8d456b",
+    "rtl/TcpSackSnapshot.sv": "19a03ca3fdfecd328e54cf5acbe8a0a383d3e9750e11a313f72866824efb707e",
+    "rtl/mem_4x69.sv": "a1cd7ecb43ae54169811e70a3a53c9920307266e2b8a3ff585bd70a4573006e8",
+    "rtl/memory_16384x8.sv": "e3a0ced6f1c899c7108704f4ed456f5c40f5bffb582d551d5b741fb2ce6e9212",
+    "rtl/ram_2x146.sv": "0fb7871bcd3cb18f99debab22a09ce6df21361d800b6d33c63c9520c297d9939",
+    "rtl/retainedPayload_1024x128.sv": "934c0b2e90a78034eb1e77b94d8a45446dec5d9414e68feed7ae4390abc069b9"
+  },
+  "hardware_throughput_claim": false
+}

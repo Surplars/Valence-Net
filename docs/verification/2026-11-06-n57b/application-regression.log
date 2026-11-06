@@ -1,0 +1,55 @@
+RUN ['python3', 'sim/build.py', 'gmii']
++ mill -i hw.runMain iperf.Emit gmii /home/openion/Valence-Iperf-Rx256K-Main/build/gmii
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Iperf-Rx256K-Main/build/gmii /home/openion/Valence-Iperf-Rx256K-Main/build/gmii/gmii.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Iperf-Rx256K-Main/build/gmii /home/openion/Valence-Iperf-Rx256K-Main/build/gmii/IperfGmiiHarness0.cpp /home/openion/Valence-Iperf-Rx256K-Main/sim/gmii_tap.cpp -ldl -o /home/openion/Valence-Iperf-Rx256K-Main/build/gmii/test
+RUN ['python3', 'sim/build.py', 'rxqueue']
++ mill -i hw.runMain iperf.Emit rxqueue /home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue
++ /home/openion/.cache/valence-net/gsim-src-93b8cd23/build/gsim/gsim --threads=1 --dir=/home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue /home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue/rxqueue.fir
++ clang++-19 -std=c++20 -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -I/home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue /home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue/ReceiveWindowHarness0.cpp /home/openion/Valence-Iperf-Rx256K-Main/sim/receive_window.cpp -ldl -o /home/openion/Valence-Iperf-Rx256K-Main/build/rxqueue/test
+RUN ['build/rxqueue/test']
+PASS_FAST_SINK bytes=373760 window_updates=0
+PASS_ZERO_WINDOW rounds=3 bytes=786432 partial_reopen=16 wrap=PASS
+PASS_SACK gap_bytes=1460 replay_bytes=1460 encoded_after_fill=0
+RECEIVE_WINDOW_PASS capacity=262144 high_window_updates=0 zero_reopen=PASS full_restore=PASS wrap=PASS SACK=PASS
+RUN ['python3', 'sim/test_transport.py']
+START reverse=1 cycle=3959 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=32 ack_latency_cycles=32000 ack_latency_us=256 cycles_measured=500000 wire_payload_bytes=474500 model_mbps=949 cycles=820563 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=64 ack_latency_cycles=32000 ack_latency_us=256 cycles_measured=500000 wire_payload_bytes=474500 model_mbps=949 cycles=1017467 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=3959 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=32 ack_latency_cycles=64000 ack_latency_us=512 cycles_measured=500000 wire_payload_bytes=360620 model_mbps=721.24 cycles=1031680 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=64 ack_latency_cycles=64000 ack_latency_us=512 cycles_measured=500000 wire_payload_bytes=474500 model_mbps=949 cycles=1194420 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=3959 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=32 ack_latency_cycles=80000 ack_latency_us=640 cycles_measured=500000 wire_payload_bytes=286160 model_mbps=572.32 cycles=1159680 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_LATENCY_WINDOW banks=64 ack_latency_cycles=80000 ack_latency_us=640 cycles_measured=500000 wire_payload_bytes=474500 model_mbps=949 cycles=1290420 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=0 cycle=3961 busyDrops=0 macDrops=0
+PASS_FORWARD_LINE_RATE banks=32 packets=512 payload_bytes=747520 ack_packets=1026 advertised_window_max=65536 scale=1 cycles=807528 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=0 cycle=4008 busyDrops=0 macDrops=0
+PASS_FORWARD_LINE_RATE banks=64 packets=512 payload_bytes=747520 ack_packets=513 advertised_window_max=262104 scale=3 cycles=807528 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_BURST banks=64 bursts=32 min_frame_start_gap_cycles=84 data_packets=2400 oldest=440735836 actual=440829276 cycles=3784771 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=3959 busyDrops=0 macDrops=0
+PASS_CLOSE_PROBE mode=late-reset banks=32 errors=1 final_phase=1 cycles=24225 busy_drops=0 other_drops=4 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_CLOSE_PROBE mode=late-reset banks=64 errors=0 final_phase=1 cycles=24595 busy_drops=0 other_drops=3 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_CLOSE_PROBE mode=active-reset banks=64 errors=1 final_phase=1 cycles=23507 busy_drops=0 other_drops=2 mac_drops=0 max_inflight=1 tick_period=125000
+
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_CLOSE_PROBE mode=control-reset banks=64 errors=1 final_phase=1 cycles=24248 busy_drops=0 other_drops=4 mac_drops=0 max_inflight=1 tick_period=125000
+
+PASS: 13 transport cases; simulation throughput is not board throughput
+N57M_APPLICATION_PASS

@@ -54,7 +54,8 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val txBeats: Int = 128, val rxWords: Int = 4096, val packetBeats: Int = 128,
     val ticksPerSecond: Int = 1000, val timeWaitTicks: Int = 120000,
     val challengeTicks: Int = 10, val maxRetries: Int = 8,
-    val completionDepth: Int = 16, val autonomousCongestion: Boolean = true) extends Module {
+    val completionDepth: Int = 16, val autonomousCongestion: Boolean = true,
+    val pressureWindowUpdates: Boolean = false) extends Module {
     require(connectionCount >= 1 && connectionCount <= 8)
     val connectionBits = math.max(1, log2Ceil(connectionCount))
     val globalDepth = connectionCount * completionDepth
@@ -79,7 +80,8 @@ class MultiTcpIpv4Endpoint(val connectionCount: Int = 4, val txBanks: Int = 8,
     val cores = Seq.fill(connectionCount)(Module(new TcpIpv4Endpoint(txBanks, txBeats,
         rxWords, packetBeats, ticksPerSecond, timeWaitTicks, challengeTicks,
         maxRetries, completionDepth, autonomousCongestion,
-        deferOpenClear = true, pipelineCompletions = true, closedResponses = false, sharedReceive = true)))
+        deferOpenClear = true, pipelineCompletions = true, closedResponses = false, sharedReceive = true,
+        pressureWindowUpdates = pressureWindowUpdates)))
     val config = Reg(Vec(connectionCount, new TcpConnectionOpen))
     val claimed = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))
     val releaseListener = RegInit(VecInit(Seq.fill(connectionCount)(false.B)))

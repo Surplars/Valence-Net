@@ -1,0 +1,6 @@
+Cloning into '/home/openion/Valence-Net/build/n57b-merge-20261106/reproduction/deps/valence'...
+HEAD is now at bf021b5 Unplace exact TX reset chain before assigning new BELs
+Cloning into '/home/openion/Valence-Net/build/n57b-merge-20261106/reproduction/deps/valence-net'...
+done.
+HEAD is now at c2b3bba Share TCP receive validation and use selective RAM mapping
+{"output": "/home/openion/Valence-Net/build/n57b-merge-20261106/reproduction", "net_commit": "c2b3bba8d39ede70159e37086702af85fc541187", "dirty_snapshot": true, "original_unchanged": true}

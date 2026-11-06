@@ -9,6 +9,7 @@ object Emit extends App {
     require(MemoryExport.profiles(MemoryExport.profile), "unsupported memory profile")
     val out = Paths.get(args(0))
     Files.createDirectories(out)
+    Files.writeString(out.resolve("TcpReceiveWindowHarness.fir"), ChiselStage.emitCHIRRTL(new TcpReceiveWindowHarness))
     Files.writeString(out.resolve("SharedTcpReceiveHarness.fir"), ChiselStage.emitCHIRRTL(new SharedTcpReceiveHarness))
     Files.writeString(out.resolve("MemoryQueueHarness.fir"), ChiselStage.emitCHIRRTL(new MemoryQueueHarness))
     MemoryExport.emit(new MemoryQueueHarness, Array("--target-dir", out.resolve("memory-queue-rtl").toString))

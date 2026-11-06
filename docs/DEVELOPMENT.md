@@ -1,4 +1,4 @@
-# Valence-Net development evidence (2026-10-23 through 2026-10-25)
+# Valence-Net development evidence (2026-10-23 through 2026-11-06)
 
 The target is 10 Gb/s Ethernet. The internal interface carries 128 bits at
 156.25 MHz (20 Gb/s raw bandwidth); this is not a claim of 20G wire rate for
@@ -10,7 +10,16 @@ Source, Git, caches and simulation stay in native WSL at
 E:\VM\Share\Valence-rtl. The original checkout base is
 0273d8dfb0219889560efdc9aa5066c4b55c69ef.
 
-## Current shared-receive area revision
+## N57B merge (2026-11-06)
+
+The 57c6984-pinned N57B application has two receive-module overrides.
+Its 256 KiB capacity, capacity-derived credit counter and optional
+pressure-window notification policy are integrated on c2b3bba, preserving
+the shared receive frontend and selective RAM mapping. Default geometry and
+ACK policy remain unchanged. See [merge details](N57B-MERGE.md) and its
+source-bound validation record; no new physical qualification is claimed.
+
+## Shared-receive area baseline (c2b3bba)
 
 Starting at `57c6984`, the default four-context core now shares complete
 IPv4/TCP receive validation and stateless-response validation. Immutable

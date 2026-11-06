@@ -16,7 +16,8 @@ class TcpIpv4Endpoint(val txBanks: Int = 8, val txBeats: Int = 128,
     val challengeTicks: Int = 10, val maxRetries: Int = 8,
     val completionDepth: Int = 16, val autonomousCongestion: Boolean = true, val sackSupport: Boolean = true,
     val deferOpenClear: Boolean = false, val pipelineCompletions: Boolean = false,
-    val closedResponses: Boolean = true, val sharedReceive: Boolean = false) extends Module {
+    val closedResponses: Boolean = true, val sharedReceive: Boolean = false,
+    val pressureWindowUpdates: Boolean = false) extends Module {
     val io = IO(new Bundle {
         val localIp = Input(UInt(32.W)); val netmask = Input(UInt(32.W))
         val pathMtuLimit = Input(UInt(16.W))
@@ -61,7 +62,7 @@ class TcpIpv4Endpoint(val txBanks: Int = 8, val txBeats: Int = 128,
         val timerRunning = Output(Bool()); val timerExpired = Output(Bool())
         val rto = Output(UInt(32.W)); val retries = Output(UInt(8.W))
     })
-    val receive = Module(new TcpReceiveQueue(rxWords))
+    val receive = Module(new TcpReceiveQueue(rxWords, pressureWindowUpdates))
     val connection = Module(new TcpConnectionTransmit(txBanks, txBeats, ticksPerSecond,
         timeWaitTicks, challengeTicks, maxRetries, completionDepth, autonomousCongestion, receiveReorder = true, sackSupport = sackSupport,
         pipelineCompletions = pipelineCompletions))

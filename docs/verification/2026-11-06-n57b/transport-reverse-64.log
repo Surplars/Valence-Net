@@ -1,0 +1,2 @@
+START reverse=1 cycle=4006 busyDrops=0 macDrops=0
+PASS_ACK_BURST banks=64 bursts=32 min_frame_start_gap_cycles=84 data_packets=2400 oldest=440735836 actual=440829276 cycles=3784771 busy_drops=0 other_drops=0 mac_drops=0 max_inflight=1 tick_period=125000
