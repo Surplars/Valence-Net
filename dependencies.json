@@ -1,0 +1,20 @@
+{
+  "valence": {
+    "url": "https://github.com/Surplars/Valence.git",
+    "ref": "recovery/common-idle-source-20261021-r1",
+    "commit": "bf021b52fe67f3d4c8c33d94a7e928559f55c729"
+  },
+  "valence-net": {
+    "url": "https://github.com/Surplars/Valence-Net.git",
+    "ref": "main",
+    "commit": "7f651a6185e3dd13f9981b2ae024d3b6c117f588"
+  },
+  "iperf3": {
+    "url": "https://github.com/esnet/iperf.git",
+    "commit": "2a387afd416a258b78f0562af42eec3c110aed62"
+  },
+  "gsim": {
+    "commit": "93b8cd23edd3228807c4f2a08c19c3936a463cb2",
+    "path": "/home/openion/.cache/valence-net/gsim-src-93b8cd23"
+  }
+}

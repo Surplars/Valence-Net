@@ -1,0 +1,13 @@
+set_property PACKAGE_PIN AL8 [get_ports clk_in1_p]
+set_property PACKAGE_PIN AL7 [get_ports clk_in1_n]
+set_property IOSTANDARD DIFF_SSTL12 [get_ports {clk_in1_p clk_in1_n}]
+create_clock -name board200 -period 5.000 [get_ports clk_in1_p]
+set_property PACKAGE_PIN F16 [get_ports sys_rst_n]
+set_property PACKAGE_PIN F15 [get_ports button_n]
+set_property PACKAGE_PIN D16 [get_ports led]
+set_property IOSTANDARD LVCMOS33 [get_ports {sys_rst_n button_n led}]
+set_property DRIVE 12 [get_ports led]
+# Board PL UART TX only; 460800 8N1 diagnostic output.
+set_property PACKAGE_PIN D15 [get_ports uart_tx]
+set_property IOSTANDARD LVCMOS33 [get_ports uart_tx]
+set_property DRIVE 12 [get_ports uart_tx]
