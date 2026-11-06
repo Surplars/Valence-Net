@@ -13,7 +13,8 @@ application requires its own physical qualification.
 The standalone applications are backed up on [n57b-main](https://github.com/Surplars/Valence-Net/tree/n57b-main)
 (upgraded N57M) and [n57b-tested](https://github.com/Surplars/Valence-Net/tree/n57b-tested)
 (original hardware-tested N57B). Follow the [restore guide](https://github.com/Surplars/Valence-Net/blob/n57b-main/RESTORE.md)
-to rebuild after removing local workspaces.
+to rebuild after removing local workspaces. See the [six-directory backup map](docs/WORKSPACE-BACKUPS.md)
+for older iperf versions and the PLL recovery archive.
 
 The c2b3bba shared-receive baseline passes **46 functional targets** with unchanged
 default capacity. The fully routed core falls from **180,442 to 164,239 LUTs
